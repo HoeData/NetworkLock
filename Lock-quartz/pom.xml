@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Lock-quartz</artifactId>
+    <artifactId>lock-quartz</artifactId>
 
     <description>
         quartz定时任务
@@ -32,7 +32,7 @@
         <!-- 通用工具-->
         <dependency>
             <groupId>com.ruoyi</groupId>
-            <artifactId>ruoyi-common</artifactId>
+            <artifactId>lock-common</artifactId>
         </dependency>
 
     </dependencies>

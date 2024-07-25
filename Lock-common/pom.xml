@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>Lock-common</artifactId>
+    <artifactId>lock-common</artifactId>
 
     <description>
         common通用工具
