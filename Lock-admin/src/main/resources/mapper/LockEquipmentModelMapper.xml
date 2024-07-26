@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.LockEquipmentModelMapper">
+    <delete id="deleteByIds">
+        update lock_equipment_model set del_flag = '2' where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectEquipmentModelList" resultType="com.ruoyi.web.domain.LockEquipmentModel">
+        select * from lock_equipment_model where del_flag = '0'
+        <if test="name != null and name !='' ">
+            AND name like concat('%',#{name},'%')
+        </if>
+        <if test="description != null and description !='' ">
+            AND description like concat('%',#{description},'%')
+        </if>
+
+    </select>
+</mapper>

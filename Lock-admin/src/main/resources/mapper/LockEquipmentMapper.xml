@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.LockEquipmentMapper">
+    <delete id="deleteByIds">
+        update lock_equipment set del_flag = '2' where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="selectEquipmentList" resultType="com.ruoyi.web.domain.vo.LockEquipmentViewVO">
+        select t.*,dept.name as dept_name,cabinet.name as cabinet_name,et.name as
+        equipment_type_name,em.name as equipment_model_name,company.name as company_name,
+        site.name as site_name,room.name as machine_room_name
+        from lock_equipment t
+        left join lock_cabinet as cabinet on cabinet.id=t.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room on room.id=cabinet.machine_room_id and room.del_flag =
+        '0'
+        left join lock_dept as dept on dept.id = t.dept_id and dept.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_equipment_type as et on et.id = t.equipment_type_id and et.del_flag = '0'
+        left join lock_equipment_model as em on em.id = t.equipment_model_id and em.del_flag = '0'
+        left join lock_company as company on company.id = dept.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        <if test="name != null and name !='' ">
+            AND t.name like concat('%',#{name},'%')
+        </if>
+        <if test="description != null and description !='' ">
+            AND t.description like concat('%',#{description},'%')
+        </if>
+        <if test="equipmentId != null ">
+            AND t.id = #{equipmentId}
+        </if>
+        <if test="companyId != null">
+            AND company.id =#{companyId}
+        </if>
+        <if test="deptId != null">
+            AND dept.id =#{deptId}
+        </if>
+        <if test="machineRoomId != null">
+            AND room.id =#{machineRoomId}
+        </if>
+        <if test="cabinetId != null">
+            AND cabinet.id =#{cabinetId}
+        </if>
+        <if test="equipmentTypeId != null">
+            AND t.equipment_type_id =#{equipmentTypeId}
+        </if>
+        <if test="equipmentModelId != null">
+            AND t.equipment_model_id =#{equipmentModelId}
+        </if>
+
+
+    </select>
+    <select id="selectConsoleTotal" resultType="java.lang.Integer">
+        select count(*) from lock_equipment  where console_flag =1;
+    </select>
+</mapper>
