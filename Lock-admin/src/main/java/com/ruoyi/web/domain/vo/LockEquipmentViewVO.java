@@ -10,8 +10,10 @@ public class LockEquipmentViewVO{
     private Integer id;
     private String name;
     private String companyName;
+    private Integer companyId;
     private Integer deptId;
     private String deptName;
+    private Integer machineRoomId;
     private String machineRoomName;
     private Integer cabinetId;
     private String cabinetName;
@@ -19,6 +21,7 @@ public class LockEquipmentViewVO{
     private String equipmentTypeName;
     private Integer equipmentModelId;
     private String equipmentModelName;
+    private Integer siteId;
     private String siteName;
     private String description;
     private String delFlag;
