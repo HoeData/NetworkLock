@@ -41,11 +41,12 @@ public class LockUtil {
 //            System.out.printf("0x%X", b);
 //            System.out.println("-");
 //        }
-        readSerialNumber(11, "COM7");
+        unLock(11, "COM7");
 
     }
 
-    public static boolean readSerialNumber(int serialNumber, String portName) {
+    public static boolean unLock(int serialNumber, String portName) {
+        boolean result = false;
         String hexString = "6862000200";
         hexString += String.format("%02X", serialNumber);
         byte[] data = hexStringToByteArray(hexString);
@@ -56,7 +57,6 @@ public class LockUtil {
         serialPort.setComPortParameters(115200, 8, 1, 0); // 设置串口参数：波特率9600, 数据位8, 停止位1, 校验位无
         serialPort.setParity(0);
         byte[] newData;
-        boolean result = false;
         try {
 
             if (serialPort.openPort()) {

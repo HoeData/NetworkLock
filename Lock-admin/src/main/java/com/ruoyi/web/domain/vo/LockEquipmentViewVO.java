@@ -1,5 +1,6 @@
 package com.ruoyi.web.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import lombok.Data;
 
@@ -8,7 +9,6 @@ public class LockEquipmentViewVO{
 
     private Integer id;
     private String name;
-
     private String companyName;
     private Integer deptId;
     private String deptName;
@@ -24,6 +24,7 @@ public class LockEquipmentViewVO{
     private String delFlag;
     private Integer portNumber;
     private Integer consoleFlag;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
 }
