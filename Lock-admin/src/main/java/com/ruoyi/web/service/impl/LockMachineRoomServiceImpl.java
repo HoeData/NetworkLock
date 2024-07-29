@@ -3,6 +3,7 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.web.domain.LockMachineRoom;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
+import com.ruoyi.web.domain.vo.LockCommonViewVO;
 import com.ruoyi.web.mapper.LockMachineRoomMapper;
 import com.ruoyi.web.service.ILockMachineRoomService;
 import java.util.List;
@@ -17,7 +18,7 @@ public class LockMachineRoomServiceImpl extends
     private LockMachineRoomMapper lockMachineRoomMapper;
 
     @Override
-    public List<LockMachineRoom> selectMachineRoomList(LockCommonParamVO lockCommonParamVO) {
+    public List<LockCommonViewVO> selectMachineRoomList(LockCommonParamVO lockCommonParamVO) {
         return lockMachineRoomMapper.selectMachineRoomList(lockCommonParamVO);
     }
 

@@ -6,6 +6,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.web.domain.LockMachineRoom;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
+import com.ruoyi.web.domain.vo.LockCommonViewVO;
 import com.ruoyi.web.service.ILockMachineRoomService;
 import com.ruoyi.web.utils.CommonUtils;
 import java.util.List;
@@ -28,14 +29,14 @@ public class LockMachineRoomController extends BaseController {
     @PostMapping("/list")
     public TableDataInfo list(@RequestBody LockCommonParamVO lockCommonParamVO) {
         PageHelper.startPage(lockCommonParamVO.getPageNum(), lockCommonParamVO.getPageSize());
-        List<LockMachineRoom> list = lockMachineRoomService.selectMachineRoomList(
+        List<LockCommonViewVO> list = lockMachineRoomService.selectMachineRoomList(
             lockCommonParamVO);
         return getDataTable(list);
     }
 
     @GetMapping("/getAll")
     public AjaxResult getAll() {
-        List<LockMachineRoom> list = lockMachineRoomService.selectMachineRoomList(
+        List<LockCommonViewVO> list = lockMachineRoomService.selectMachineRoomList(
             new LockCommonParamVO());
         return success(list);
     }
