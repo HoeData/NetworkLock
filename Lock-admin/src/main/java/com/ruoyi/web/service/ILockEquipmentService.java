@@ -2,7 +2,6 @@ package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.LockEquipment;
-import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.LockEquipmentAddParamVO;
 import com.ruoyi.web.domain.vo.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.LockEquipmentViewVO;

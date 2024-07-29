@@ -1,8 +1,6 @@
 package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.web.domain.LockEquipment;
-import com.ruoyi.web.domain.LockEquipmentModel;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.LockPortInfoStatisticalQuantityVO;

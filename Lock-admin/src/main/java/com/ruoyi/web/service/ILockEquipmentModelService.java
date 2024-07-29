@@ -1,7 +1,6 @@
 package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.web.domain.LockCompany;
 import com.ruoyi.web.domain.LockEquipmentModel;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import java.util.List;
