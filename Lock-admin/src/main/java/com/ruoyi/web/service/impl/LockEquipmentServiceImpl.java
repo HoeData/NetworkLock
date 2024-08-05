@@ -65,5 +65,13 @@ public class LockEquipmentServiceImpl extends
         return 1;
     }
 
+    @Override
+    public int setTrust(LockEquipmentAddParamVO lockEquipmentAddParamVO) {
+        LockEquipment lockEquipment = new LockEquipment();
+        lockEquipment.setId(lockEquipmentAddParamVO.getId());
+        lockEquipment.setTrustFlag(lockEquipmentAddParamVO.getTrustFlag());
+        return updateById(lockEquipment) ? 1 : 0;
+    }
+
 
 }

@@ -59,4 +59,8 @@ public class LockEquipmentController extends BaseController {
     }
 
 
+    @PostMapping("/setTrust")
+    public AjaxResult setTrust(@RequestBody LockEquipmentAddParamVO lockEquipmentAddParamVO){
+        return toAjax(lockEquipmentService.setTrust(lockEquipmentAddParamVO));
+    }
 }

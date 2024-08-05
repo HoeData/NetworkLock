@@ -16,4 +16,6 @@ public interface ILockEquipmentService extends IService<LockEquipment> {
 
     int add(LockEquipmentAddParamVO lockEquipmentAddParamVO);
     int update(LockEquipmentAddParamVO lockEquipmentAddParamVO);
+
+    int setTrust(LockEquipmentAddParamVO lockEquipmentAddParamVO);
 }

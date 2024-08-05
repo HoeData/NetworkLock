@@ -20,4 +20,5 @@ public class LockEquipment extends LockEntity {
     private String delFlag;
     private Integer consoleFlag;
     private Integer portNumber;
+    private Integer trustFlag;
 }
