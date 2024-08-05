@@ -52,6 +52,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="equipmentModelId != null">
             AND t.equipment_model_id =#{equipmentModelId}
         </if>
+        <if test="trustFlag != null">
+            AND t.trust_flag =#{trustFlag}
+        </if>
 
 
     </select>

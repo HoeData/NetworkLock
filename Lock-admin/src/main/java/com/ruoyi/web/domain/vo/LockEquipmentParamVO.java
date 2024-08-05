@@ -14,6 +14,7 @@ public class LockEquipmentParamVO extends PageVO{
     private Integer equipmentTypeId;
     private Integer equipmentModelId;
     private String description;
+    private Integer trustFlag;
 
 
 }
