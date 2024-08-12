@@ -1,122 +1,301 @@
 package com.ruoyi.web.utils;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.ruoyi.web.domain.LockInfo;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import java.util.List;
 
 public class LockUtil {
+    private static String dev="/dev/cu.usbserial-2140";
 
-    private static byte[] reverseBytes(byte[] bytes) {
-        int length = bytes.length;
-        byte[] reversedBytes = new byte[length];
-        for (int i = 0; i < length; i++) {
-            reversedBytes[i] = bytes[length - 1 - i];
+
+    public LockUtil(String dev) {
+        this.dev=dev;
+    }
+
+    /**
+     * 获取钥匙ID
+     */
+    public static byte[] readKeyId(byte[] data) throws IOException {
+        SerialPort serialPort = SerialPort.getCommPort(dev);
+        byte[] header=new byte[]{0x68,0x65};
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte[] checksum= new byte[]{(byte) i};
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(message);
+        outputStream.flush();
+        InputStream inputStream = serialPort.getInputStream();
+        byte[] buffer = new byte[21];
+        inputStream.read(buffer);
+        serialPort.closePort();
+        return buffer;
+    }
+
+
+
+
+    /**
+     * 设置钥匙ID
+     */
+    public static boolean setKeyId(byte[] data) throws IOException {
+        SerialPort serialPort = SerialPort.getCommPort(dev);
+        byte[] header=new byte[]{0x68,0x64};
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte[] checksum= new byte[]{(byte) i};
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(message);
+        outputStream.flush();
+        InputStream inputStream = serialPort.getInputStream();
+        byte[] buffer = new byte[6];
+        inputStream.read(buffer);
+        serialPort.closePort();
+        if (buffer.toString().contains("68 FF")){
+            return true;
+        }else{
+            return false;
         }
-        return reversedBytes;
     }
 
-    public static byte[] hexStringToByteArray(String hexString) {
-        int len = hexString.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(hexString.charAt(i), 16) << 4)
-                + Character.digit(hexString.charAt(i + 1), 16));
+
+
+    /**
+     * 查询锁信息
+     * 返回数据编码格式ASCII字符串
+     */
+    public static byte[]  selectLockInformation(byte[] data) throws IOException{
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        byte[] header=new byte[]{0x68,0x62};
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte[] checksum= new byte[]{(byte) i};
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(message);
+        outputStream.flush();
+        InputStream inputStream = serialPort.getInputStream();
+        byte[] buffer = new byte[5+(data.length-1)*19];
+        inputStream.read(buffer);
+        serialPort.closePort();
+        return buffer;
+    }
+
+    /**
+     * 删除锁信息
+     *        deleteLockInformation(byteArray);
+     */
+    public static Boolean  deleteLockInformation(byte[] data) throws IOException{
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        byte[] header=new byte[]{0x68,0x63};
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte[] checksum= new byte[]{(byte) i};
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(message);
+        outputStream.flush();
+        InputStream inputStream = serialPort.getInputStream();
+        byte[] buffer = new byte[6];
+        inputStream.read(buffer);
+        serialPort.closePort();
+        if (buffer.toString().contains("68 FF")){
+            return true;
+        }else{
+            return false;
         }
-        return data;
     }
 
-    public static void main(String[] args) {
-//        String str = "6862000200";
-//        str += Integer.toHexString(255).toUpperCase();
-//        byte[] data = hexStringToByteArray(str);
-//        byte crc8 = crc8(data, data.length);
-//        System.out.println(crc8);
-//        System.out.println(String.format("%02x",crc8));
-//        System.out.println("===="+String.format("%02x",crc8));
-//        str+=String.format("%02x",crc8);
-//        byte[] result = hexStringToByteArray(str);
-//        for (byte b : result) {
-//            System.out.println(b);
-//        }
-//        System.out.println("====");
-//        for (byte b : result) {
-//            System.out.printf("0x%X", b);
-//            System.out.println("-");
-//        }
-        unLock(11, "COM7");
-
-    }
-
-    public static boolean unLock(int serialNumber, String portName) {
-        boolean result = false;
-        String hexString = "6862000200";
-        hexString += String.format("%02X", serialNumber);
-        byte[] data = hexStringToByteArray(hexString);
-        byte crc8 = crc8(data, data.length);
-        hexString += String.format("%02x", crc8);
-        byte[] sendMessage = hexStringToByteArray(hexString);
-        SerialPort serialPort = SerialPort.getCommPort(portName);
-        serialPort.setComPortParameters(115200, 8, 1, 0); // 设置串口参数：波特率9600, 数据位8, 停止位1, 校验位无
-        serialPort.setParity(0);
-        byte[] newData;
-        try {
-
-            if (serialPort.openPort()) {
-                serialPort.writeBytes(sendMessage, sendMessage.length);
-                for (int i = 0; i < 10; i++) {
-                    Thread.sleep(1000);
-                    while (serialPort.bytesAvailable() > 0) {//循环读取所有的返回数据。如果可读取数据长度为0或-1，则停止读取
-                        newData = new byte[serialPort.bytesAvailable()];//创建一个字节数组，长度为可读取的字节长度
-                        int bytesRead = serialPort.readBytes(newData, newData.length); // 读取数据
-                        if (bytesRead > 0) {
-                            byte[] receivedData = new byte[bytesRead];
-                            System.arraycopy(newData, 0, receivedData, 0, bytesRead);
-                            for (byte b : newData) {
-                                System.out.println(String.format("%02X", b));
-                            }
-                            String unLockStr = "6861001300";
-                            unLockStr += String.format("%02X", serialNumber);
-                            unLockStr += "01";
-                            for (int j = 5; j < 21; j++) {
-                                unLockStr += String.format("%02X", newData[j]);
-                            }
-                            byte[] unLockByte = hexStringToByteArray(unLockStr);
-                            byte unLockCrc8 = crc8(unLockByte, unLockByte.length);
-                            unLockStr += String.format("%02x", unLockCrc8);
-                            unLockByte=hexStringToByteArray(unLockStr);
-                            serialPort.writeBytes(unLockByte, unLockByte.length);
-                            for (int k = 0; k < 10; k++) {
-                                while (serialPort.bytesAvailable() > 0) {
-                                    result = true;
-                                    break;
-                                }
-                            }
-
-                        }
-                        break;
-                    }
-                }
+    /**
+     * 添加锁信息
+     *
+     */
+    public static void addLockInformation(List<LockInfo> lockInfos) throws IOException{
+        if (!lockInfos.isEmpty() && lockInfos.size()>48){
+            throw  new RuntimeException("数据长度超过48");
+        }
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        byte[] header=new byte[]{0x68,0x61};
+        int sized = lockInfos.size();
+        //转换锁的数量
+        // 获取最低有效字节  字符串
+        byte[] data=new byte[lockInfos.size()*19+1];
+        data[0]= (byte) (sized & 0xFF); // 获取最低有效字节  字符串
+        for (int i = 0; i < lockInfos.size(); i++) {
+            int i1 = i + 1;
+            LockInfo lockInfo = lockInfos.get(i);
+            data[i1]=lockInfo.getLockNumber();
+            byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
+            for (int j = 0; j < lockSerialNumber.length; j++) {
+                data[i1+1+j]=lockSerialNumber[j];
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            serialPort.closePort();
+            data[i1+17]=lockInfo.getLockEffective();
+            data[i1+18]=lockInfo.getLockTime();
         }
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte lsb = (byte) (i & 0xFF); // 获取最低有效字节  字符串
+        byte[] checksum= new byte[]{lsb};
+
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(message);
+        outputStream.flush();
+        serialPort.closePort();
+    }
+
+
+    /**
+     * 串口连接
+     * @param CommPort
+     * @return
+     */
+
+    public static  SerialPort getSerialPort(String CommPort) {
+        SerialPort serialPort = SerialPort.getCommPort(CommPort);
+        serialPort.setBaudRate(9600);
+        serialPort.setNumDataBits(8);
+        serialPort.setParity(SerialPort.EVEN_PARITY);//偶检验
+        serialPort.setNumStopBits(SerialPort.ONE_STOP_BIT); // 1个停止位
+        serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
+        serialPort.clearDTR();
+        serialPort.clearRTS();
+        return serialPort;
+    }
+
+    /**
+     * 获取版本
+     * 返回数据编码格式ASCII字符串
+     */
+    public static byte[] getVersion() throws IOException {
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        byte[] header=new byte[]{0x68,0x60};
+        byte[] data={0x00};
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte lsb = (byte) (i & 0xFF); // 获取最低有效字节  字符串
+        byte[] checksum= new byte[]{lsb};
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(message);
+        outputStream.flush();
+        InputStream inputStream = serialPort.getInputStream();
+        byte[] buffer = new byte[21];
+        inputStream.read(buffer);
+        serialPort.closePort();
+        return buffer;
+    }
+    /**
+     * 合并
+     */
+    public static byte[] mergeByteArrays(byte[]... arrays) {
+        int totalLength = 0;
+        for (byte[] array : arrays) {
+            totalLength += array.length;
+        }
+
+        byte[] result = new byte[totalLength];
+        int offset = 0;
+        for (byte[] array : arrays) {
+            System.arraycopy(array, 0, result, offset, array.length);
+            offset += array.length;
+        }
+
         return result;
     }
+    /**
+     * 计算指定区域的8位累加和（不考虑进位）
+     *
+     * @param data   字节数据数组
+     * @param offset 起始位索引
+     * @param length 要计算累加和的数据长度
+     * @return 8位累加和的结果
+     */
+    public static int calculateChecksum(byte[] data, int offset, int length) {
+        int checksum = 0; // 初始化累加和
 
-    public static byte crc8(byte[] start, int len) {
-        int j;
-        int crc_reg = 0;
-        int check;
+        // 检查输入参数的有效性
+        if (data == null || offset < 0 || length < 0 || offset + length > data.length) {
+            throw new IllegalArgumentException("Invalid parameters for calculateChecksum");
+        }
+
+        // 遍历指定区域的数据
+        for (int i = offset; i < offset + length; i++) {
+            checksum += data[i] & 0xFF; // 将byte值转换为int并加到累加和上，确保是正值
+        }
+
+        // 只保留累加和的低8位
+        checksum &= 0xFF;
+
+        return checksum;
+    }
+    /**
+     * 数组转Ascii
+     */
+    public static String byteArrayToAscii(byte[] byteArray) {
+        StringBuilder output = new StringBuilder("");
+        for (byte b : byteArray) {
+            output.append((char) b);
+        }
+        return output.toString();
+    }
+    /**
+     * 计算校验和
+     */
+    public static byte CheckSumming(byte[] start, int len){
+        byte crc_reg = 0;
+        byte check;
+
         for (int i = 0; i < len; i++) {
-            crc_reg = 0xAA ^ (start[i] & 0xFF); // 将byte转换为无符号值
-            for (j = 0; j < 8; j++) {
-                check = crc_reg & 0x01;
-                crc_reg >>= 1;
-                if (check == 0x01) {
-                    crc_reg ^= 0x55;
+            // Java中的byte是有符号的，但这里我们将其视为无符号
+            // 0xAA在Java中可以直接这样写，因为byte会自动扩展为int进行计算
+            crc_reg = (byte) (0xAA ^ (start[i] & 0xFF)); // 确保byte被当作无符号处理
+
+            for (int j = 0; j < 8; j++) {
+                check = (byte) (crc_reg & 0x01); // 取出最低位
+                crc_reg >>= 1; // 右移一位
+
+                if ((check & 0x01) != 0) { // 检查最低位是否为1
+                    // 注意：0x55在Java中也是直接使用的，但同样会进行int计算
+                    crc_reg ^= (byte) 0x55; // 异或操作
                 }
             }
         }
-        return (byte) crc_reg; // 返回时转换为byte
+
+        return crc_reg;
+    }
+    /**
+     * 计算长度数值
+     */
+    public static byte[] CheckLen(int len){
+        // 通过与0xFFFF进行按位与操作来获取低16位
+        int low16Bits = len & 0xFFFF;
+        // 使用String.format来确保结果是4个字符长的十六进制字符串
+        String format = String.format("%04X", low16Bits);
+        byte[] bytes = new byte[2];
+        String[] split = format.split("");
+        int q=0;
+        for (int i = 0; i < split.length; i++) {
+            bytes[q] = Byte.parseByte(split[i] + split[i+1]);
+            ++q;
+            ++i;
+        }
+        return bytes;
     }
 }
