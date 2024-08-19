@@ -1,20 +1,24 @@
 package com.ruoyi.web.utils;
 
+import com.alibaba.fastjson2.JSON;
 import com.fazecast.jSerialComm.SerialPort;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.domain.LockInfo;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 public class LockUtil {
-    private static String dev="/dev/cu.usbserial-2140";
+
+    //    private static String dev="/dev/cu.usbserial-2140";
+    private static String dev = "\\\\.\\COM5";
 
 
     public LockUtil(String dev) {
-        this.dev=dev;
+        this.dev = dev;
     }
 
     /**
@@ -166,14 +170,16 @@ public class LockUtil {
      */
 
     public static  SerialPort getSerialPort(String CommPort) {
-        SerialPort serialPort = SerialPort.getCommPort(CommPort);
+//        SerialPort serialPort = SerialPort.getCommPort(CommPort);
+        SerialPort serialPort = SerialPort.getCommPorts()[2];
         serialPort.setBaudRate(9600);
         serialPort.setNumDataBits(8);
         serialPort.setParity(SerialPort.EVEN_PARITY);//偶检验
         serialPort.setNumStopBits(SerialPort.ONE_STOP_BIT); // 1个停止位
         serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
-        serialPort.clearDTR();
+//        serialPort.clearDTR();
         serialPort.clearRTS();
+        System.out.println(JSON.toJSONString(serialPort));
         return serialPort;
     }
 
@@ -289,13 +295,75 @@ public class LockUtil {
         // 使用String.format来确保结果是4个字符长的十六进制字符串
         String format = String.format("%04X", low16Bits);
         byte[] bytes = new byte[2];
-        String[] split = format.split("");
-        int q=0;
-        for (int i = 0; i < split.length; i++) {
-            bytes[q] = Byte.parseByte(split[i] + split[i+1]);
-            ++q;
-            ++i;
+        for (int i = 0; i < format.length(); i += 2) {
+            // 每次取两位字符，转换为字节
+            String hexPair = format.substring(i, i + 2);
+            bytes[i / 2] = (byte) Integer.parseInt(hexPair, 16);
         }
         return bytes;
+    }
+
+    public static void checkASCIILength(String str, String msg) {
+        if (StringUtils.isNotBlank(str)) {
+            if (str.getBytes(StandardCharsets.US_ASCII).length > 16) {
+                throw new ServiceException(msg);
+            }
+        }
+    }
+
+    public static byte[] getByteForAddLock(List<LockInfo> lockInfoList) {
+        byte[] header = new byte[]{0x68, 0x61};
+        int sized = lockInfoList.size();
+        //转换锁的数量
+        // 获取最低有效字节  字符串
+        byte[] data = new byte[lockInfoList.size() * 19 + 1];
+        data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
+        for (int i = 0; i < lockInfoList.size(); i++) {
+            int i1 = i + 1;
+            LockInfo lockInfo = lockInfoList.get(i);
+            data[i1] = lockInfo.getLockNumber();
+            byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
+            for (int j = 0; j < lockSerialNumber.length; j++) {
+                data[i1 + 1 + j] = lockSerialNumber[j];
+            }
+            data[i1 + 17] = lockInfo.getLockEffective();
+            data[i1 + 18] = lockInfo.getLockTime();
+        }
+        byte[] len = CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte lsb = (byte) (i & 0xFF); // 获取最低有效字节  字符串
+        byte[] checksum = new byte[]{lsb};
+        return mergeByteArrays(header, len, data, checksum);
+    }
+
+    public static byte[] getByteForDelLock(List<LockInfo> lockInfoList) {
+        byte[] header = new byte[]{0x68, 0x63};
+        int sized = lockInfoList.size();
+        //转换锁的数量
+        // 获取最低有效字节  字符串
+        byte[] data = new byte[lockInfoList.size()  + 1];
+        data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
+        for (int i = 0; i < lockInfoList.size(); i++) {
+            int i1 = i + 1;
+            data[i1] = lockInfoList.get(i).getLockNumber();
+        }
+        byte[] len = CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len, data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte lsb = (byte) (i & 0xFF); // 获取最低有效字节  字符串
+        byte[] checksum = new byte[]{lsb};
+        return mergeByteArrays(header, len, data, checksum);
+    }
+
+    public static String bytesToHexWithSpaces(byte[] bytes) {
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : bytes) {
+            hexString.append(String.format("%02X ", b));
+        }
+        if (hexString.length() > 0) {
+            hexString.setLength(hexString.length() - 1);
+        }
+        return hexString.toString();
     }
 }

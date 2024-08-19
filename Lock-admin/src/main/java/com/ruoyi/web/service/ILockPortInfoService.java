@@ -14,4 +14,8 @@ public interface ILockPortInfoService extends IService<LockPortInfo> {
     List<LockPortInfo> selectPortInfoList(LockPortInfoListParamVO portInfoListParamVO);
 
     LockPortInfoStatisticalQuantityVO getStatisticalQuantity();
+
+    String getHexMessageForAddLock(List<LockPortInfo> list);
+
+    String getHexMessageForDelLock(List<LockPortInfo> list);
 }

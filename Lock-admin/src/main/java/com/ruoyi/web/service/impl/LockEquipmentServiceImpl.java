@@ -49,6 +49,7 @@ public class LockEquipmentServiceImpl extends
             for (int i = 0; i < lockEquipment.getPortNumber(); i++) {
                 LockPortInfo lockPortInfo = new LockPortInfo();
                 lockPortInfo.setEquipmentId(lockEquipment.getId());
+                lockPortInfo.setSerialNumber(i + 1);
                 CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
                 lockPortInfoList.add(lockPortInfo);
             }
