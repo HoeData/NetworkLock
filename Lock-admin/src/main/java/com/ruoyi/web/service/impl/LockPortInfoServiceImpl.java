@@ -6,6 +6,7 @@ import com.ruoyi.web.domain.LockInfo;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.LockPortInfoStatisticalQuantityVO;
+import com.ruoyi.web.domain.vo.MonitorPortViewVO;
 import com.ruoyi.web.mapper.LockEquipmentMapper;
 import com.ruoyi.web.mapper.LockPortInfoMapper;
 import com.ruoyi.web.service.ILockPortInfoService;
@@ -79,5 +80,10 @@ public class LockPortInfoServiceImpl extends
             lockInfoList.add(lockInfo);
         });
         return LockUtil.bytesToHexWithSpaces(LockUtil.getByteForDelLock(lockInfoList));
+    }
+
+    @Override
+    public List<MonitorPortViewVO> getMonitorPortList() {
+        return lockPortInfoMapper.selectonitorPortList();
     }
 }

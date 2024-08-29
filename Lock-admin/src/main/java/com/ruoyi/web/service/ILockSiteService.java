@@ -11,4 +11,6 @@ public interface ILockSiteService extends IService<LockSite> {
     List<LockCommonViewVO> selectSiteList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    void judgeName(LockSite lockSite);
 }

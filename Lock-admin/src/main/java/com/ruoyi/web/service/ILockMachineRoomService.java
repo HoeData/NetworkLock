@@ -12,4 +12,6 @@ public interface ILockMachineRoomService extends IService<LockMachineRoom> {
     List<LockCommonViewVO> selectMachineRoomList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    void judgeName(LockMachineRoom lockMachineRoom);
 }

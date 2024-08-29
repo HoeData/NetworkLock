@@ -11,4 +11,6 @@ public interface ILockDeptService extends IService<LockDept> {
     List<LockCommonViewVO> selectDeptList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    void judgeName(LockDept lockDept);
 }

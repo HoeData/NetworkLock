@@ -40,6 +40,7 @@ public class LockCompanyController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockCompany lockCompany) {
+        lockCompanyService.judgeName(lockCompany.getName(),lockCompany.getId());
         CommonUtils.addCommonParams(lockCompany, lockCompany.getId());
         return toAjax(lockCompanyService.saveOrUpdate(lockCompany));
     }

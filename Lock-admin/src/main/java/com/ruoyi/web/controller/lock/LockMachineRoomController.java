@@ -43,6 +43,7 @@ public class LockMachineRoomController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockMachineRoom lockMachineRoom) {
+        lockMachineRoomService.judgeName(lockMachineRoom);
         CommonUtils.addCommonParams(lockMachineRoom, lockMachineRoom.getId());
         return toAjax(lockMachineRoomService.saveOrUpdate(lockMachineRoom));
     }

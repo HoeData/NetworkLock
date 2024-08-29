@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.LockWarnInfoMapper">
+
+    <select id="selectLastNoConfirmByPortInfoId" resultType="com.ruoyi.web.domain.LockWarnInfo">
+        select *
+        from lock_warn_info
+        where port_id = #{portInfoId}
+          and del_flag = 0
+          and status = 0
+        order by id desc limit 1
+    </select>
+    <sql id="warnListColumn">
+        company.name     as company_name,
+               dept.name        as dept_name,
+               equ.name         as equipment_name,
+               cabinet.name     as cabinet_name,
+               et.name          as equipment_type_name,
+               em.name          as equipment_model_name,
+               site.name        as site_name,
+               room.name        as machine_room_name,
+               equ.ip           as ip,
+               equ.community    as community,
+               temp.id          as warn_info_id,
+               pt.id            as port_info_id,
+               pt.serial_number as port_index,
+               temp.create_time as create_time,
+               temp.status   as status
+    </sql>
+    <sql id="warnListLeftJoin">
+        left join lock_port_info as pt on pt.id = temp.port_id
+                 left join lock_equipment as equ on equ.id = pt.equipment_id
+                 left join lock_cabinet as cabinet
+                           on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+                 left join lock_machine_room as room
+                           on room.id = cabinet.machine_room_id and room.del_flag = '0'
+                 left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+                 left join lock_dept as dept on dept.id = equ.dept_id and dept.del_flag = '0'
+                 left join lock_equipment_type as et
+                           on et.id = equ.equipment_type_id and et.del_flag = '0'
+                 left join lock_equipment_model as em
+                           on em.id = equ.equipment_model_id and em.del_flag = '0'
+                 left join lock_company as company
+                           on company.id = dept.company_id and company.del_flag = '0'
+    </sql>
+    <select id="selectTheLastWarn" resultType="com.ruoyi.web.domain.vo.LockWarnInfoViewVO">
+        select
+        <include refid="warnListColumn"/>
+        from (select *
+              from lock_warn_info
+              where del_flag = 0
+                and status = 0
+              order by id desc limit 1) temp
+        <include refid="warnListLeftJoin"/>
+
+    </select>
+    <select id="selectWarnInfoList"
+            resultType="com.ruoyi.web.domain.vo.LockWarnInfoViewVO">
+        select
+        <include refid="warnListColumn"/>
+        from (select *
+        from lock_warn_info
+        where del_flag = 0
+        order by id ) temp
+        <include refid="warnListLeftJoin"/>
+
+    </select>
+</mapper>

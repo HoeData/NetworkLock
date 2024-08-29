@@ -12,4 +12,6 @@ public interface ILockCabinetService extends IService<LockCabinet> {
     List<LockCommonViewVO> selectCabinetList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    void judgeName(LockCabinet lockCabinet);
 }

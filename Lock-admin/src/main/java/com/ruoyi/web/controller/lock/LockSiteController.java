@@ -41,6 +41,7 @@ public class LockSiteController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockSite lockSite) {
+        lockSiteService.judgeName(lockSite);
         CommonUtils.addCommonParams(lockSite, lockSite.getId());
         return toAjax(lockSiteService.saveOrUpdate(lockSite));
     }

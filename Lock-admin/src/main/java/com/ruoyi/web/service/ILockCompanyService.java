@@ -11,4 +11,6 @@ public interface ILockCompanyService extends IService<LockCompany> {
     List<LockCompany> selectCompanyList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    void judgeName(String name, Integer id);
 }

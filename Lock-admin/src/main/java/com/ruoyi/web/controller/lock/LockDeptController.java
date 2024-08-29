@@ -41,6 +41,7 @@ public class LockDeptController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockDept lockDept) {
+        lockDeptService.judgeName(lockDept);
         CommonUtils.addCommonParams(lockDept, lockDept.getId());
         return toAjax(lockDeptService.saveOrUpdate(lockDept));
     }

@@ -42,5 +42,21 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where del_flag = '0'
           and deployment_status = 1;
     </select>
+    <select id="selectonitorPortList"
+            resultType="com.ruoyi.web.domain.vo.MonitorPortViewVO">
+        SELECT e.ip             AS ip,
+               e.community      AS community,
+               pi.serial_number AS port_index,
+               pi.id            AS port_id
+        FROM lock_port_info pi
+                 INNER JOIN lock_equipment e ON e.id = pi.equipment_id
+        WHERE pi.deployment_status = 1
+          AND pi.lock_status = 1
+          AND pi.del_flag = 0
+          AND e.ip != ""
+	AND e.community != ''
+	AND e.del_flag = 0
+
+    </select>
 
 </mapper>

@@ -41,6 +41,7 @@ public class LockCabinetController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockCabinet lockCabinet) {
+        lockCabinetService.judgeName(lockCabinet);
         CommonUtils.addCommonParams(lockCabinet, lockCabinet.getId());
         return toAjax(lockCabinetService.saveOrUpdate(lockCabinet));
     }
