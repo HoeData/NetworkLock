@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface LockMonitorFlowMapper extends BaseMapper<LockMonitorFlow> {
 
-
+    LockMonitorFlow selectLastForPortId(Integer portInfoId);
     List<LockMonitorFlow> selectMonitorFlowList(LockMonitorFlowPageParamVO vo);
 }

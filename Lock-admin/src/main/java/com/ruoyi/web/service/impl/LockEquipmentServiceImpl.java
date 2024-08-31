@@ -1,6 +1,8 @@
 package com.ruoyi.web.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.web.domain.LockEquipment;
 import com.ruoyi.web.domain.LockPortInfo;
@@ -72,6 +74,23 @@ public class LockEquipmentServiceImpl extends
         lockEquipment.setId(lockEquipmentAddParamVO.getId());
         lockEquipment.setTrustFlag(lockEquipmentAddParamVO.getTrustFlag());
         return updateById(lockEquipment) ? 1 : 0;
+    }
+
+    @Override
+    public void judgeName(Integer id, String name, Integer cabinetId) {
+        LambdaQueryWrapper<LockEquipment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(LockEquipment::getName, name);
+        wrapper.eq(LockEquipment::getCabinetId, cabinetId);
+        wrapper.eq(LockEquipment::getDelFlag, 0);
+        LockEquipment old = getOne(wrapper);
+        if (null != old && null == id) {
+            throw new ServiceException("同机柜下设备名称已存在");
+        }
+        if (null != old) {
+            if (!old.getId().equals(id)) {
+                throw new ServiceException("同机柜下设备名称已存在");
+            }
+        }
     }
 
 

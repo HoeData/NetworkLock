@@ -18,6 +18,11 @@ public class LockMonitorFlowServiceImpl extends
     private final LockMonitorFlowMapper lockMonitorFlowMapper;
 
     @Override
+    public LockMonitorFlow getLastForPortId(Integer portInfoId) {
+        return null;
+    }
+
+    @Override
     public List<LockMonitorFlow> selectMonitorFlowList(LockMonitorFlowPageParamVO vo) {
         return lockMonitorFlowMapper.selectMonitorFlowList(vo);
     }

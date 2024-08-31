@@ -31,5 +31,7 @@ public class LockEquipmentViewVO{
     private Date createTime;
 
     private Integer trustFlag;
+    private String ip;
+    private String community;
 
 }

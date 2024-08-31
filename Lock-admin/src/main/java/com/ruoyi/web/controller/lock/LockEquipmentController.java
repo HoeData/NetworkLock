@@ -43,12 +43,16 @@ public class LockEquipmentController extends BaseController {
 
     @PostMapping("/add")
     public AjaxResult add(@RequestBody LockEquipmentAddParamVO lockEquipmentAddParamVO) {
+        lockEquipmentService.judgeName(lockEquipmentAddParamVO.getId(),
+            lockEquipmentAddParamVO.getName(), lockEquipmentAddParamVO.getCabinetId());
         CommonUtils.addCommonParams(lockEquipmentAddParamVO, lockEquipmentAddParamVO.getId());
         return toAjax(lockEquipmentService.add(lockEquipmentAddParamVO));
     }
 
     @PostMapping("/update")
     public AjaxResult update(@RequestBody LockEquipmentAddParamVO lockEquipmentAddParamVO) {
+        lockEquipmentService.judgeName(lockEquipmentAddParamVO.getId(),
+            lockEquipmentAddParamVO.getName(), lockEquipmentAddParamVO.getCabinetId());
         CommonUtils.addCommonParams(lockEquipmentAddParamVO, lockEquipmentAddParamVO.getId());
         return toAjax(lockEquipmentService.update(lockEquipmentAddParamVO));
     }

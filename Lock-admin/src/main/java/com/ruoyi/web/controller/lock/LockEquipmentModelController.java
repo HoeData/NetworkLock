@@ -40,6 +40,7 @@ public class LockEquipmentModelController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockEquipmentModel lockEquipmentModel) {
+        lockEquipmentModelService.judgeName(lockEquipmentModel);
         CommonUtils.addCommonParams(lockEquipmentModel, lockEquipmentModel.getId());
         return toAjax(lockEquipmentModelService.saveOrUpdate(lockEquipmentModel));
     }
