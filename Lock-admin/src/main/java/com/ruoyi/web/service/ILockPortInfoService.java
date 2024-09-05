@@ -21,4 +21,6 @@ public interface ILockPortInfoService extends IService<LockPortInfo> {
     String getHexMessageForDelLock(List<LockPortInfo> list);
 
     List<MonitorPortViewVO> getMonitorPortList();
+
+    List<LockPortInfo> getAll();
 }

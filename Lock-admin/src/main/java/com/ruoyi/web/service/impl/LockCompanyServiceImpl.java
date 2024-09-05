@@ -43,4 +43,11 @@ public class LockCompanyServiceImpl extends
             }
         }
     }
+
+    @Override
+    public List<LockCompany> getAll() {
+        LambdaQueryWrapper<LockCompany> wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(LockCompany::getDelFlag,0);
+        return list(wrapper);
+    }
 }

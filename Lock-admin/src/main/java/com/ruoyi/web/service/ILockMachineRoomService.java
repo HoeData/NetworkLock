@@ -14,4 +14,6 @@ public interface ILockMachineRoomService extends IService<LockMachineRoom> {
     int deleteByIds(String[] ids);
 
     void judgeName(LockMachineRoom lockMachineRoom);
+
+    List<LockMachineRoom> getAll();
 }

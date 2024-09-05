@@ -14,4 +14,6 @@ public interface ILockCabinetService extends IService<LockCabinet> {
     int deleteByIds(String[] ids);
 
     void judgeName(LockCabinet lockCabinet);
+
+    List<LockCabinet> getAll();
 }

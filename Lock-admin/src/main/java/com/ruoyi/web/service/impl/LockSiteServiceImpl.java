@@ -3,6 +3,7 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.web.domain.LockDept;
 import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.LockCommonViewVO;
@@ -45,5 +46,12 @@ public class LockSiteServiceImpl extends
                 throw new ServiceException("站点名称已存在");
             }
         }
+    }
+
+    @Override
+    public List<LockSite> getAll() {
+        LambdaQueryWrapper<LockSite> wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(LockSite::getDelFlag,0);
+        return list(wrapper);
     }
 }

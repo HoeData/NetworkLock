@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.web.domain.LockEquipment;
+import com.ruoyi.web.domain.LockEquipmentType;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.LockEquipmentAddParamVO;
 import com.ruoyi.web.domain.vo.LockEquipmentParamVO;
@@ -91,6 +92,13 @@ public class LockEquipmentServiceImpl extends
                 throw new ServiceException("同机柜下设备名称已存在");
             }
         }
+    }
+
+    @Override
+    public List<LockEquipment> getAll() {
+        LambdaQueryWrapper<LockEquipment> wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(LockEquipment::getDelFlag,0);
+        return list(wrapper);
     }
 
 

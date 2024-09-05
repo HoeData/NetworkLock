@@ -1,6 +1,5 @@
 package com.ruoyi.web.utils;
 
-import com.alibaba.fastjson2.JSON;
 import com.fazecast.jSerialComm.SerialPort;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.domain.LockInfo;
@@ -24,48 +23,35 @@ public class LockUtil {
     /**
      * 获取钥匙ID
      */
-    public static byte[] readKeyId(byte[] data) throws IOException {
-        SerialPort serialPort = SerialPort.getCommPort(dev);
-        byte[] header=new byte[]{0x68,0x65};
-        byte[] len=CheckLen(data.length);
-        byte[] bytes = mergeByteArrays(header, len, data);
-        int i = calculateChecksum(bytes, 0, bytes.length);
-        byte[] checksum= new byte[]{(byte) i};
-        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
-        OutputStream outputStream = serialPort.getOutputStream();
-        outputStream.write(message);
-        outputStream.flush();
-        InputStream inputStream = serialPort.getInputStream();
+    public static byte[] readKeyId(byte[] data) throws Exception {
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        send(serialPort, data);
         byte[] buffer = new byte[21];
-        inputStream.read(buffer);
+        receiveByte(serialPort, buffer);
         serialPort.closePort();
         return buffer;
     }
 
-
-
-
     /**
      * 设置钥匙ID
      */
-    public static boolean setKeyId(byte[] data) throws IOException {
-        SerialPort serialPort = SerialPort.getCommPort(dev);
-        byte[] header=new byte[]{0x68,0x64};
-        byte[] len=CheckLen(data.length);
+    public static boolean setKeyId(byte[] data) throws Exception {
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        byte[] header = new byte[]{0x68, 0x64};
+        byte[] len = CheckLen(data.length);
         byte[] bytes = mergeByteArrays(header, len, data);
         int i = calculateChecksum(bytes, 0, bytes.length);
-        byte[] checksum= new byte[]{(byte) i};
+        byte[] checksum = new byte[]{(byte) i};
         byte[] message = mergeByteArrays(header, len, data, checksum);//报文
-        OutputStream outputStream = serialPort.getOutputStream();
-        outputStream.write(message);
-        outputStream.flush();
-        InputStream inputStream = serialPort.getInputStream();
-        byte[] buffer = new byte[6];
-        inputStream.read(buffer);
+        send(serialPort, message);
+        byte[] buffer = new byte[1024];
+        receiveByte(serialPort, buffer);
         serialPort.closePort();
-        if (buffer.toString().contains("68 FF")){
+        if (buffer.toString().contains("68 FF")) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -171,7 +157,7 @@ public class LockUtil {
 
     public static  SerialPort getSerialPort(String CommPort) {
 //        SerialPort serialPort = SerialPort.getCommPort(CommPort);
-        SerialPort serialPort = SerialPort.getCommPorts()[2];
+        SerialPort serialPort = SerialPort.getCommPorts()[0];
         serialPort.setBaudRate(9600);
         serialPort.setNumDataBits(8);
         serialPort.setParity(SerialPort.EVEN_PARITY);//偶检验
@@ -179,7 +165,6 @@ public class LockUtil {
         serialPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0, 0);
 //        serialPort.clearDTR();
         serialPort.clearRTS();
-        System.out.println(JSON.toJSONString(serialPort));
         return serialPort;
     }
 
@@ -365,5 +350,36 @@ public class LockUtil {
             hexString.setLength(hexString.length() - 1);
         }
         return hexString.toString();
+    }
+
+    private static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 3]; // 每个字节占三个字符（两个十六进制数字加上一个空格）
+
+        for (int i = 0; i < len; i += 3) {
+            int index = i / 3;
+            int v = Integer.parseInt(s.substring(i, i + 2), 16);
+            data[index] = (byte) v;
+        }
+        return data;
+    }
+
+    private static void send(SerialPort serialPort, byte[] data) throws Exception {
+        OutputStream outputStream = serialPort.getOutputStream();
+        outputStream.write(data);
+        outputStream.flush();
+    }
+
+    private static void receiveByte(SerialPort serialPort, byte[] buffer) throws Exception {
+        int i = 0;
+        int bytesRead = 0;
+        while (i < 10 && bytesRead < buffer.length - 1) {
+            if (buffer.length - 1 == bytesRead) {
+                break;
+            }
+            bytesRead = serialPort.readBytes(buffer, buffer.length);
+            Thread.sleep(1000);
+            i++;
+        }
     }
 }

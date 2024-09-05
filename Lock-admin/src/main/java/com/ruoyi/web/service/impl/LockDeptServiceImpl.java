@@ -46,4 +46,11 @@ public class LockDeptServiceImpl extends ServiceImpl<LockDeptMapper, LockDept> i
             }
         }
     }
+
+    @Override
+    public List<LockDept> getAll() {
+        LambdaQueryWrapper<LockDept> wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(LockDept::getDelFlag,0);
+        return list(wrapper);
+    }
 }

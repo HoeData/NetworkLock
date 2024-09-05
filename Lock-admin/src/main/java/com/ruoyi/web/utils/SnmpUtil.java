@@ -1,6 +1,16 @@
 package com.ruoyi.web.utils;
 
+import cn.smallbun.screw.core.Configuration;
+import cn.smallbun.screw.core.engine.EngineConfig;
+import cn.smallbun.screw.core.engine.EngineFileType;
+import cn.smallbun.screw.core.engine.EngineTemplateType;
+import cn.smallbun.screw.core.execute.DocumentationExecute;
+import cn.smallbun.screw.core.process.ProcessConfig;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import java.io.IOException;
+import java.util.ArrayList;
+import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
@@ -30,24 +40,6 @@ public class SnmpUtil {
     public static final String IF_OUT_OCTETS = "1.3.6.1.2.1.2.2.1.16";
     public static final String NETWORK_PORT_NUMBER = "1.3.6.1.2.1.2.1";
 
-    public static void main(String[] args) {
-        try {
-//            System.out.println(getForSnmp("192.168.0.32","private",IF_SPEED,PDU.GET));
-//            System.out.println(getForSnmp("192.168.0.32","private",NETWORK_PORT_NUMBER,PDU.GETNEXT));
-//            System.out.println(getForSnmp("192.168.0.32","private",IF_IN_OCTETS,PDU.GET));
-//            System.out.println(getForSnmp("192.168.0.32","private",IF_OUT_OCTETS,PDU.GET));
-
-//            setInterfaceAdminStatus("192.168.2.100", "writetest", ".1.3.6.1.2.1.2.2.1.7.1", true);
-            System.out.println(
-                getForSnmp("192.168.2.100", "writetest", ".1.3.6.1.2.1.2.2.1.7.1", PDU.GET));
-            System.out.println(
-                getForSnmp("192.168.2.100", "writetest", NETWORK_PORT_NUMBER, PDU.GETNEXT));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
 
     public static void setInterfaceAdminStatus(String ip, String community, String oid,
         Boolean enable) {

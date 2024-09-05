@@ -13,4 +13,6 @@ public interface ILockDeptService extends IService<LockDept> {
     int deleteByIds(String[] ids);
 
     void judgeName(LockDept lockDept);
+
+    List<LockDept> getAll();
 }

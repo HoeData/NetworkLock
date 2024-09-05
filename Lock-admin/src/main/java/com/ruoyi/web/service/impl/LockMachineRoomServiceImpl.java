@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.domain.LockMachineRoom;
+import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.LockCommonViewVO;
 import com.ruoyi.web.mapper.LockMachineRoomMapper;
@@ -44,5 +45,12 @@ public class LockMachineRoomServiceImpl extends
                 throw new ServiceException("机房名称已存在");
             }
         }
+    }
+
+    @Override
+    public List<LockMachineRoom> getAll() {
+        LambdaQueryWrapper<LockMachineRoom> wrapper=new LambdaQueryWrapper<>();
+        wrapper.eq(LockMachineRoom::getDelFlag,0);
+        return list(wrapper);
     }
 }

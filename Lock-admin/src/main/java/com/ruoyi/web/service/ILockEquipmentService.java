@@ -20,4 +20,6 @@ public interface ILockEquipmentService extends IService<LockEquipment> {
     int setTrust(LockEquipmentAddParamVO lockEquipmentAddParamVO);
 
     void judgeName(Integer id, String name, Integer cabinetId);
+
+    List<LockEquipment> getAll();
 }

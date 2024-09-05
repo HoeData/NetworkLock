@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.RelPdaUserPortMapper">
+    <sql id="selectFiled">
+        SELECT equ.id       AS equipment_id,
+               company.NAME AS company_name,
+               dept.NAME    AS dept_name,
+               equ.NAME     AS equipment_name,
+               cabinet.NAME AS cabinet_name,
+               et.NAME      AS equipment_type_name,
+               em.NAME      AS equipment_model_name,
+               site.NAME    AS site_name,
+               room.NAME    AS machine_room_name
+    </sql>
+
+    <sql id="fromSql">
+        FROM lock_equipment AS equ
+        INNER JOIN lock_cabinet AS cabinet ON cabinet.id = equ.cabinet_id
+        AND cabinet.del_flag = '0'
+        INNER JOIN lock_machine_room AS room ON room.id = cabinet.machine_room_id
+        AND room.del_flag = '0'
+        INNER JOIN lock_site AS site ON site.id = room.site_id
+        AND site.del_flag = '0'
+        INNER JOIN lock_dept AS dept ON dept.id = equ.dept_id
+        AND dept.del_flag = '0'
+        INNER JOIN lock_equipment_type AS et ON et.id = equ.equipment_type_id
+        AND et.del_flag = '0'
+        INNER JOIN lock_equipment_model AS em ON em.id = equ.equipment_model_id
+        AND em.del_flag = '0'
+        INNER JOIN lock_company AS company ON company.id = dept.company_id
+        AND company.del_flag = '0'
+    </sql>
+    <sql id="whereSql">
+        <if test="equipmentId != null ">
+            AND equ.id = #{equipmentId}
+        </if>
+        <if test="companyId != null">
+            AND company.id =#{companyId}
+        </if>
+        <if test="deptId != null">
+            AND dept.id =#{deptId}
+        </if>
+        <if test="machineRoomId != null">
+            AND room.id =#{machineRoomId}
+        </if>
+        <if test="cabinetId != null">
+            AND cabinet.id =#{cabinetId}
+        </if>
+        <if test="siteId != null">
+            AND site.id =#{siteId}
+        </if>
+        <if test="equipmentTypeId != null">
+            AND equ.equipment_type_id =#{equipmentTypeId}
+        </if>
+        <if test="equipmentModelId != null">
+            AND equ.equipment_model_id =#{equipmentModelId}
+        </if>
+    </sql>
+    <delete id="deleteByPdaUserId">
+        delete
+        from rel_pda_user_port
+        where pda_user_id=#{pdaUserId}
+        where;
+    </delete>
+    <select id="selectAllList"   resultType="com.ruoyi.web.domain.vo.RelPdaUserPortViewVO">
+        <include refid="selectFiled"/>
+        <include refid="fromSql"/>
+        where equ.del_flag = '0'
+        <include refid="whereSql"/>
+        order by equ.id desc
+    </select>
+    <select id="selectAuthorizationList"
+      resultType="com.ruoyi.web.domain.vo.RelPdaUserPortViewVO">
+        <include refid="selectFiled"/>
+        <include refid="fromSql"/>
+        INNER JOIN (SELECT pt.equipment_id
+        FROM rel_pda_user_port rel
+        INNER JOIN lock_port_info pt ON pt.id = rel.port_info_id
+        AND pt.del_flag = '0' and rel.pda_user_id = #{pdaUserId}
+        GROUP BY pt.equipment_id) temp ON temp.equipment_id = equ.id
+        where equ.del_flag= '0'
+        <include refid="whereSql"/>
+        order by equ.id desc
+    </select>
+    <select id="selectAuthorizationPortList"
+            resultType="com.ruoyi.web.domain.LockPortInfo">
+        select pt.*
+        from rel_pda_user_port rel
+                 INNER JOIN lock_port_info pt ON pt.id = rel.port_info_id
+            AND pt.del_flag = '0'
+        where rel.pda_user_id = #{pdaUserId} group by pt.id
+    </select>
+
+</mapper>
