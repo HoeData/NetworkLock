@@ -17,6 +17,5 @@ public class LockPdaUser extends LockEntity {
     private String password;
     private String description;
     private String delFlag;
-
     private Integer adminFlag;
 }

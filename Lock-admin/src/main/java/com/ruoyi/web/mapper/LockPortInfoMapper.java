@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
+import com.ruoyi.web.domain.vo.index.PortStatisticsVO;
 import java.util.List;
 
 public interface LockPortInfoMapper extends BaseMapper<LockPortInfo> {
@@ -22,4 +23,8 @@ public interface LockPortInfoMapper extends BaseMapper<LockPortInfo> {
     int selectNoUseTotal();
 
     List<MonitorPortViewVO> selectonitorPortList();
+
+    List<PortStatisticsVO> selectPortStatisticsVOList();
+
+    Integer selectIdleTotal();
 }

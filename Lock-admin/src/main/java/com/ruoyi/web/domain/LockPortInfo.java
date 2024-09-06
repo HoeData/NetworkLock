@@ -1,6 +1,8 @@
 package com.ruoyi.web.domain;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.ruoyi.web.domain.vo.LockEntity;
 import javax.validation.constraints.Max;
@@ -18,6 +20,7 @@ public class LockPortInfo extends LockEntity {
     private Integer serialNumber;
     private String remark;
     private String delFlag;
+    @TableField(fill = FieldFill.UPDATE)
     private String userCode;
     private String keyId;
     @Max(value = 255, message = "有效期不能大于255")

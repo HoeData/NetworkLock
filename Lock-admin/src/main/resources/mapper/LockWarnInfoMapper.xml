@@ -67,4 +67,12 @@
         <include refid="warnListLeftJoin"/>
 
     </select>
+    <select id="selectTotalByStartAndEndDate"
+            resultType="com.ruoyi.web.domain.vo.index.Recent12MonthsStatisticsVO">
+        SELECT SUM(id) as warnInfoTotal
+        FROM lock_warn_info
+        where create_time <![CDATA[ >= ]]> #{startDate}
+          and create_time <![CDATA[ <= ]]> #{endDate}
+        GROUP BY MONTH (create_time);
+    </select>
 </mapper>

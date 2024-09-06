@@ -70,9 +70,18 @@ public class PdaDataSynchronizationUtil {
             LOCAL_DATA_DIR_PATH + deviceId + File.separator + STATUS_NAME);
         pushFileToDevice(deviceId, LOCAL_DATA_DIR_PATH + deviceId + File.separator + STATUS_NAME,
             PDA_DATA_DIR_PATH + STATUS_NAME);
+        PdaMergeDataVO pdaMergeDataVO;
         //获取所有同步数据
-        PdaService pdaService = SpringUtils.getBean(PdaService.class);
-        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllData();
+        try {
+            PdaService pdaService = SpringUtils.getBean(PdaService.class);
+            pdaMergeDataVO = pdaService.getAllData();
+        } catch (Exception e) {
+            setNowStatusMsgAndAddProcess(synchronizationInfo,
+                PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
+            PdaDataSynchronizationStopThread.RUNNING = false;
+            throw new ServiceException(e.getMessage());
+        }
+
         //等待PDA创建数据文件完成
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
@@ -92,7 +101,7 @@ public class PdaDataSynchronizationUtil {
         getEndFlag(deviceId);
         updatePortInfo();
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
-        refresh();
+        refreshRunningAndList();
     }
 
     private static void updatePortInfo() {
@@ -360,6 +369,7 @@ public class PdaDataSynchronizationUtil {
     }
 
     public static void startPdaAuthorization(List<RelPdaUserPort> list) {
+        PdaDataSynchronizationUtil.refreshAll();
         statusVO = new PdaDataSynchronizationStatusVO();
         //获取连接设备ID
         String deviceId = getConnectedDeviceId();
@@ -385,13 +395,18 @@ public class PdaDataSynchronizationUtil {
         getPdaGetDataFlag(deviceId);
         getEndFlag(deviceId);
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
-        refresh();
+        refreshRunningAndList();
     }
 
-    public static void refresh() {
+    public static void refreshAll() {
         PdaDataSynchronizationUtil.RUNNING = false;
         PdaDataSynchronizationUtil.statusVO = new PdaDataSynchronizationStatusVO();
         PdaDataSynchronizationUtil.nowStatusMsg = "未同步";
+        PdaDataSynchronizationUtil.emptyList();
+    }
+
+    public static void refreshRunningAndList() {
+        PdaDataSynchronizationUtil.RUNNING = false;
         PdaDataSynchronizationUtil.emptyList();
     }
 

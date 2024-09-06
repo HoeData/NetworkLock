@@ -41,6 +41,7 @@ public class PdaDataSynchronizationController {
         if (PdaDataSynchronizationUtil.RUNNING) {
             return AjaxResult.error("正在同步数据无法同步,请等待数据同步完成后再进行同步");
         }
+        PdaDataSynchronizationUtil.refreshAll();
         PdaDataSynchronizationUtil.startPdaDataSynchronizationThread();
         return AjaxResult.success("正在同步");
     }

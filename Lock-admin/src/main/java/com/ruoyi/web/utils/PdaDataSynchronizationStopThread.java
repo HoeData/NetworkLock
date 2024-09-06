@@ -22,7 +22,7 @@ public class PdaDataSynchronizationStopThread implements Runnable {
             }
         }
         log.info("线程退出了。");
-        PdaDataSynchronizationUtil.refresh();
+        PdaDataSynchronizationUtil.refreshRunningAndList();
     }
 
     // 提供一个方法来请求线程停止

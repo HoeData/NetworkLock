@@ -1,6 +1,14 @@
 package com.ruoyi.web.service;
 
+import com.ruoyi.web.domain.LockPdaUser;
+import com.ruoyi.web.domain.RelPdaUserPort;
+import com.ruoyi.web.domain.vo.LockPdaUserPageParamVO;
+import com.ruoyi.web.domain.vo.RelPdaUserPortParamVO;
+import com.ruoyi.web.domain.vo.RelPdaUserPortViewVO;
 import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
+import com.ruoyi.web.utils.PdaDataSynchronizationUtil;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +25,9 @@ public class PdaService {
     private final ILockEquipmentTypeService equipmentTypeService;
     private final ILockEquipmentService equipmentService;
     private final ILockPortInfoService portInfoService;
+    private final ILockPdaInfoService pdaService;
+    private final ILockPdaUserService pdaUserService;
+    private final IRelPdaUserPortService relPdaUserPortService;
 
     public PdaMergeDataVO getAllData() {
         PdaMergeDataVO pdaMergeDataVO = new PdaMergeDataVO();
@@ -29,6 +40,26 @@ public class PdaService {
         pdaMergeDataVO.setEquipmentTypeList(equipmentTypeService.getAll());
         pdaMergeDataVO.setEquipmentList(equipmentService.getAll());
         pdaMergeDataVO.setPortInfoList(portInfoService.getAll());
+        LockPdaUserPageParamVO vo = new LockPdaUserPageParamVO();
+        vo.setPdaId(pdaService.getByKey(PdaDataSynchronizationUtil.getConnectedDeviceId()).getId());
+        List<LockPdaUser> pdaUserList = pdaUserService.getPdaUserList(vo);
+        pdaMergeDataVO.setPdaUserList(pdaUserList);
+        List<RelPdaUserPort> relPdaUserPortList = new ArrayList<>();
+        pdaUserList.forEach(pdaUser -> {
+            RelPdaUserPortParamVO relPdaUserPortParamVO = new RelPdaUserPortParamVO();
+            relPdaUserPortParamVO.setPdaUserId(pdaUser.getId());
+            List<RelPdaUserPortViewVO> list = relPdaUserPortService.getAuthorizationList(
+                relPdaUserPortParamVO);
+            list.stream()
+                .filter(item -> null != item.getPortViewList() && item.getPortViewList().size() > 0)
+                .forEach(item -> item.getPortViewList().forEach(portView -> {
+                    RelPdaUserPort relPdaUserPort = new RelPdaUserPort();
+                    relPdaUserPort.setPdaUserId(pdaUser.getId());
+                    relPdaUserPort.setPortInfoId(portView.getPortInfoId());
+                    relPdaUserPortList.add(relPdaUserPort);
+                }));
+        });
+        pdaMergeDataVO.setRelPdaUserPortList(relPdaUserPortList);
         return pdaMergeDataVO;
     }
 

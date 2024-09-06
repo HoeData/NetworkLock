@@ -7,6 +7,7 @@ import com.ruoyi.web.domain.LockEquipment;
 import com.ruoyi.web.domain.LockEquipmentModel;
 import com.ruoyi.web.domain.LockEquipmentType;
 import com.ruoyi.web.domain.LockMachineRoom;
+import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.RelPdaUserPort;
@@ -26,6 +27,7 @@ public class PdaMergeDataVO implements Serializable {
     private List<LockEquipmentModel> equipmentModelList;
     private List<LockEquipment> equipmentList;
     private List<LockPortInfo> portInfoList;
+    private List<LockPdaUser> pdaUserList;
     private List<RelPdaUserPort> relPdaUserPortList;
 
 }

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -382,4 +383,39 @@ public class LockUtil {
             i++;
         }
     }
+
+    public static void main(String[] args) throws Exception {
+        byte[] onData = "ON".getBytes();
+        byte[] encodedBytes = Base64.getEncoder().encode(onData);
+        String hexRepresentation = bytesToHexWithSpaces(encodedBytes);
+        System.out.println(hexRepresentation);
+        byte[] aa= hexStringToByteArray("54 30 34 3D ");
+        byte[] bb = new byte[]{0x68, (byte) 0x82};
+        byte[] len = CheckLen(aa.length);
+        byte[] bytes = mergeByteArrays(bb, len, aa);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte[] checksum = new byte[]{(byte) i};
+        byte[] message = mergeByteArrays(bytes, checksum);//报文
+        System.out.println(bytesToHexWithSpaces(message));
+        SerialPort serialPort = getSerialPort(dev);
+        serialPort.openPort();
+        send(serialPort, message);
+        byte[] buffer = new byte[100];
+        receiveByte(serialPort, buffer);
+        serialPort.closePort();
+        System.out.println(bytesToHexWithSpaces(buffer));
+      byte[] decodedBytes= hexStringToByteArray("57 46 6C 61 55 7A 49 30 4D 44 68 42 51 6A 41 77 4D 44 41 30 4D 77 3D 3D ");
+        String decodedString = new String(decodedBytes);
+        // 输出解码后的字符串
+        System.out.println(decodedString);
+        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
+        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
+        System.out.println(decodedStringa);
+//        System.out.println(getStrForAscii("31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 23 "));
+
+
+
+    }
+
+
 }
