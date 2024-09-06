@@ -3,7 +3,7 @@ package com.ruoyi.web.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPdaUser;
-import com.ruoyi.web.domain.vo.LockPdaUserPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import java.util.List;
 
 public interface LockPdaUserMapper extends BaseMapper<LockPdaUser> {

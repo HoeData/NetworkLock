@@ -7,7 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.web.constants.PdaUserConst;
 import com.ruoyi.web.domain.LockPdaUser;
-import com.ruoyi.web.domain.vo.LockPdaUserPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.service.ILockPdaUserService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

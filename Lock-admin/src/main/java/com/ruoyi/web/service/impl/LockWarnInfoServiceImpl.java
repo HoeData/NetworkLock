@@ -2,7 +2,7 @@ package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.web.domain.LockWarnInfo;
-import com.ruoyi.web.domain.vo.LockEquipmentParamVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.LockWarnInfoViewVO;
 import com.ruoyi.web.mapper.LockWarnInfoMapper;
 import com.ruoyi.web.service.ILockWarnInfoService;

@@ -11,7 +11,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
 
-    <select id="selectEquipmentList" resultType="com.ruoyi.web.domain.vo.LockEquipmentViewVO">
+    <select id="selectEquipmentList" resultType="com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO">
         select t.*,dept.name as dept_name,cabinet.name as cabinet_name,et.name as
         equipment_type_name,em.name as equipment_model_name,company.name as company_name,
         company.id as company_id,site.name as site_name,site.id as site_id,

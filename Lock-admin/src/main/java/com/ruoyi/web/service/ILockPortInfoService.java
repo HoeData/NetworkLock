@@ -2,8 +2,8 @@ package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.LockPortInfo;
-import com.ruoyi.web.domain.vo.LockPortInfoListParamVO;
-import com.ruoyi.web.domain.vo.LockPortInfoStatisticalQuantityVO;
+import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
+import com.ruoyi.web.domain.vo.port.LockPortInfoStatisticalQuantityVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
 import java.util.List;
 

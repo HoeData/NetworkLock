@@ -1,12 +1,10 @@
 package com.ruoyi.web.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ruoyi.common.core.domain.R;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.RelPdaUserPort;
-import com.ruoyi.web.domain.vo.RelPdaUserPortParamVO;
-import com.ruoyi.web.domain.vo.RelPdaUserPortViewVO;
-import com.ruoyi.web.domain.vo.RelPortViewVO;
+import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
+import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
 import java.util.List;
 
 public interface RelPdaUserPortMapper extends BaseMapper<RelPdaUserPort> {

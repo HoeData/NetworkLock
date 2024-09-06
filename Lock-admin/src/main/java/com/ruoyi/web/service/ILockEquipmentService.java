@@ -2,9 +2,9 @@ package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.LockEquipment;
-import com.ruoyi.web.domain.vo.LockEquipmentAddParamVO;
-import com.ruoyi.web.domain.vo.LockEquipmentParamVO;
-import com.ruoyi.web.domain.vo.LockEquipmentViewVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentAddParamVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO;
 import java.util.List;
 
 public interface ILockEquipmentService extends IService<LockEquipment> {

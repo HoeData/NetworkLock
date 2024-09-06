@@ -5,7 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.web.domain.LockPdaInfo;
-import com.ruoyi.web.domain.vo.LockPadPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPadPageParamVO;
 import com.ruoyi.web.service.ILockPdaInfoService;
 import java.util.List;
 import javax.annotation.Resource;

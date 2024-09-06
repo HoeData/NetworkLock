@@ -3,7 +3,7 @@ package com.ruoyi.web.controller.lock;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.domain.LockPortInfo;
-import com.ruoyi.web.domain.vo.LockPortInfoListParamVO;
+import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.utils.CommonUtils;
 import com.ruoyi.web.utils.LockUtil;

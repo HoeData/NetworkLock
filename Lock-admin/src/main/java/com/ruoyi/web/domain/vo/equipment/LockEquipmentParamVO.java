@@ -1,9 +1,10 @@
-package com.ruoyi.web.domain.vo;
+package com.ruoyi.web.domain.vo.equipment;
 
+import com.ruoyi.web.domain.vo.PageVO;
 import lombok.Data;
 
 @Data
-public class LockEquipmentParamVO extends PageVO{
+public class LockEquipmentParamVO extends PageVO {
 
     private Integer equipmentId;
     private String name;

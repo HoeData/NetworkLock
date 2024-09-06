@@ -1,7 +1,7 @@
 package com.ruoyi.web.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ruoyi.web.domain.vo.LockPadPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPadPageParamVO;
 import com.ruoyi.web.domain.LockPdaInfo;
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.ruoyi.web.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.web.domain.LockPortInfo;
-import com.ruoyi.web.domain.vo.LockPortInfoListParamVO;
+import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
 import com.ruoyi.web.domain.vo.index.PortStatisticsVO;
 import java.util.List;

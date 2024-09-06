@@ -2,9 +2,9 @@ package com.ruoyi.web.service;
 
 import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.RelPdaUserPort;
-import com.ruoyi.web.domain.vo.LockPdaUserPageParamVO;
-import com.ruoyi.web.domain.vo.RelPdaUserPortParamVO;
-import com.ruoyi.web.domain.vo.RelPdaUserPortViewVO;
+import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
+import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
+import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
 import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.utils.PdaDataSynchronizationUtil;
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.web.domain.vo.LockPadPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPadPageParamVO;
 import com.ruoyi.web.domain.LockPdaInfo;
 import java.util.List;
 

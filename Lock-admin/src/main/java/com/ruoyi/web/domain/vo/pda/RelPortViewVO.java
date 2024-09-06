@@ -1,4 +1,4 @@
-package com.ruoyi.web.domain.vo;
+package com.ruoyi.web.domain.vo.pda;
 
 import lombok.Data;
 

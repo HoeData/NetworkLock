@@ -1,9 +1,10 @@
-package com.ruoyi.web.domain.vo;
+package com.ruoyi.web.domain.vo.equipment;
 
+import com.ruoyi.web.domain.vo.LockEntity;
 import lombok.Data;
 
 @Data
-public class LockEquipmentAddParamVO extends LockEntity{
+public class LockEquipmentAddParamVO extends LockEntity {
     private Integer id;
     private Integer deptId;
     private Integer cabinetId;

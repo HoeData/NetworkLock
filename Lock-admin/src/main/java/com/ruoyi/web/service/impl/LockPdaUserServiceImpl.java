@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPdaUser;
-import com.ruoyi.web.domain.vo.LockPdaUserPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.mapper.LockPdaInfoMapper;
 import com.ruoyi.web.mapper.LockPdaUserMapper;
 import com.ruoyi.web.service.ILockPdaUserService;

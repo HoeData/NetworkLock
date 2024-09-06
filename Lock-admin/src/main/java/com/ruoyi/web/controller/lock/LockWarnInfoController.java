@@ -5,7 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.web.domain.LockWarnInfo;
-import com.ruoyi.web.domain.vo.LockEquipmentParamVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.LockWarnInfoViewVO;
 import com.ruoyi.web.service.ILockWarnInfoService;
 import com.ruoyi.web.utils.CommonUtils;

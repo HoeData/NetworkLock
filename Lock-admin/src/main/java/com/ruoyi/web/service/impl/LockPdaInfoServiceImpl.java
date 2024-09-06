@@ -7,7 +7,7 @@ import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.web.constants.PdaUserConst;
 import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPdaUser;
-import com.ruoyi.web.domain.vo.LockPadPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPadPageParamVO;
 import com.ruoyi.web.mapper.LockPdaInfoMapper;
 import com.ruoyi.web.service.ILockPdaInfoService;
 import com.ruoyi.web.service.ILockPdaUserService;

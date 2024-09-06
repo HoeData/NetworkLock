@@ -64,7 +64,7 @@
         where pda_user_id=#{pdaUserId}
         where;
     </delete>
-    <select id="selectAllList"   resultType="com.ruoyi.web.domain.vo.RelPdaUserPortViewVO">
+    <select id="selectAllList"   resultType="com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO">
         <include refid="selectFiled"/>
         <include refid="fromSql"/>
         where equ.del_flag = '0'
@@ -72,7 +72,7 @@
         order by equ.id desc
     </select>
     <select id="selectAuthorizationList"
-      resultType="com.ruoyi.web.domain.vo.RelPdaUserPortViewVO">
+      resultType="com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO">
         <include refid="selectFiled"/>
         <include refid="fromSql"/>
         INNER JOIN (SELECT pt.equipment_id
