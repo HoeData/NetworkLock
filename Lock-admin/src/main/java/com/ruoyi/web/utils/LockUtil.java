@@ -356,7 +356,6 @@ public class LockUtil {
     private static byte[] hexStringToByteArray(String s) {
         int len = s.length();
         byte[] data = new byte[len / 3]; // 每个字节占三个字符（两个十六进制数字加上一个空格）
-
         for (int i = 0; i < len; i += 3) {
             int index = i / 3;
             int v = Integer.parseInt(s.substring(i, i + 2), 16);
@@ -385,6 +384,9 @@ public class LockUtil {
     }
 
     public static void main(String[] args) throws Exception {
+        //以下为测试开锁的秘钥测试，秘钥为ON，第一步必须要调用锁信息，然后在输入解锁秘钥
+        //获取锁信息报文为68 80 00 01 00 E9，开锁报文为68 82 00 04 54 30 34 3D E3
+        //如果想解析锁信息，需要base64解密报文，然后在转为ascii码来获取真实报文
         byte[] onData = "ON".getBytes();
         byte[] encodedBytes = Base64.getEncoder().encode(onData);
         String hexRepresentation = bytesToHexWithSpaces(encodedBytes);
@@ -404,7 +406,8 @@ public class LockUtil {
         receiveByte(serialPort, buffer);
         serialPort.closePort();
         System.out.println(bytesToHexWithSpaces(buffer));
-      byte[] decodedBytes= hexStringToByteArray("57 46 6C 61 55 7A 49 30 4D 44 68 42 51 6A 41 77 4D 44 41 30 4D 77 3D 3D ");
+        byte[] decodedBytes = hexStringToByteArray(
+            "57 46 6C 61 55 7A 49 30 4D 44 68 42 51 6A 41 77 4D 44 41 30 4D 77 3D 3D ");
         String decodedString = new String(decodedBytes);
         // 输出解码后的字符串
         System.out.println(decodedString);
