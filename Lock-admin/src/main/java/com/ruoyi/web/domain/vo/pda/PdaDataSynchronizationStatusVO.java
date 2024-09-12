@@ -16,6 +16,7 @@ import lombok.Data;
 public class PdaDataSynchronizationStatusVO implements Serializable {
 
     private Boolean readyFlag = false;
+
     private Boolean pdaCreateDataFlag = false;
     private Boolean pcGetDataFlag = false;
     private Boolean pcCreateDataFlag = false;
@@ -23,4 +24,5 @@ public class PdaDataSynchronizationStatusVO implements Serializable {
     private Boolean endFlag = false;
     private Boolean pdaAuthorizationFlag = false;
     private Boolean pdaResetPasswordFlag = false;
+    private Boolean errorFlag = false;
 }

@@ -1,23 +1,14 @@
 package com.ruoyi.web.domain;
 
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.ruoyi.common.core.domain.BaseEntity;
 import lombok.Data;
 
 @Data
-public class LockInfo {
-    /**
-     * 锁序号
-     */
-    private byte lockNumber;
-    /**
-     * 锁序列号
-     */
-    private byte[] lockSerialNumber;
-    /**
-     * 锁信息有效期
-     */
-    private byte lockEffective;
-    /**
-     * 锁动作时长
-     */
-    private byte lockTime;
+@TableName("lock_info")
+public class LockInfo extends BaseEntity {
+
+    private String id;
+    private String serialNumber;
+    private String batchNo;
 }

@@ -2,7 +2,7 @@ package com.ruoyi.web.utils;
 
 import com.fazecast.jSerialComm.SerialPort;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.web.domain.LockInfo;
+import com.ruoyi.web.domain.vo.port.LockInfoVO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -111,30 +111,29 @@ public class LockUtil {
 
     /**
      * 添加锁信息
-     *
      */
-    public static void addLockInformation(List<LockInfo> lockInfos) throws IOException{
-        if (!lockInfos.isEmpty() && lockInfos.size()>48){
-            throw  new RuntimeException("数据长度超过48");
+    public static void addLockInformation(List<LockInfoVO> lockInfos) throws IOException {
+        if (!lockInfos.isEmpty() && lockInfos.size() > 48) {
+            throw new RuntimeException("数据长度超过48");
         }
         SerialPort serialPort = getSerialPort(dev);
         serialPort.openPort();
-        byte[] header=new byte[]{0x68,0x61};
+        byte[] header = new byte[]{0x68, 0x61};
         int sized = lockInfos.size();
         //转换锁的数量
         // 获取最低有效字节  字符串
-        byte[] data=new byte[lockInfos.size()*19+1];
-        data[0]= (byte) (sized & 0xFF); // 获取最低有效字节  字符串
+        byte[] data = new byte[lockInfos.size() * 19 + 1];
+        data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
         for (int i = 0; i < lockInfos.size(); i++) {
             int i1 = i + 1;
-            LockInfo lockInfo = lockInfos.get(i);
-            data[i1]=lockInfo.getLockNumber();
+            LockInfoVO lockInfo = lockInfos.get(i);
+            data[i1] = lockInfo.getLockNumber();
             byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
             for (int j = 0; j < lockSerialNumber.length; j++) {
-                data[i1+1+j]=lockSerialNumber[j];
+                data[i1 + 1 + j] = lockSerialNumber[j];
             }
-            data[i1+17]=lockInfo.getLockEffective();
-            data[i1+18]=lockInfo.getLockTime();
+            data[i1 + 17] = lockInfo.getLockEffective();
+            data[i1 + 18] = lockInfo.getLockTime();
         }
         byte[] len=CheckLen(data.length);
         byte[] bytes = mergeByteArrays(header, len, data);
@@ -297,7 +296,7 @@ public class LockUtil {
         }
     }
 
-    public static byte[] getByteForAddLock(List<LockInfo> lockInfoList) {
+    public static byte[] getByteForAddLock(List<LockInfoVO> lockInfoList) {
         byte[] header = new byte[]{0x68, 0x61};
         int sized = lockInfoList.size();
         //转换锁的数量
@@ -306,7 +305,7 @@ public class LockUtil {
         data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
         for (int i = 0; i < lockInfoList.size(); i++) {
             int i1 = i + 1;
-            LockInfo lockInfo = lockInfoList.get(i);
+            LockInfoVO lockInfo = lockInfoList.get(i);
             data[i1] = lockInfo.getLockNumber();
             byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
             for (int j = 0; j < lockSerialNumber.length; j++) {
@@ -323,12 +322,12 @@ public class LockUtil {
         return mergeByteArrays(header, len, data, checksum);
     }
 
-    public static byte[] getByteForDelLock(List<LockInfo> lockInfoList) {
+    public static byte[] getByteForDelLock(List<LockInfoVO> lockInfoList) {
         byte[] header = new byte[]{0x68, 0x63};
         int sized = lockInfoList.size();
         //转换锁的数量
         // 获取最低有效字节  字符串
-        byte[] data = new byte[lockInfoList.size()  + 1];
+        byte[] data = new byte[lockInfoList.size() + 1];
         data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
         for (int i = 0; i < lockInfoList.size(); i++) {
             int i1 = i + 1;
@@ -363,13 +362,11 @@ public class LockUtil {
         }
         return data;
     }
-
     private static void send(SerialPort serialPort, byte[] data) throws Exception {
         OutputStream outputStream = serialPort.getOutputStream();
         outputStream.write(data);
         outputStream.flush();
     }
-
     private static void receiveByte(SerialPort serialPort, byte[] buffer) throws Exception {
         int i = 0;
         int bytesRead = 0;
@@ -382,7 +379,6 @@ public class LockUtil {
             i++;
         }
     }
-
     public static void main(String[] args) throws Exception {
         //以下为测试开锁的秘钥测试，秘钥为ON，第一步必须要调用锁信息，然后在输入解锁秘钥
         //获取锁信息报文为68 80 00 01 00 E9，开锁报文为68 82 00 04 54 30 34 3D E3
@@ -415,10 +411,5 @@ public class LockUtil {
         String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
         System.out.println(decodedStringa);
 //        System.out.println(getStrForAscii("31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 23 "));
-
-
-
     }
-
-
 }

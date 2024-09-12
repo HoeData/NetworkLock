@@ -2,7 +2,7 @@ package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.web.domain.LockInfo;
+import com.ruoyi.web.domain.vo.port.LockInfoVO;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoStatisticalQuantityVO;
@@ -50,11 +50,11 @@ public class LockPortInfoServiceImpl extends
 
     @Override
     public String getHexMessageForAddLock(List<LockPortInfo> list) {
-        List<LockInfo> lockInfoList = new ArrayList<>();
+        List<LockInfoVO> lockInfoList = new ArrayList<>();
         list.forEach(lockPortInfo -> {
             lockPortInfo.setLockStatus(1);
             updateById(lockPortInfo);
-            LockInfo lockInfo = new LockInfo();
+            LockInfoVO lockInfo = new LockInfoVO();
             lockInfo.setLockNumber(
                 (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getSerialNumber()), 16));
             lockInfo.setLockSerialNumber(
@@ -70,11 +70,11 @@ public class LockPortInfoServiceImpl extends
 
     @Override
     public String getHexMessageForDelLock(List<LockPortInfo> list) {
-        List<LockInfo> lockInfoList = new ArrayList<>();
+        List<LockInfoVO> lockInfoList = new ArrayList<>();
         list.forEach(lockPortInfo -> {
             lockPortInfo.setLockStatus(0);
             updateById(lockPortInfo);
-            LockInfo lockInfo = new LockInfo();
+            LockInfoVO lockInfo = new LockInfoVO();
             lockInfo.setLockNumber(
                 (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getSerialNumber()), 16));
             lockInfoList.add(lockInfo);

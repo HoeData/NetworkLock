@@ -10,6 +10,7 @@ import com.ruoyi.web.domain.LockMachineRoom;
 import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.LockSite;
+import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.RelPdaUserPort;
 import java.io.Serializable;
 import java.util.List;
@@ -29,5 +30,6 @@ public class PdaMergeDataVO implements Serializable {
     private List<LockPortInfo> portInfoList;
     private List<LockPdaUser> pdaUserList;
     private List<RelPdaUserPort> relPdaUserPortList;
+    private List<LockUnlockLog> unlockLogList;
 
 }

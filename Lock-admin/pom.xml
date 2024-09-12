@@ -18,9 +18,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>cn.smallbun.screw</groupId>
-            <artifactId>screw-core</artifactId>
-            <version>1.0.5</version>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-crypto</artifactId>
         </dependency>
 
         <dependency>

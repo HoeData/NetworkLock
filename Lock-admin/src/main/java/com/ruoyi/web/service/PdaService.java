@@ -1,6 +1,9 @@
 package com.ruoyi.web.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.web.domain.LockPdaUser;
+import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.RelPdaUserPort;
 import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
@@ -28,6 +31,7 @@ public class PdaService {
     private final ILockPdaInfoService pdaService;
     private final ILockPdaUserService pdaUserService;
     private final IRelPdaUserPortService relPdaUserPortService;
+    private final ILockUnlockLogService unlockLogService;
 
     public PdaMergeDataVO getAllData() {
         PdaMergeDataVO pdaMergeDataVO = new PdaMergeDataVO();
@@ -63,4 +67,12 @@ public class PdaService {
         return pdaMergeDataVO;
     }
 
+    public void update(PdaMergeDataVO fromPdaData) {
+        if(fromPdaData.getPortInfoList().size()>0){
+            portInfoService.updateBatchById(fromPdaData.getPortInfoList());
+        }
+        if(fromPdaData.getUnlockLogList().size()>0){
+            unlockLogService.updateBatchById(fromPdaData.getUnlockLogList());
+        }
+    }
 }

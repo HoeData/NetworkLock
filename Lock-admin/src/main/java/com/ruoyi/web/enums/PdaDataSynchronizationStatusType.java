@@ -8,6 +8,7 @@ public enum PdaDataSynchronizationStatusType {
     PC_CREATE_DATA(3, "PC创建同步文件失败"),
     PDA_GET_DATA(4, "pda获取同步文件失败"),
     END(5, "同步成功"),
+    MAXIMUM_NUMBER_EXCEEDED(6, "超过最大允许管理锁数量"),
     ;
 
 

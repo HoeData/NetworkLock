@@ -1,8 +1,10 @@
 package com.ruoyi.web.utils;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.web.constants.LockCache;
+import com.ruoyi.web.core.config.LicenseProperties;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.RelPdaUserPort;
@@ -11,7 +13,6 @@ import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.enums.PdaDataSynchronizationStatusType;
 import com.ruoyi.web.enums.PdaDataSynchronizationType;
 import com.ruoyi.web.service.ILockPdaDataSynchronizationInfoService;
-import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.service.PdaService;
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,11 +20,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,15 +35,11 @@ public class PdaDataSynchronizationUtil {
     private static final String PDA_STATUS_FILENAME = "status.json";
     private static final String PC_DATA_NAME = "pcData.json";
     private static final String PDA_DATA_NAME = "pdaData.json";
+    private static final String LICENSE_NAME = "lock.license";
     public static final String STATUS_NAME = "status.json";
     public static PdaDataSynchronizationStatusVO statusVO;
     public static String nowStatusMsg;
     public volatile static boolean RUNNING = false;
-    public static List<LockPortInfo> resultList = new ArrayList<>();
-    public static List<LockPortInfo> updateList = new ArrayList<>();
-    public static List<LockPortInfo> oldPcList = new ArrayList<>();
-    public static List<LockPortInfo> oldPdaList = new ArrayList<>();
-    public static List<LockPortInfo> resolveConflictsList = new ArrayList<>();
 
     public static void startPdaDataSynchronizationThread() {
         PdaDataSynchronizationStopThread task = new PdaDataSynchronizationStopThread();
@@ -66,14 +61,14 @@ public class PdaDataSynchronizationUtil {
             deviceId, PdaDataSynchronizationType.AUTHORIZATION_SYNCHRONIZATION);
         statusVO.setReadyFlag(true);
         nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
-        writeStringToFile(JSON.toJSONString(statusVO),
-            LOCAL_DATA_DIR_PATH + deviceId + File.separator + STATUS_NAME);
-        pushFileToDevice(deviceId, LOCAL_DATA_DIR_PATH + deviceId + File.separator + STATUS_NAME,
-            PDA_DATA_DIR_PATH + STATUS_NAME);
+        LicenseProperties licenseProperties = SpringUtils.getBean(LicenseProperties.class);
+        pushFileToDevice(deviceId, licenseProperties.getPath(), PDA_DATA_DIR_PATH + LICENSE_NAME);
+        writeStatusToPda();
+
         PdaMergeDataVO pdaMergeDataVO;
         //获取所有同步数据
+        PdaService pdaService = SpringUtils.getBean(PdaService.class);
         try {
-            PdaService pdaService = SpringUtils.getBean(PdaService.class);
             pdaMergeDataVO = pdaService.getAllData();
         } catch (Exception e) {
             setNowStatusMsgAndAddProcess(synchronizationInfo,
@@ -81,7 +76,6 @@ public class PdaDataSynchronizationUtil {
             PdaDataSynchronizationStopThread.RUNNING = false;
             throw new ServiceException(e.getMessage());
         }
-
         //等待PDA创建数据文件完成
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
@@ -93,39 +87,33 @@ public class PdaDataSynchronizationUtil {
         //创建需要同步给PDA的数据
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PC_CREATE_DATA);
-        createGivePdaData(pdaMergeDataVO, fromPdaData, deviceId);
+//        createGivePdaData(pdaMergeDataVO, fromPdaData, deviceId);
+        judgePdaData(pdaMergeDataVO, fromPdaData, synchronizationInfo);
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PDA_GET_DATA);
         writeDataToPda(deviceId, pdaMergeDataVO);
         getPdaGetDataFlag(deviceId);
         getEndFlag(deviceId);
-        updatePortInfo();
+        pdaService.update(fromPdaData);
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
-        refreshRunningAndList();
-    }
-
-    private static void updatePortInfo() {
-        ILockPortInfoService lockPortInfoService = SpringUtils.getBean(ILockPortInfoService.class);
-        if (updateList.size() > 0) {
-            lockPortInfoService.updateBatchById(updateList);
-        }
-        if (resolveConflictsList.size() > 0) {
-            lockPortInfoService.updateBatchById(resolveConflictsList);
-        }
+        PdaDataSynchronizationUtil.RUNNING = false;
     }
 
     private static void waitPdaCreateData(String deviceId) {
         while (!statusVO.getPdaCreateDataFlag()) {
-            getPdaStatus(deviceId, PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
+            getPdaStatus(deviceId);
         }
     }
 
-    private static void getPdaStatus(String deviceId, PdaDataSynchronizationStatusType statusType) {
+    private static void getPdaStatus(String deviceId) {
         try {
             checkDeviceId(deviceId);
             statusVO = JSON.parseObject(
                 readFileContentFromDevice(deviceId, PDA_DATA_DIR_PATH + PDA_STATUS_FILENAME),
                 PdaDataSynchronizationStatusVO.class);
+            if (statusVO.getErrorFlag()) {
+                PdaDataSynchronizationStopThread.RUNNING = false;
+            }
         } catch (Exception e) {
 
         } finally {
@@ -242,97 +230,57 @@ public class PdaDataSynchronizationUtil {
         }
     }
 
-    private static void createGivePdaData(PdaMergeDataVO pdaMergeDataVO, PdaMergeDataVO fromPdaData,
-        String deviceId) {
+    private static void judgePdaData(PdaMergeDataVO pdaMergeDataVO,
+        PdaMergeDataVO fromPdaData, LockPdaDataSynchronizationInfo synchronizationInfo) {
         List<LockPortInfo> pcPortList = pdaMergeDataVO.getPortInfoList();
         List<LockPortInfo> pdaPortList = fromPdaData.getPortInfoList();
-        ILockPdaDataSynchronizationInfoService synchronizationInfoService = SpringUtils.getBean(
-            ILockPdaDataSynchronizationInfoService.class);
-        LockPdaDataSynchronizationInfo synchronizationInfo = synchronizationInfoService.getLastByDeviceId(
-            deviceId);
-        if (null == synchronizationInfo) {
-            return;
-        }
-        long syncTime = synchronizationInfo.getUpdateTime().getTime();
-        Map<Integer, LockPortInfo> pcPortMap = pcPortList.stream()
-            .collect(Collectors.toMap(LockPortInfo::getId, Function.identity()));
-        Map<Integer, LockPortInfo> pdaPortMap = pdaPortList.stream()
-            .collect(Collectors.toMap(LockPortInfo::getId, Function.identity()));
-        pcPortMap.forEach((key, value) -> {
-            if (!pdaPortMap.containsKey(key)) {
-                resultList.add(value);
-            } else {
-                long pcUpdateTime = value.getUpdateTime().getTime();
-                LockPortInfo pdaPortInfo = pdaPortMap.get(key);
-                long pdaUpdateTime = pdaPortInfo.getUpdateTime().getTime();
-                if (pcUpdateTime != pdaUpdateTime) {
-                    if (pcUpdateTime > syncTime && pdaUpdateTime > syncTime) {
-                        if (!StringUtils.equals(value.getUserCode(), pdaPortInfo.getUserCode())
-                            || value.getDeploymentStatus() != pdaPortInfo.getDeploymentStatus()
-                            || value.getLockStatus() != pdaPortInfo.getLockStatus()) {
-                            oldPcList.add(value);
-                            oldPdaList.add(pdaPortInfo);
-                        }
-                        //判断几个字段是否冲突
-                    } else if (pcUpdateTime > syncTime && syncTime <= pdaUpdateTime) {
-                        resultList.add(value);
-                    } else if (pcUpdateTime <= syncTime && syncTime < pdaUpdateTime) {
-                        updateList.add(pdaPortInfo);
-                    }
-                }
-            }
-        });
-        if (oldPcList.size() > 0 || oldPdaList.size() > 0) {
-            while (resolveConflictsList.size() == 0) {
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+        Map<Integer, LockPortInfo> pcPortMap = new HashMap<>();
+        int value = 0;
+        for (LockPortInfo lockPortInfo : pcPortList) {
+            pcPortMap.put(lockPortInfo.getId(), lockPortInfo);
+            if (StringUtils.isNotBlank(lockPortInfo.getUserCode())) {
+                value++;
             }
         }
-        if (resultList.size() > 0 || resolveConflictsList.size() > 0) {
-            pdaMergeDataVO.setPortInfoList(resultList);
-            pdaMergeDataVO.getPortInfoList().addAll(resolveConflictsList);
+        for (LockPortInfo pdaPort : pdaPortList) {
+            if (StringUtils.isNotBlank(pdaPort.getUserCode())) {
+                value++;
+            }
+        }
+        if (value > LockCache.licenseParamVO.getLockNumber()) {
+            PdaDataSynchronizationStopThread.RUNNING = false;
+            setNowStatusMsgAndAddProcess(synchronizationInfo,
+                PdaDataSynchronizationStatusType.MAXIMUM_NUMBER_EXCEEDED);
         }
     }
-
-
     private static void writeDataToPda(String deviceId, PdaMergeDataVO givePdaData) {
-        int i = 0;
         while (!statusVO.getPcCreateDataFlag()) {
-            if (i == 0) {
-                writeStringToFile(JSON.toJSONString(givePdaData),
-                    LOCAL_DATA_DIR_PATH + deviceId + File.separator + PC_DATA_NAME);
-                pushFileToDevice(deviceId,
-                    LOCAL_DATA_DIR_PATH + deviceId + File.separator + PC_DATA_NAME,
-                    PDA_DATA_DIR_PATH + PC_DATA_NAME);
-                statusVO.setPcCreateDataFlag(true);
-                writeStringToFile(JSON.toJSONString(givePdaData),
-                    LOCAL_DATA_DIR_PATH + deviceId + File.separator + PDA_STATUS_FILENAME);
-                pushFileToDevice(deviceId,
-                    LOCAL_DATA_DIR_PATH + deviceId + File.separator + PDA_STATUS_FILENAME,
-                    PDA_DATA_DIR_PATH + PDA_STATUS_FILENAME);
-            }
-            getPdaStatus(deviceId, PdaDataSynchronizationStatusType.PC_CREATE_DATA);
-            i++;
-            if (i > 10) {
-                i = 0;
-            }
+            writeStringToFile(JSON.toJSONString(givePdaData),
+                LOCAL_DATA_DIR_PATH + deviceId + File.separator + PC_DATA_NAME);
+            pushFileToDevice(deviceId,
+                LOCAL_DATA_DIR_PATH + deviceId + File.separator + PC_DATA_NAME,
+                PDA_DATA_DIR_PATH + PC_DATA_NAME);
+            statusVO.setPcCreateDataFlag(true);
+            writeStringToFile(JSON.toJSONString(givePdaData),
+                LOCAL_DATA_DIR_PATH + deviceId + File.separator + PDA_STATUS_FILENAME);
+            pushFileToDevice(deviceId,
+                LOCAL_DATA_DIR_PATH + deviceId + File.separator + PDA_STATUS_FILENAME,
+                PDA_DATA_DIR_PATH + PDA_STATUS_FILENAME);
+            getPdaStatus(deviceId);
         }
     }
 
     private static void getPdaGetDataFlag(String deviceId) {
         int i=0;
         while (!statusVO.getPdaGetDataFlag()&&i<20) {
-            getPdaStatus(deviceId, PdaDataSynchronizationStatusType.PC_GET_DATA);
+            getPdaStatus(deviceId);
             i++;
         }
     }
 
     private static void getEndFlag(String deviceId) {
         while (!statusVO.getEndFlag()) {
-            getPdaStatus(deviceId, PdaDataSynchronizationStatusType.END);
+            getPdaStatus(deviceId);
         }
     }
 
@@ -360,13 +308,6 @@ public class PdaDataSynchronizationUtil {
         pdaDataSynchronizationInfoService.updateStatus(synchronizationInfo, statusType.getValue());
     }
 
-    public static void emptyList() {
-        resultList = new ArrayList<>();
-        updateList = new ArrayList<>();
-        oldPcList = new ArrayList<>();
-        oldPdaList = new ArrayList<>();
-        resolveConflictsList = new ArrayList<>();
-    }
 
     public static void startPdaAuthorization(List<RelPdaUserPort> list) {
         PdaDataSynchronizationUtil.refreshAll();
@@ -395,19 +336,20 @@ public class PdaDataSynchronizationUtil {
         getPdaGetDataFlag(deviceId);
         getEndFlag(deviceId);
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
-        refreshRunningAndList();
+        PdaDataSynchronizationUtil.RUNNING = false;
+    }
+
+    public static void writeStatusToPda() {
+        String deviceId = getConnectedDeviceId();
+        writeStringToFile(JSON.toJSONString(statusVO),
+            LOCAL_DATA_DIR_PATH + deviceId + File.separator + STATUS_NAME);
+        pushFileToDevice(deviceId, LOCAL_DATA_DIR_PATH + deviceId + File.separator + STATUS_NAME,
+            PDA_DATA_DIR_PATH + STATUS_NAME);
     }
 
     public static void refreshAll() {
         PdaDataSynchronizationUtil.RUNNING = false;
         PdaDataSynchronizationUtil.statusVO = new PdaDataSynchronizationStatusVO();
         PdaDataSynchronizationUtil.nowStatusMsg = "未同步";
-        PdaDataSynchronizationUtil.emptyList();
     }
-
-    public static void refreshRunningAndList() {
-        PdaDataSynchronizationUtil.RUNNING = false;
-        PdaDataSynchronizationUtil.emptyList();
-    }
-
 }
