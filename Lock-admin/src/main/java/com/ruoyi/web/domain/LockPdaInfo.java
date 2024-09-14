@@ -15,7 +15,7 @@ public class LockPdaInfo extends LockEntity {
     @TableId(type = IdType.AUTO)
     private Integer id;
     @NotBlank(message = "唯一标识不能为空")
-    private String key;
+    private String onlyKey;
     @NotNull(message = "类型不能为空")
     private Integer type;
     @NotBlank(message = "描述不能为空")

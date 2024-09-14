@@ -8,8 +8,24 @@
             resultType="com.ruoyi.web.domain.LockPdaDataSynchronizationInfo">
         select *
         from lock_pda_data_synchronization_info
-        where device_id = #{deviceId}
+        where pda_id = #{deviceId}
         order by create_time desc limit 1
 
+    </select>
+    <select id="selectSynchronizationInfoList"
+            resultType="com.ruoyi.web.domain.vo.pda.LockPdaDataSynchronizationInfoViewVO">
+        select info.*,pda.key as pda_key,pda.description as pda_description
+        from lock_pda_data_synchronization_info info
+        inner  join lock_pda_info pda on pda.id = info.pda_id and pda.del_flag = '0'
+        where  info.del_flag ='0'
+        <if test="pdaId != null">
+            AND info.pda_id = #{deviceId}
+        </if>
+        <if test="status != null">
+            AND info.status = #{status}
+        </if>
+        <if test="type != null">
+            AND info.type = #{type}
+        </if>
     </select>
 </mapper>

@@ -61,21 +61,12 @@ public class PdaDataSynchronizationUtil {
             deviceId, PdaDataSynchronizationType.AUTHORIZATION_SYNCHRONIZATION);
         statusVO.setReadyFlag(true);
         nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
-        LicenseProperties licenseProperties = SpringUtils.getBean(LicenseProperties.class);
-        pushFileToDevice(deviceId, licenseProperties.getPath(), PDA_DATA_DIR_PATH + LICENSE_NAME);
+        pushFileToDevice(deviceId, SpringUtils.getBean(LicenseProperties.class).getPath(),
+            PDA_DATA_DIR_PATH + LICENSE_NAME);
         writeStatusToPda();
-
-        PdaMergeDataVO pdaMergeDataVO;
         //获取所有同步数据
         PdaService pdaService = SpringUtils.getBean(PdaService.class);
-        try {
-            pdaMergeDataVO = pdaService.getAllData();
-        } catch (Exception e) {
-            setNowStatusMsgAndAddProcess(synchronizationInfo,
-                PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
-            PdaDataSynchronizationStopThread.RUNNING = false;
-            throw new ServiceException(e.getMessage());
-        }
+        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllData();
         //等待PDA创建数据文件完成
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PDA_CREATE_DATA);

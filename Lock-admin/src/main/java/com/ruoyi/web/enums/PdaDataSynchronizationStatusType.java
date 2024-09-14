@@ -27,4 +27,12 @@ public enum PdaDataSynchronizationStatusType {
     public String getMsg() {
         return msg;
     }
+    public static PdaDataSynchronizationStatusType getEnum(int value) {
+        for (PdaDataSynchronizationStatusType type : PdaDataSynchronizationStatusType.values()) {
+            if (type.value == value) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

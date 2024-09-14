@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationProcess;
 import com.ruoyi.web.domain.LockPdaInfo;
+import com.ruoyi.web.domain.vo.pda.LockPdaDataSynchronizationInfoPageParamVO;
+import com.ruoyi.web.domain.vo.pda.LockPdaDataSynchronizationInfoViewVO;
 import com.ruoyi.web.enums.PdaDataSynchronizationStatusType;
 import com.ruoyi.web.enums.PdaDataSynchronizationType;
 import com.ruoyi.web.mapper.LockPdaDataSynchronizationInfoMapper;
@@ -11,6 +13,7 @@ import com.ruoyi.web.service.ILockPdaDataSynchronizationInfoService;
 import com.ruoyi.web.service.ILockPdaDataSynchronizationProcessService;
 import com.ruoyi.web.service.ILockPdaInfoService;
 import java.util.Date;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -59,6 +62,22 @@ public class LockPdaDataSynchronizationInfoImpl extends
     @Override
     public LockPdaDataSynchronizationInfo getLastByDeviceId(String deviceId) {
         return infoMapper.getLastByDeviceId(deviceId);
+    }
+
+    @Override
+    public List<LockPdaDataSynchronizationInfoViewVO> selectSynchronizationInfoList(
+        LockPdaDataSynchronizationInfoPageParamVO viewVO) {
+        List<LockPdaDataSynchronizationInfoViewVO> list = infoMapper.selectSynchronizationInfoList(
+            viewVO);
+        list.forEach(item -> {
+            PdaDataSynchronizationStatusType type = PdaDataSynchronizationStatusType.getEnum(
+                item.getStatus());
+            if (null != type) {
+                item.setStatusDesc(type.getMsg());
+            }
+
+        });
+        return list;
     }
 
     private LockPdaDataSynchronizationProcess setLockPdaDataSynchronizationProcess(

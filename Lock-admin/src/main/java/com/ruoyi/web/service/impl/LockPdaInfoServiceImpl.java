@@ -27,7 +27,7 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
 
     @Override
     public void judgeKey(LockPdaInfo lockPdaInfo) {
-        LockPdaInfo old = getByKey(lockPdaInfo.getKey());
+        LockPdaInfo old = getByKey(lockPdaInfo.getOnlyKey());
         if (null != old && null == lockPdaInfo.getId()) {
             throw new ServiceException("数据已存在");
         }
@@ -51,7 +51,7 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
     @Override
     public LockPdaInfo getByKey(String key) {
         LambdaQueryWrapper<LockPdaInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(LockPdaInfo::getKey, key);
+        wrapper.eq(LockPdaInfo::getOnlyKey, key);
         wrapper.eq(LockPdaInfo::getDelFlag, 0);
         return getOne(wrapper);
     }

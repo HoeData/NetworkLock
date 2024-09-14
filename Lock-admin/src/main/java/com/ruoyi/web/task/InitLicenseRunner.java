@@ -23,13 +23,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class InitLicenseRunner implements ApplicationRunner {
 
-
     private static final String PUBLIC_KEY =
-        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCLCOITP83Y/pDHXa0n/d4TANQsuCKycK1x0b5QUU0sm2sbGXluZmbg8kwSk"
-            + "YaQgB0mfITdkT/nnskPghospYp7BQL8p5eBESUSOq+rBai/+8ZddfN4kv15b/WX4KCrs1vY4CbBW7OgRvVRm+WdsP9Aw45R5Q71mSqNmSyd5/xv3wIDAQAB";
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxrGSr56hzbSRbo/agsDW5QvnV\n"
+            + "SBNNdLxjYMvP2rcxSl1RGByW2HlNuE+RwN2hIhTJHJ47UiHE8ymWO+l9pOjNh1lL\n"
+            + "dWAUI+zsDt40ooXbAfAK6zbPxQKrqqFPj8bsBuQ7y9mIh7STbdTcnsid73z9+F/N\n"
+            + "+dNO9V+x6qdSlGeKIQIDAQAB";
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         LicenseProperties licenseProperties = SpringUtils.getBean(LicenseProperties.class);
         if (StringUtils.isBlank(licenseProperties.getPath())) {
             log.error("InitLicenseRunner-run:license路径为空,初始化license失败");
@@ -39,6 +40,7 @@ public class InitLicenseRunner implements ApplicationRunner {
                 readFile(licenseProperties.getPath()));
             LockCache.lockSerialNumberSet.addAll(licenseParamVO.getLockSerialNumberList());
             LockCache.licenseParamVO = licenseParamVO;
+            log.info("初始化license成功");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("InitLicenseRunner-run:初始化license失败" + e.getMessage());
@@ -57,7 +59,6 @@ public class InitLicenseRunner implements ApplicationRunner {
     }
 
     private LicenseParamVO getLicenseParamVO(String licenseValue) {
-        LicenseParamVO licenseParamVO = new LicenseParamVO();
         RSA rsa = new RSA(null, PUBLIC_KEY);
         return JSONObject.parseObject(rsa.decryptStr(licenseValue, KeyType.PublicKey),
             LicenseParamVO.class);
