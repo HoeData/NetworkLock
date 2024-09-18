@@ -3,7 +3,6 @@ package com.ruoyi.web.controller.lock;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
 import com.ruoyi.web.domain.vo.pda.LockPdaDataSynchronizationInfoPageParamVO;
 import com.ruoyi.web.domain.vo.pda.LockPdaDataSynchronizationInfoViewVO;
 import com.ruoyi.web.service.ILockPdaDataSynchronizationInfoService;
