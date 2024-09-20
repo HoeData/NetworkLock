@@ -11,4 +11,17 @@
           and create_time <![CDATA[ <= ]]> #{endDate}
         GROUP BY MONTH (create_time);
     </select>
+    <select id="selectUnlockList" resultType="com.ruoyi.web.domain.vo.pda.LockUnlockViewVO">
+        SELECT unlog.*,
+               pda.description as pda_description,
+               pu.user_name as pda_user_name,
+               equ.name         AS equipment_name,
+               pi.serial_number AS port_Index
+        FROM lock_unlock_log unlog
+                 LEFT JOIN lock_pda_user pu ON pu.id = unlog.pda_user_id
+                 LEFT JOIN lock_pda_info pda ON pda.id = pu.pda_id
+                 LEFT JOIN lock_port_info pi ON pi.id = unlog.port_id
+                 LEFT JOIN lock_equipment equ ON pi.equipment_id = equ.id
+
+    </select>
 </mapper>

@@ -3,6 +3,12 @@
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.web.mapper.LockEquipmentMapper">
+    <update id="removeActiveDefenseByIds">
+        update lock_equipment set active_defense_flag = 0 where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
     <delete id="deleteByIds">
         update lock_equipment set del_flag = '2' where id in
         <foreach collection="array" item="id" open="(" separator="," close=")">
@@ -55,7 +61,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="trustFlag != null">
             AND t.trust_flag =#{trustFlag}
         </if>
-
+        <if test="activeDefenseFlag != null ">
+            AND t.active_defense_flag = #{activeDefenseFlag}
+        </if>
 
     </select>
     <select id="selectConsoleTotal" resultType="java.lang.Integer">

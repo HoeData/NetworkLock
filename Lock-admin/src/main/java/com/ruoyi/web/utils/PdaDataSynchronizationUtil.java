@@ -61,8 +61,11 @@ public class PdaDataSynchronizationUtil {
             deviceId, PdaDataSynchronizationType.AUTHORIZATION_SYNCHRONIZATION);
         statusVO.setReadyFlag(true);
         nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
-        pushFileToDevice(deviceId, SpringUtils.getBean(LicenseProperties.class).getPath(),
-            PDA_DATA_DIR_PATH + LICENSE_NAME);
+        List<String> pathList = SpringUtils.getBean(LicenseProperties.class).getPathList();
+        for (int i = 0; i < pathList.size(); i++) {
+            pushFileToDevice(deviceId, pathList.get(i),
+                PDA_DATA_DIR_PATH + "/license/" + LICENSE_NAME + i);
+        }
         writeStatusToPda();
         //获取所有同步数据
         PdaService pdaService = SpringUtils.getBean(PdaService.class);
@@ -238,7 +241,7 @@ public class PdaDataSynchronizationUtil {
                 value++;
             }
         }
-        if (value > LockCache.licenseParamVO.getLockNumber()) {
+        if (value > LockCache.lockNumber) {
             PdaDataSynchronizationStopThread.RUNNING = false;
             setNowStatusMsgAndAddProcess(synchronizationInfo,
                 PdaDataSynchronizationStatusType.MAXIMUM_NUMBER_EXCEEDED);

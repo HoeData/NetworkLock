@@ -23,4 +23,5 @@ public class LockEquipment extends LockEntity {
     private Integer trustFlag;
     private String ip ;
     private String community;
+    private Integer activeDefenseFlag;
 }

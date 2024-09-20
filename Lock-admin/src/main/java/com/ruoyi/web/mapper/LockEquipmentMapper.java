@@ -14,4 +14,5 @@ public interface LockEquipmentMapper extends BaseMapper<LockEquipment> {
 
     int selectConsoleTotal();
 
+    int removeActiveDefenseByIds(String[] ids);
 }

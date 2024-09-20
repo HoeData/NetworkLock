@@ -18,4 +18,8 @@ public class LockIndexController extends BaseController {
     public AjaxResult getIndexStatisticalQuantity() {
         return success(lockIndexService.getIndexStatisticalQuantity());
     }
+    @GetMapping("/getLockNumberByStatusAndSite")
+    public AjaxResult getLockNumberByStatusAndSite() {
+        return success(lockIndexService.getLockNumberByStatusAndSite());
+    }
 }

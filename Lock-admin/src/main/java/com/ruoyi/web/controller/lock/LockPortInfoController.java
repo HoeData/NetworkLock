@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.lock;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.port.LockInfoForAddLockVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.utils.CommonUtils;
@@ -41,7 +42,6 @@ public class LockPortInfoController extends BaseController {
     @PostMapping("/setInfo")
     public AjaxResult saveOrUpdate(@RequestBody LockPortInfo lockPortInfo) {
         LockUtil.checkASCIILength(lockPortInfo.getUserCode(), "锁的用户码不正确,请重新输入");
-        LockUtil.checkASCIILength(lockPortInfo.getKeyId(), "钥匙ID不正确,请重新输入");
         CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
         return toAjax(lockPortInfoService.updateById(lockPortInfo));
     }
@@ -52,14 +52,14 @@ public class LockPortInfoController extends BaseController {
     }
 
     @PostMapping("/getHexMessageForAddLock")
-    public AjaxResult getHexMessageForAddLock(@RequestBody @Validated List<LockPortInfo> list) {
+    public AjaxResult getHexMessageForAddLock(@RequestBody @Validated List<LockInfoForAddLockVO> voList) {
         Map<String, String> map = new HashMap<>(1);
-        map.put(HEX_MESSAGE, lockPortInfoService.getHexMessageForAddLock(list));
+        map.put(HEX_MESSAGE, lockPortInfoService.getHexMessageForAddLock(voList));
         return success(map);
     }
 
     @PostMapping("/getHexMessageForDelLock")
-    public AjaxResult getHexMessageForDelLock(@RequestBody  List<LockPortInfo> list) {
+    public AjaxResult getHexMessageForDelLock(@RequestBody  List<LockInfoForAddLockVO> list) {
         Map<String, String> map = new HashMap<>(1);
         map.put(HEX_MESSAGE, lockPortInfoService.getHexMessageForDelLock(list));
         return success(map);

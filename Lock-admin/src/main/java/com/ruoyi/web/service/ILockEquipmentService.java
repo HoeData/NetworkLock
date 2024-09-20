@@ -2,6 +2,7 @@ package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.LockEquipment;
+import com.ruoyi.web.domain.vo.equipment.ActiveDefenseSaveOrUpdateParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentAddParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO;
@@ -22,4 +23,10 @@ public interface ILockEquipmentService extends IService<LockEquipment> {
     void judgeName(Integer id, String name, Integer cabinetId);
 
     List<LockEquipment> getAll();
+
+    int setActiveDefenseFlag(ActiveDefenseSaveOrUpdateParamVO vo);
+
+    int updateActiveDefenseFlag(ActiveDefenseSaveOrUpdateParamVO vo);
+
+    int removeActiveDefenseByIds(String[] ids);
 }

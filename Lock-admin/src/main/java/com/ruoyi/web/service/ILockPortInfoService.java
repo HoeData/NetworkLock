@@ -2,6 +2,7 @@ package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.port.LockInfoForAddLockVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoStatisticalQuantityVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
@@ -16,9 +17,9 @@ public interface ILockPortInfoService extends IService<LockPortInfo> {
 
     LockPortInfoStatisticalQuantityVO getStatisticalQuantity();
 
-    String getHexMessageForAddLock(List<LockPortInfo> list);
+    String getHexMessageForAddLock(List<LockInfoForAddLockVO> list);
 
-    String getHexMessageForDelLock(List<LockPortInfo> list);
+    String getHexMessageForDelLock(List<LockInfoForAddLockVO> list);
 
     List<MonitorPortViewVO> getMonitorPortList();
 

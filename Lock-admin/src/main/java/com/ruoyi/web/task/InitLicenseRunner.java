@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -32,14 +31,16 @@ public class InitLicenseRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         LicenseProperties licenseProperties = SpringUtils.getBean(LicenseProperties.class);
-        if (StringUtils.isBlank(licenseProperties.getPath())) {
+        if (licenseProperties.getPathList().size() == 0) {
             log.error("InitLicenseRunner-run:license路径为空,初始化license失败");
         }
         try {
-            LicenseParamVO licenseParamVO = getLicenseParamVO(
-                readFile(licenseProperties.getPath()));
-            LockCache.lockSerialNumberSet.addAll(licenseParamVO.getLockSerialNumberList());
-            LockCache.licenseParamVO = licenseParamVO;
+            for (String path : licenseProperties.getPathList()) {
+                LicenseParamVO licenseParamVO = getLicenseParamVO(readFile(path));
+                LockCache.lockSerialNumberSet.addAll(licenseParamVO.getLockSerialNumberList());
+                LockCache.licenseParamVOList.add(licenseParamVO);
+                LockCache.lockNumber += licenseParamVO.getLockNumber();
+            }
             log.info("初始化license成功");
         } catch (Exception e) {
             e.printStackTrace();

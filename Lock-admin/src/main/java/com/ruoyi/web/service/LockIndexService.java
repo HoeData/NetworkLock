@@ -1,5 +1,6 @@
 package com.ruoyi.web.service;
 
+import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.index.PortStatisticsChartVO;
 import com.ruoyi.web.domain.vo.index.PortStatisticsVO;
 import com.ruoyi.web.domain.vo.index.Recent12MonthsStatisticsVO;
@@ -21,6 +22,7 @@ public class LockIndexService {
     private final LockPortInfoMapper lockPortInfoMapper;
     private final LockWarnInfoMapper warnInfoMapper;
     private final LockUnlockLogMapper lockUnlockLogMapper;
+    private final ILockSiteService lockSiteService;
 
     public Map<String, Object> getIndexStatisticalQuantity() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -37,6 +39,11 @@ public class LockIndexService {
     }
 
     private List<PortStatisticsChartVO> setPortStatistics() {
+        List<PortStatisticsChartVO> controlledTotalStatisticsList = new ArrayList<>();
+        List<LockSite> lockSiteList = lockSiteService.getAll();
+        if(lockSiteList.size()==0){
+            return controlledTotalStatisticsList;
+        }
         List<PortStatisticsVO> portStatisticsVOList = lockPortInfoMapper.selectPortStatisticsVOList();
         Map<Integer, Integer> sitePortSumMap = new HashMap<>();
         Map<Integer, String> siteIdNameMap = new HashMap<>();
@@ -50,13 +57,12 @@ public class LockIndexService {
                     controlledTotalMap.getOrDefault(vo.getSiteId(), 0) + 1);
             }
         }
-        List<PortStatisticsChartVO> controlledTotalStatisticsList = new ArrayList<>();
-        sitePortSumMap.forEach((k, v) -> {
+        lockSiteList.forEach(lockSite -> {
             PortStatisticsChartVO portStatisticsChartVO = new PortStatisticsChartVO();
-            portStatisticsChartVO.setSiteId(k);
-            portStatisticsChartVO.setSiteName(siteIdNameMap.get(k));
-            portStatisticsChartVO.setSumTotal(v);
-            portStatisticsChartVO.setControlledTotal(controlledTotalMap.getOrDefault(k, 0));
+            portStatisticsChartVO.setSiteId(lockSite.getId());
+            portStatisticsChartVO.setSiteName(lockSite.getName());
+            portStatisticsChartVO.setSumTotal(sitePortSumMap.getOrDefault(lockSite.getId(), 0));
+            portStatisticsChartVO.setControlledTotal(controlledTotalMap.getOrDefault(lockSite.getId(), 0));
             if (portStatisticsChartVO.getSumTotal() != 0) {
                 portStatisticsChartVO.setControlledProportion(
                     (double) portStatisticsChartVO.getControlledTotal()
@@ -91,4 +97,36 @@ public class LockIndexService {
         return warnInfoStatisticsVOList;
     }
 
+    public List<Map<String, Object>> getLockNumberByStatusAndSite() {
+        List<Map<String, Object>> list = new ArrayList<>();
+        List<LockSite> lockSiteList = lockSiteService.getAll();
+        if(lockSiteList.size()==0){
+            return list;
+        }
+        List<PortStatisticsVO> portStatisticsVOList = lockPortInfoMapper.selectPortStatisticsVOList();
+        Map<Integer, String> siteIdNameMap = new HashMap<>();
+        Map<Integer, Integer> useTotalMap = new HashMap<>();
+        Map<Integer, Integer> idleTotalMap = new HashMap<>();
+        for (PortStatisticsVO vo : portStatisticsVOList) {
+            siteIdNameMap.put(vo.getSiteId(), vo.getSiteName());
+            if (vo.getLockStatus() == 1) {
+                if (vo.getDeploymentStatus() == 1) {
+                    idleTotalMap.put(vo.getSiteId(),
+                        idleTotalMap.getOrDefault(vo.getSiteId(), 1) + 1);
+                } else if (vo.getDeploymentStatus() == 2) {
+                    useTotalMap.put(vo.getSiteId(),
+                        useTotalMap.getOrDefault(vo.getSiteId(), 1) + 1);
+                }
+            }
+        }
+        lockSiteList.forEach(lockSite -> {
+            Map<String, Object> numberMap = new HashMap<>();
+            numberMap.put("idleTotal", idleTotalMap.getOrDefault(lockSite.getId(), 0));
+            numberMap.put("useTotal", useTotalMap.getOrDefault(lockSite.getId(), 0));
+            numberMap.put("siteName", lockSite.getName());
+            numberMap.put("siteId", lockSite.getId());
+            list.add(numberMap);
+        });
+        return list;
+    }
 }

@@ -17,5 +17,7 @@ public class LockEquipmentParamVO extends PageVO {
     private String description;
     private Integer trustFlag;
 
+    private Integer activeDefenseFlag;
+
 
 }

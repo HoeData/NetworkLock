@@ -2,11 +2,12 @@ package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.web.domain.vo.port.LockInfoVO;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.MonitorPortViewVO;
+import com.ruoyi.web.domain.vo.port.LockInfoForAddLockVO;
+import com.ruoyi.web.domain.vo.port.LockInfoVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoStatisticalQuantityVO;
-import com.ruoyi.web.domain.vo.MonitorPortViewVO;
 import com.ruoyi.web.mapper.LockEquipmentMapper;
 import com.ruoyi.web.mapper.LockPortInfoMapper;
 import com.ruoyi.web.service.ILockPortInfoService;
@@ -49,34 +50,30 @@ public class LockPortInfoServiceImpl extends
     }
 
     @Override
-    public String getHexMessageForAddLock(List<LockPortInfo> list) {
+    public String getHexMessageForAddLock(List<LockInfoForAddLockVO> list) {
         List<LockInfoVO> lockInfoList = new ArrayList<>();
-        list.forEach(lockPortInfo -> {
-            lockPortInfo.setLockStatus(1);
-            updateById(lockPortInfo);
+        list.forEach(vo -> {
             LockInfoVO lockInfo = new LockInfoVO();
             lockInfo.setLockNumber(
-                (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getSerialNumber()), 16));
+                (byte) Integer.parseInt(Integer.toHexString(vo.getLockNumber()), 16));
             lockInfo.setLockSerialNumber(
-                lockPortInfo.getUserCode().getBytes(StandardCharsets.US_ASCII));
+                vo.getLockSerialNumber().getBytes(StandardCharsets.US_ASCII));
             lockInfo.setLockEffective(
-                (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getValidityPeriod()), 16));
+                (byte) Integer.parseInt(Integer.toHexString(vo.getLockEffective()), 16));
             lockInfo.setLockTime(
-                (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getActionDuration()), 16));
+                (byte) Integer.parseInt(Integer.toHexString(vo.getLockTime()), 16));
             lockInfoList.add(lockInfo);
         });
         return LockUtil.bytesToHexWithSpaces(LockUtil.getByteForAddLock(lockInfoList));
     }
 
     @Override
-    public String getHexMessageForDelLock(List<LockPortInfo> list) {
+    public String getHexMessageForDelLock(List<LockInfoForAddLockVO> list) {
         List<LockInfoVO> lockInfoList = new ArrayList<>();
         list.forEach(lockPortInfo -> {
-            lockPortInfo.setLockStatus(0);
-            updateById(lockPortInfo);
             LockInfoVO lockInfo = new LockInfoVO();
             lockInfo.setLockNumber(
-                (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getSerialNumber()), 16));
+                (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getLockNumber()), 16));
             lockInfoList.add(lockInfo);
         });
         return LockUtil.bytesToHexWithSpaces(LockUtil.getByteForDelLock(lockInfoList));

@@ -54,6 +54,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
           AND pi.lock_status = 1
           AND pi.del_flag = 0
           AND e.ip != ""
+          and e.active_defense_flag = 1
 	AND e.community != ''
 	AND e.del_flag = 0
 

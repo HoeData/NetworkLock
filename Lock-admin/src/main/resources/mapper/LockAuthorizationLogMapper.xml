@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.LockAuthorizationLogMapper">
+
+    <select id="selectAllList" resultType="com.ruoyi.web.domain.vo.pda.UnlockViewVO">
+        SELECT
+        au.*,
+        pda.description AS pda_description,
+        pu.user_name AS pda_user_name
+        FROM
+        lock_authorization_log au
+        LEFT JOIN lock_pda_user pu ON pu.id = au.pda_user_id
+        LEFT JOIN lock_pda_info pda ON pda.id = pu.pda_id
+        <if test="successFlag != null">
+            AND au.success_flag =#{successFlag}
+        </if>
+
+    </select>
+</mapper>

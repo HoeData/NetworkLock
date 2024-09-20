@@ -6,6 +6,7 @@ import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.web.domain.LockEquipment;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.equipment.ActiveDefenseSaveOrUpdateParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentAddParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO;
@@ -13,9 +14,12 @@ import com.ruoyi.web.mapper.LockEquipmentMapper;
 import com.ruoyi.web.service.ILockEquipmentService;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.utils.CommonUtils;
+import com.ruoyi.web.utils.SnmpUtil;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
+import org.snmp4j.PDU;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,6 +68,7 @@ public class LockEquipmentServiceImpl extends
     public int update(LockEquipmentAddParamVO lockEquipmentAddParamVO) {
         LockEquipment lockEquipment = new LockEquipment();
         BeanUtils.copyProperties(lockEquipmentAddParamVO, lockEquipment);
+        lockEquipment.setPortNumber(null);
         updateById(lockEquipment);
         return 1;
     }
@@ -95,10 +100,37 @@ public class LockEquipmentServiceImpl extends
 
     @Override
     public List<LockEquipment> getAll() {
-        LambdaQueryWrapper<LockEquipment> wrapper=new LambdaQueryWrapper<>();
-        wrapper.eq(LockEquipment::getDelFlag,0);
+        LambdaQueryWrapper<LockEquipment> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(LockEquipment::getDelFlag, 0);
         return list(wrapper);
     }
 
+    @Override
+    public int setActiveDefenseFlag(ActiveDefenseSaveOrUpdateParamVO vo) {
+        LockEquipment old = getById(vo.getOldEquipmentId());
+        if (StringUtils.isBlank(old.getIp()) || StringUtils.isBlank(old.getCommunity())) {
+            throw new ServiceException("设备未配置IP和密码");
+        }
+        if (StringUtils.isBlank(
+            SnmpUtil.getForSnmp(old.getIp(), old.getCommunity(), SnmpUtil.SYS_DEC, PDU.GETNEXT))) {
+            throw new ServiceException("该设备SNMP尝试连接失败");
+        }
+        LockEquipment lockEquipment = new LockEquipment();
+        lockEquipment.setId(vo.getNewEquipmentId());
+        lockEquipment.setActiveDefenseFlag(1);
+        return updateById(lockEquipment) ? 1 : 0;
+    }
 
+    @Override
+    public int updateActiveDefenseFlag(ActiveDefenseSaveOrUpdateParamVO vo) {
+        String[] ids = new String[1];
+        ids[0] = vo.getOldEquipmentId().toString();
+        removeActiveDefenseByIds(ids);
+        return setActiveDefenseFlag(vo);
+    }
+
+    @Override
+    public int removeActiveDefenseByIds(String[] ids) {
+        return lockEquipmentMapper.removeActiveDefenseByIds(ids);
+    }
 }
