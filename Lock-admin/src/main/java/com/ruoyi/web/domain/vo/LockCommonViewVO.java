@@ -17,6 +17,8 @@ public class LockCommonViewVO {
     private String description;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+    private String latitude;
+    private String longitude;
 
 
 }

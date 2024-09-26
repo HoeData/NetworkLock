@@ -10,6 +10,13 @@
         </foreach>
 
     </delete>
+    <delete id="delByPdaId">
+        update lock_pda_user set del_flag = '2' where pda_id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+
+    </delete>
 
     <select id="selectPdaUserList" resultType="com.ruoyi.web.domain.LockPdaUser">
         select *

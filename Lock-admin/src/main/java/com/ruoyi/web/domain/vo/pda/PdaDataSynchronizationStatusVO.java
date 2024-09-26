@@ -3,6 +3,7 @@ package com.ruoyi.web.domain.vo.pda;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;
+import org.apache.commons.compress.utils.Lists;
 
 /**
  * pda数据同步vo pda首先创建需要同步数据，此时pdaCreateDataFlag为false; pda创建好数据后，此时pdaCreateDataFlag为false为true；
@@ -17,13 +18,13 @@ import lombok.Data;
 public class PdaDataSynchronizationStatusVO implements Serializable {
 
     private Boolean readyFlag = false;
-
     private Boolean pdaCreateDataFlag = false;
     private Boolean pcGetDataFlag = false;
     private Boolean pcCreateDataFlag = false;
     private Boolean pdaGetDataFlag = false;
     private Boolean endFlag = false;
-    private Boolean pdaAuthorizationFlag = false;
-    private Boolean pdaResetPasswordFlag = false;
+//    private Boolean pdaAuthorizationFlag = false;
+//    private Boolean pdaResetPasswordFlag = false;
     private Boolean errorFlag = false;
+    private List<String> licensesNameList = Lists.newArrayList();
 }

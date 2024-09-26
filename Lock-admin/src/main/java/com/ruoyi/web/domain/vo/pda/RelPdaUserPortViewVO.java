@@ -1,6 +1,5 @@
 package com.ruoyi.web.domain.vo.pda;
 
-import java.util.List;
 import lombok.Data;
 
 @Data
@@ -15,7 +14,10 @@ public class RelPdaUserPortViewVO {
     private String equipmentModelName;
     private String equipmentName;
     private Integer equipmentId;
-    private List<RelPortViewVO> portViewList;
+
+    private Integer portInfoId;
+    private Integer portInfoIndex;
+    private String portInfoUserCode;
 
 
 }

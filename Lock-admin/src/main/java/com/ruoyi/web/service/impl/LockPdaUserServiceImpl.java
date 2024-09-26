@@ -70,4 +70,9 @@ public class LockPdaUserServiceImpl extends ServiceImpl<LockPdaUserMapper, LockP
             throw new ServiceException("电子钥匙无法修改默认用户");
         }
     }
+
+    @Override
+    public int delByPdaId(String[] ids) {
+        return pdaUserMapper.delByPdaId(ids);
+    }
 }

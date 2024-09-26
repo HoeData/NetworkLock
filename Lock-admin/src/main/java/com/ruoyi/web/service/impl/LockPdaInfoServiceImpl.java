@@ -45,7 +45,8 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
 
     @Override
     public int deleteByIds(String[] ids) {
-        return pdaInfoMapper.deleteByIds(ids);
+        pdaInfoMapper.deleteByIds(ids);
+        return pdaUserService.delByPdaId(ids);
     }
 
     @Override
@@ -68,7 +69,7 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
             lockPdaUser.setDescription(PdaUserConst.DEFAULT_USER_DESCRIPTION);
             lockPdaUser.setPassword(
                 SecurityUtils.encryptPassword(PdaUserConst.DEFAULT_USER_PASSWORD));
-            CommonUtils.addCommonParams(lockPdaUser, lockPdaInfo.getId());
+            CommonUtils.addCommonParams(lockPdaUser, null);
             return pdaUserService.save(lockPdaUser) ? 1 : 0;
         }
         return updateById(lockPdaInfo) ? 1 : 0;

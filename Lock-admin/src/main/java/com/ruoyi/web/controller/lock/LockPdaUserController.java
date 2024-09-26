@@ -9,6 +9,7 @@ import com.ruoyi.web.constants.PdaUserConst;
 import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.service.ILockPdaUserService;
+import com.ruoyi.web.utils.CommonUtils;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -38,12 +39,22 @@ public class LockPdaUserController extends BaseController {
         pdaUserService.judgeWhetherEdit(pdaUser.getPdaId());
         pdaUserService.judgeAdminFlag(pdaUser);
         pdaUserService.judgeUserName(pdaUser);
-        pdaUser.setPassword(SecurityUtils.encryptPassword(PdaUserConst.DEFAULT_USER_PASSWORD));
+        if (null == pdaUser.getId()) {
+            pdaUser.setPassword("");
+        }
+        CommonUtils.addCommonParams(pdaUser, pdaUser.getId());
         return toAjax(pdaUserService.saveOrUpdate(pdaUser));
     }
 
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(pdaUserService.deleteByIds(ids));
+    }
+
+    @PostMapping("/resetPassword")
+    public AjaxResult resetPassword(LockPdaUser pdaUser) {
+        pdaUser = pdaUserService.getById(pdaUser.getId());
+        pdaUser.setPassword("");
+        return toAjax(pdaUserService.updateById(pdaUser));
     }
 }

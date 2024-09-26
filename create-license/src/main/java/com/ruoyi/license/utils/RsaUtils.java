@@ -52,103 +52,20 @@ public class RsaUtils {
         map.put("batchNo", "123456");
         map.put("lockNumber", 5000);
         List<String> aa = new ArrayList<>();
-        for (int i = 0; i <= 1; i++) {
-            aa.add("1234567890123456");
+        for (int i = 0; i <= 9; i++) {
+            aa.add("qwertyuiopasdfg"+i);
         }
         map.put("lockSerialNumberList", aa);
         String encrypt2 = rsa.encryptBase64(
-            StrUtil.bytes(JSON.toJSONString(map), CharsetUtil.CHARSET_UTF_8), KeyType.PrivateKey);
-        System.out.println(encrypt2);
-
-
-        byte[] keyBytes = Base64.decode(publicKey);
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PublicKey publicKey1 = keyFactory.generatePublic(keySpec);
-
-
-        // 生成一个密钥对
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        cipher.init(Cipher.DECRYPT_MODE, publicKey1);
-        byte[] encryptedBytes = Base64.decode(encrypt2);
-
-        // 定义最大解密块大小
-        int blockSize = 128; // 1024位RSA密钥的最大块大小，减去一些开销
-
-        StringBuilder decryptedText = new StringBuilder();
-
-        // 分割数据并逐个解密
-        for (int i = 0; i < encryptedBytes.length; i += blockSize) {
-            byte[] block = new byte[Math.min(blockSize, encryptedBytes.length - i)];
-            System.arraycopy(encryptedBytes, i, block, 0, block.length);
-            // 执行解密操作
-            byte[] decryptedBlock = cipher.doFinal(block);
-            // 将解密后的字节数组转换为字符串并拼接
-            decryptedText.append(new String(decryptedBlock, "UTF-8"));
-        }
-        System.out.println(decryptedText);
-
+            StrUtil.bytes(JSON.toJSONString(map), CharsetUtil.CHARSET_UTF_8), KeyType.PublicKey);
         try (FileWriter writer = new FileWriter("D:\\out\\lock.license")) {
             writer.write(encrypt2);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        long a = System.currentTimeMillis();
-        System.out.println("cost=" + (System.currentTimeMillis() - a));
-        List<String> valueList = new ArrayList<>();
-        valueList.add("1");
-        valueList.add("2");
-        valueList.add("3");
-        valueList.add("4");
-        valueList.add("5");
-        final CountDownLatch latch = new CountDownLatch(valueList.size());
-        JSONObject result = new JSONObject();
-        final JSONObject data = new JSONObject();
-        final List<String> lockSerialNumberList = new ArrayList<>();
-        for (String value : valueList) {
-            final String val = value;
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    lockSerialNumberList.add(val);
-                    // 计数器减一，通知等待线程
-                    latch.countDown();
-                }
-            }).start();
-        }
-        try {
-            // 主线程等待数据聚合完成
-            latch.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        result.put("lockSerialNumberList", lockSerialNumberList);
-        System.out.println(JSON.toJSONString(result));
+        System.out.println(JSON.toJSONString(rsa.decryptStr(encrypt2, KeyType.PrivateKey)));
 
 
     }
 
-    private static void getPublicKey() {
-        String content = "测试一下AES加密";
-//随机生成密钥
-        byte[] key = SecureUtil.generateKey(SymmetricAlgorithm.AES.getValue()).getEncoded();
-
-//构建
-        SymmetricCrypto aes = new SymmetricCrypto(SymmetricAlgorithm.AES, key);
-
-//加密
-        byte[] encrypt = aes.encrypt(content);
-//解密
-        byte[] decrypt = aes.decrypt(encrypt);
-
-//加密为16进制表示
-        String encryptHex = aes.encryptHex(content);
-//解密为字符串
-        String decryptStr = aes.decryptStr(encryptHex, CharsetUtil.CHARSET_UTF_8);
-    }
-
-    public static String decryptPrivate(String privateKey, String str) {
-        RSA rsa = new RSA(privateKey, null);
-        return rsa.decryptStr(str, KeyType.PrivateKey);
-    }
 }

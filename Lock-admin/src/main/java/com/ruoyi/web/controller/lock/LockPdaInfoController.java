@@ -7,6 +7,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.vo.pda.LockPadPageParamVO;
 import com.ruoyi.web.service.ILockPdaInfoService;
+import com.ruoyi.web.utils.CommonUtils;
 import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +34,7 @@ public class LockPdaInfoController extends BaseController {
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockPdaInfo lockPdaInfo) {
         pdaInfoService.judgeKey(lockPdaInfo);
+        CommonUtils.addCommonParams(lockPdaInfo, lockPdaInfo.getId());
         return toAjax(pdaInfoService.saveOrUpdateAll(lockPdaInfo));
     }
 

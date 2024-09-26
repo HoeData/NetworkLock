@@ -13,6 +13,7 @@ import com.ruoyi.web.utils.PdaDataSynchronizationUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -54,14 +55,12 @@ public class PdaService {
             relPdaUserPortParamVO.setPdaUserId(pdaUser.getId());
             List<RelPdaUserPortViewVO> list = relPdaUserPortService.getAuthorizationList(
                 relPdaUserPortParamVO);
-            list.stream()
-                .filter(item -> null != item.getPortViewList() && item.getPortViewList().size() > 0)
-                .forEach(item -> item.getPortViewList().forEach(portView -> {
-                    RelPdaUserPort relPdaUserPort = new RelPdaUserPort();
-                    relPdaUserPort.setPdaUserId(pdaUser.getId());
-                    relPdaUserPort.setPortInfoId(portView.getPortInfoId());
-                    relPdaUserPortList.add(relPdaUserPort);
-                }));
+            list.forEach(item -> {
+                RelPdaUserPort relPdaUserPort = new RelPdaUserPort();
+                relPdaUserPort.setPdaUserId(pdaUser.getId());
+                relPdaUserPort.setPortInfoId(item.getPortInfoId());
+                relPdaUserPortList.add(relPdaUserPort);
+            });
         });
         pdaMergeDataVO.setRelPdaUserPortList(relPdaUserPortList);
         return pdaMergeDataVO;

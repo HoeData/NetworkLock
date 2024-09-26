@@ -125,6 +125,8 @@ public class LockIndexService {
             numberMap.put("useTotal", useTotalMap.getOrDefault(lockSite.getId(), 0));
             numberMap.put("siteName", lockSite.getName());
             numberMap.put("siteId", lockSite.getId());
+            numberMap.put("latitude", lockSite.getLatitude());
+            numberMap.put("longitude", lockSite.getLongitude());
             list.add(numberMap);
         });
         return list;

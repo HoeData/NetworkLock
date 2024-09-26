@@ -17,4 +17,6 @@ public interface ILockPdaUserService extends IService<LockPdaUser> {
     int deleteByIds(String[] ids);
 
     void judgeWhetherEdit(Integer pdaId);
+
+    int delByPdaId(String[] ids);
 }

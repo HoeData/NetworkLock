@@ -17,4 +17,6 @@ public interface LockPdaUserMapper extends BaseMapper<LockPdaUser> {
     List<LockPdaUser> selectPdaUserList(LockPdaUserPageParamVO vo);
 
     int deleteByIds(String[] ids);
+
+    int delByPdaId(String[] ids);
 }
