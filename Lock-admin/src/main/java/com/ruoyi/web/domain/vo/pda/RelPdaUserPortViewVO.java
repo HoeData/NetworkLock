@@ -1,5 +1,7 @@
 package com.ruoyi.web.domain.vo.pda;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
 import lombok.Data;
 
 @Data
@@ -18,6 +20,10 @@ public class RelPdaUserPortViewVO {
     private Integer portInfoId;
     private Integer portInfoIndex;
     private String portInfoUserCode;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date validityPeriod;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 
 
 }

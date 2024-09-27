@@ -48,6 +48,7 @@ public class RelPdaUserPortServiceImpl extends
         lockAuthorizationLogService.save(lockAuthorizationLog);
         try {
             pdaUserPortMapper.deleteByPdaUserId(list.get(0).getPdaUserId());
+            list.forEach(item -> item.setCreateTime(new Date()));
             return saveBatch(list) ? 1 : 0;
         } catch (Throwable t) {
             lockAuthorizationLog.setErrorMsg(
