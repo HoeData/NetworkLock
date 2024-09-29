@@ -15,6 +15,8 @@ public class LockUnlockViewVO {
     private String lockSerialNumber;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    private Integer status;
+    private String errorMsg;
 
 
 }
