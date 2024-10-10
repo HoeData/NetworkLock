@@ -7,7 +7,7 @@ import lombok.Data;
 public class LockPadPageParamVO extends PageDomain {
 
     private Integer type;
-    private String  key;
+    private String  onlyKey;
     private String description;
 
 }

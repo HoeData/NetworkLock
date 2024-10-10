@@ -16,6 +16,20 @@
         select *
         from lock_pda_info
         where del_flag = '0'
+        <if test="type != null ">
+            AND type =#{type}
+        </if>
+        <if test="onlyKey != null and onlyKey !='' ">
+            AND only_key like concat('%',#{onlyKey},'%')
+        </if>
+        <if test="description != null and description !='' ">
+            AND description like concat('%',#{description},'%')
+        </if>
         order by create_time desc
+
+
+
+
+
     </select>
 </mapper>
