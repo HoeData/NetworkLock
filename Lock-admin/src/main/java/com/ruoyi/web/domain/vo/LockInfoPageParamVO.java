@@ -6,4 +6,5 @@ import lombok.Data;
 public class LockInfoPageParamVO extends PageVO {
     private String serialNumber;
     private String batchNo;
+    private Integer type;
 }

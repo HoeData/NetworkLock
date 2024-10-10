@@ -5,6 +5,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.port.LockInfoForAddLockVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
+import com.ruoyi.web.service.ILockInfoService;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.utils.CommonUtils;
 import com.ruoyi.web.utils.LockUtil;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,8 @@ public class LockPortInfoController extends BaseController {
 
     @Resource
     private ILockPortInfoService lockPortInfoService;
+
+    private ILockInfoService lockInfoService;
     private static final String HEX_MESSAGE = "hexMessage";
 
     @PostMapping("/list")
@@ -41,7 +45,9 @@ public class LockPortInfoController extends BaseController {
 
     @PostMapping("/setInfo")
     public AjaxResult saveOrUpdate(@RequestBody LockPortInfo lockPortInfo) {
-        LockUtil.checkASCIILength(lockPortInfo.getUserCode(), "锁的用户码不正确,请重新输入");
+        if (StringUtils.isNotBlank(lockPortInfo.getUserCode())) {
+            LockUtil.checkASCIILength(lockPortInfo.getUserCode(), "锁的用户码不正确,请重新输入");
+        }
         CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
         return toAjax(lockPortInfoService.updateById(lockPortInfo));
     }

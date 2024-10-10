@@ -15,7 +15,6 @@ public class LockEquipmentAddParamVO extends LockEntity {
     private String delFlag;
     private Integer consoleFlag;
     private Integer portNumber;
-    private Integer trustFlag;
     private String ip;
     private String community;
 

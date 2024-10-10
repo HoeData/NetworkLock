@@ -22,6 +22,6 @@
                  LEFT JOIN lock_pda_info pda ON pda.id = pu.pda_id
                  LEFT JOIN lock_port_info pi ON pi.id = unlog.port_id
                  LEFT JOIN lock_equipment equ ON pi.equipment_id = equ.id
-
+        order by unlog.create_time desc
     </select>
 </mapper>

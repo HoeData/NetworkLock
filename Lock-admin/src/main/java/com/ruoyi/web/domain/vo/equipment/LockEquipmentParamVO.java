@@ -7,6 +7,7 @@ import lombok.Data;
 public class LockEquipmentParamVO extends PageVO {
 
     private Integer equipmentId;
+    private Integer siteId;
     private String name;
     private Integer companyId;
     private Integer deptId;
@@ -15,7 +16,6 @@ public class LockEquipmentParamVO extends PageVO {
     private Integer equipmentTypeId;
     private Integer equipmentModelId;
     private String description;
-    private Integer trustFlag;
 
     private Integer activeDefenseFlag;
 

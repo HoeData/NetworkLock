@@ -44,6 +44,7 @@
                            on em.id = equ.equipment_model_id and em.del_flag = '0'
                  left join lock_company as company
                            on company.id = dept.company_id and company.del_flag = '0'
+            order by temp.create_time desc
     </sql>
     <select id="selectTheLastWarn" resultType="com.ruoyi.web.domain.vo.LockWarnInfoViewVO">
         select

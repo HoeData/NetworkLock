@@ -83,7 +83,6 @@ public class LockPortInfoServiceImpl extends
     public List<MonitorPortViewVO> getMonitorPortList() {
         return lockPortInfoMapper.selectonitorPortList();
     }
-
     @Override
     public List<LockPortInfo> getAll() {
         LambdaQueryWrapper<LockPortInfo> wrapper = new LambdaQueryWrapper<>();

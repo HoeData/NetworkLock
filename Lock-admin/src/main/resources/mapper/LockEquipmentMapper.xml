@@ -46,6 +46,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="deptId != null">
             AND dept.id =#{deptId}
         </if>
+        <if test="siteId != null">
+            AND site.id =#{siteId}
+        </if>
         <if test="machineRoomId != null">
             AND room.id =#{machineRoomId}
         </if>
@@ -58,13 +61,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="equipmentModelId != null">
             AND t.equipment_model_id =#{equipmentModelId}
         </if>
-        <if test="trustFlag != null">
-            AND t.trust_flag =#{trustFlag}
-        </if>
         <if test="activeDefenseFlag != null ">
             AND t.active_defense_flag = #{activeDefenseFlag}
         </if>
-
+    order by t.create_time desc
     </select>
     <select id="selectConsoleTotal" resultType="java.lang.Integer">
         select count(*) from lock_equipment  where console_flag =1;

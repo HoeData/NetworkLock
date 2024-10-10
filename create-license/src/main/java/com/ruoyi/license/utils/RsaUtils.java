@@ -1,29 +1,17 @@
 package com.ruoyi.license.utils;
 
 
-import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
-import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
-import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONObject;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import javax.crypto.Cipher;
 
 public class RsaUtils {
 
@@ -48,16 +36,64 @@ public class RsaUtils {
             + "b1nSSQShT6Y/cHGh37MLfo6hKO1gqPwlyGoIay941P9hl2MSgjYUp0aVAe/RUQdI\n"
             + "veM6K6605Eo0gA==";
         RSA rsa = new RSA(privateKey, publicKey);
-        Map<String, Object> map = new HashMap<>();
-        map.put("batchNo", "123456");
-        map.put("lockNumber", 5000);
-        List<String> aa = new ArrayList<>();
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("batchNo", "123456");
+        resultMap.put("lockNumber", 5000);
+        List<Map<String, Object>> list = new ArrayList<>();
         for (int i = 0; i <= 9; i++) {
-            aa.add("qwertyuiopasdfg"+i);
+            Map<String, Object> map = new HashMap<>();
+            if (i < 5) {
+                map.put("type", 1);
+            } else {
+                map.put("type", 0);
+            }
+            map.put("serialNumber", "qwertyuiopasdfg" + i);
+            list.add(map);
         }
-        map.put("lockSerialNumberList", aa);
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 1);
+        map.put("serialNumber", "XYZS2408AB000036");
+        list.add(map);
+
+        Map<String, Object> map1 = new HashMap<>();
+        map1.put("type", 1);
+        map1.put("serialNumber", "XYZS2408AB000037");
+        list.add(map1);
+
+        Map<String, Object> map2 = new HashMap<>();
+        map2.put("type", 1);
+        map2.put("serialNumber", "XYZS2408AB000038");
+        list.add(map2);
+
+        Map<String, Object> map3 = new HashMap<>();
+        map3.put("type", 1);
+        map3.put("serialNumber", "XYZS2408AB000039");
+        list.add(map3);
+
+        Map<String, Object> map4 = new HashMap<>();
+        map4.put("type", 1);
+        map4.put("serialNumber", "XYZS2408AB000034");
+        list.add(map4);
+
+        Map<String, Object> map5 = new HashMap<>();
+        map5.put("type", 1);
+        map5.put("serialNumber", "XYZS2408AB000041");
+        list.add(map5);
+
+        Map<String, Object> map6 = new HashMap<>();
+        map5.put("type", 1);
+        map5.put("serialNumber", "XYZS2408AB000043");
+        list.add(map6);
+
+        Map<String, Object> map7 = new HashMap<>();
+        map7.put("type", 1);
+        map7.put("serialNumber", "XYZS2408AB000044");
+        list.add(map7);
+
+        resultMap.put("lockInfoList", list);
         String encrypt2 = rsa.encryptBase64(
-            StrUtil.bytes(JSON.toJSONString(map), CharsetUtil.CHARSET_UTF_8), KeyType.PublicKey);
+            StrUtil.bytes(JSON.toJSONString(resultMap), CharsetUtil.CHARSET_UTF_8),
+            KeyType.PublicKey);
         try (FileWriter writer = new FileWriter("D:\\out\\lock.license")) {
             writer.write(encrypt2);
         } catch (IOException e) {

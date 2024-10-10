@@ -10,4 +10,5 @@ public class LockInfo {
     @TableId
     private String serialNumber;
     private String batchNo;
+    private Integer type;
 }

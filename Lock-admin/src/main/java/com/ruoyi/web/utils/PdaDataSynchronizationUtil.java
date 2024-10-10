@@ -1,19 +1,24 @@
 package com.ruoyi.web.utils;
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.web.constants.LockCache;
 import com.ruoyi.web.core.config.LicenseProperties;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.RelPdaUserPort;
 import com.ruoyi.web.domain.vo.pda.PdaDataSynchronizationStatusVO;
+import com.ruoyi.web.domain.vo.pda.PdaDataVO;
 import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.enums.PdaDataSynchronizationStatusType;
 import com.ruoyi.web.enums.PdaDataSynchronizationType;
 import com.ruoyi.web.service.ILockPdaDataSynchronizationInfoService;
 import com.ruoyi.web.service.PdaService;
+import com.ruoyi.web.task.InitLicenseRunner;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -30,7 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 @Slf4j
 public class PdaDataSynchronizationUtil {
 
-    private static final String ADB_PATH = "D:\\out\\platform-tools-latest-windows\\platform-tools\\adb.exe";
+    public static String ADB_PATH = "";
     public static final String PDA_DATA_DIR_PATH = "/sdcard/Android/data/uni.UNI77F4334/documents/";
     private static final String LOCAL_DATA_DIR_PATH = "D:\\out\\";
     private static final String PDA_STATUS_FILENAME = "status.txt";
@@ -66,7 +71,8 @@ public class PdaDataSynchronizationUtil {
         pathList.forEach(path -> {
             String fileName = getFileName(path);
             fileNameList.add(fileName);
-            pushFileToDevice(deviceId, path, PDA_DATA_DIR_PATH + fileName);
+            pushFileToDevice(deviceId, InitLicenseRunner.JAR_PATH + File.separator + "license" + File.separator
+                + fileName, PDA_DATA_DIR_PATH + fileName);
         });
         statusVO.setLicensesNameList(fileNameList);
         writeStatusToPda();
@@ -80,7 +86,7 @@ public class PdaDataSynchronizationUtil {
         //获取PDA创建文件内容
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PC_GET_DATA);
-        PdaMergeDataVO fromPdaData = getFromPda(deviceId);
+        PdaDataVO fromPdaData = getFromPda(deviceId);
         //创建需要同步给PDA的数据
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PC_CREATE_DATA);
@@ -90,22 +96,25 @@ public class PdaDataSynchronizationUtil {
             PdaDataSynchronizationStatusType.PDA_GET_DATA);
         writeDataToPda(deviceId, pdaMergeDataVO);
         getPdaGetDataFlag(deviceId);
-//        pdaService.update(fromPdaData);
+        fromPdaData.setLockPortInfo(pdaMergeDataVO.getPortInfoList());
+        pdaService.update(fromPdaData);
         statusVO.setEndFlag(true);
         writeStatusToPda();
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
+        removePdaFile(deviceId);
         PdaDataSynchronizationUtil.RUNNING = false;
+        PdaDataSynchronizationStopThread.RUNNING=false;
     }
 
     private static void waitPdaCreateData(String deviceId) {
         while (!statusVO.getPdaCreateDataFlag()) {
+            checkDeviceId(deviceId);
             getPdaStatus(deviceId);
         }
     }
 
     private static void getPdaStatus(String deviceId) {
         try {
-            checkDeviceId(deviceId);
             statusVO = JSON.parseObject(
                 readFileContentFromDevice(deviceId, PDA_DATA_DIR_PATH + PDA_STATUS_FILENAME),
                 PdaDataSynchronizationStatusVO.class);
@@ -123,14 +132,14 @@ public class PdaDataSynchronizationUtil {
         }
     }
 
-    private static PdaMergeDataVO getFromPda(String deviceId) {
-        PdaMergeDataVO fromPdaData = null;
+    private static PdaDataVO getFromPda(String deviceId) {
+        PdaDataVO fromPdaData = null;
         int error = 0;
         while (true) {
             try {
                 fromPdaData = JSON.parseObject(
                     readFileContentFromDevice(deviceId, PDA_DATA_DIR_PATH + PDA_DATA_NAME),
-                    PdaMergeDataVO.class);
+                    PdaDataVO.class);
                 if (error > 5) {
                     PdaDataSynchronizationStopThread.RUNNING = false;
                     break;
@@ -236,23 +245,27 @@ public class PdaDataSynchronizationUtil {
     }
 
     private static void judgePdaData(PdaMergeDataVO pdaMergeDataVO,
-        PdaMergeDataVO fromPdaData, LockPdaDataSynchronizationInfo synchronizationInfo) {
+        PdaDataVO fromPdaData, LockPdaDataSynchronizationInfo synchronizationInfo) {
         List<LockPortInfo> pcPortList = pdaMergeDataVO.getPortInfoList();
-        List<LockPortInfo> pdaPortList = new ArrayList<>();
+        List<LockUnlockLog> lockUnlockLogList;
+        Map<Integer, LockPortInfo> pdaPortMap = new HashMap<>();
         if (null != fromPdaData) {
-            pdaPortList = fromPdaData.getPortInfoList();
+            List<LockPortInfo> pdaPortList = fromPdaData.getLockPortInfo();
+            for(LockPortInfo lockPortInfo:pdaPortList){
+                pdaPortMap.put(lockPortInfo.getId(), lockPortInfo);
+            }
+            lockUnlockLogList= fromPdaData.getLockUnlockLog();
+            pdaMergeDataVO.getUnlockLogList().addAll(lockUnlockLogList);
         }
 
         Map<Integer, LockPortInfo> pcPortMap = new HashMap<>();
         int value = 0;
         for (LockPortInfo lockPortInfo : pcPortList) {
+            if(pdaPortMap.containsKey(lockPortInfo.getId())){
+                lockPortInfo=pdaPortMap.get(lockPortInfo.getId());
+            }
             pcPortMap.put(lockPortInfo.getId(), lockPortInfo);
             if (StringUtils.isNotBlank(lockPortInfo.getUserCode())) {
-                value++;
-            }
-        }
-        for (LockPortInfo pdaPort : pdaPortList) {
-            if (StringUtils.isNotBlank(pdaPort.getUserCode())) {
                 value++;
             }
         }
@@ -277,10 +290,9 @@ public class PdaDataSynchronizationUtil {
     }
 
     private static void getPdaGetDataFlag(String deviceId) {
-        int i=0;
-        while (!statusVO.getPdaGetDataFlag()&&i<20) {
+        while (!statusVO.getPdaGetDataFlag()) {
+            checkDeviceId(deviceId);
             getPdaStatus(deviceId);
-            i++;
         }
     }
 
@@ -291,8 +303,8 @@ public class PdaDataSynchronizationUtil {
     }
 
     private static void checkDeviceId(String deviceId) {
-        if (StringUtils.equals(getConnectedDeviceId(), deviceId)) {
-            PdaDataSynchronizationStopThread.RUNNING = false;
+        if (!StringUtils.equals(getConnectedDeviceId(), deviceId)) {
+            throw new ServiceException("设备已断开连接");
         }
     }
 
@@ -343,6 +355,7 @@ public class PdaDataSynchronizationUtil {
         getEndFlag(deviceId);
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
         PdaDataSynchronizationUtil.RUNNING = false;
+        PdaDataSynchronizationStopThread.RUNNING = false;
     }
 
     public static void writeStatusToPda() {
@@ -355,11 +368,12 @@ public class PdaDataSynchronizationUtil {
 
     public static void refreshAll() {
         PdaDataSynchronizationUtil.RUNNING = false;
+        PdaDataSynchronizationStopThread.RUNNING=false;
         PdaDataSynchronizationUtil.statusVO = new PdaDataSynchronizationStatusVO();
         PdaDataSynchronizationUtil.nowStatusMsg = "未同步";
     }
 
-    private static String getFileName(String filePath) {
+    public static String getFileName(String filePath) {
         // 查找最后一个路径分隔符的位置
         int lastSeparatorIndex = filePath.lastIndexOf(File.separator);
         // 如果没有找到路径分隔符，则整个字符串就是文件名
@@ -371,5 +385,23 @@ public class PdaDataSynchronizationUtil {
         // 提取文件名
         String fileName = filePath.substring(lastSeparatorIndex);
         return fileName;
+    }
+
+    public static void removePdaFile(String deviceId) {
+        try {
+            Process process = Runtime.getRuntime().exec(
+                ADB_PATH + " -s " + deviceId + " shell rm -rf " + PDA_DATA_DIR_PATH + "*");
+            int exitCode = process.waitFor();
+            log.info("Push command executed with exit code: " + exitCode);
+            if (exitCode != 0) {
+                PdaDataSynchronizationStopThread.RUNNING = false;
+                throw new IOException(
+                    "Failed to read file from device with exit code: " + exitCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            PdaDataSynchronizationStopThread.RUNNING = false;
+            log.error("Failed to push file to the device.");
+        }
     }
 }

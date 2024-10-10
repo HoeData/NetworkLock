@@ -29,7 +29,6 @@ public class LockEquipmentViewVO{
     private Integer consoleFlag;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    private Integer trustFlag;
     private String ip;
     private String community;
 

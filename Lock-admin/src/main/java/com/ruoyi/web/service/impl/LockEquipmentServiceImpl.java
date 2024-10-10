@@ -77,7 +77,6 @@ public class LockEquipmentServiceImpl extends
     public int setTrust(LockEquipmentAddParamVO lockEquipmentAddParamVO) {
         LockEquipment lockEquipment = new LockEquipment();
         lockEquipment.setId(lockEquipmentAddParamVO.getId());
-        lockEquipment.setTrustFlag(lockEquipmentAddParamVO.getTrustFlag());
         return updateById(lockEquipment) ? 1 : 0;
     }
 

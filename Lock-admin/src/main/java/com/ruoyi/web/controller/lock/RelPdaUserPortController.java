@@ -8,9 +8,12 @@ import com.ruoyi.web.domain.RelPdaUserPort;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
 import com.ruoyi.web.service.IRelPdaUserPortService;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,5 +43,9 @@ public class RelPdaUserPortController extends BaseController {
     @PostMapping("/saveAuthorization")
     public AjaxResult saveAuthorization(@RequestBody List<RelPdaUserPort> list) {
         return toAjax(relPdaUserPortService.saveAuthorization(list));
+    }
+    @DeleteMapping("/{ids}")
+    public AjaxResult remove(@PathVariable String[] ids) {
+        return toAjax(relPdaUserPortService.removeByIds(Arrays.asList(ids)));
     }
 }

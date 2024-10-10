@@ -14,7 +14,6 @@ public class LockPortInfo extends LockEntity {
     private Integer id;
     private Integer equipmentId;
     private Integer deploymentStatus;
-    private Integer lockStatus;
     private Integer serialNumber;
     private String remark;
     private String delFlag;

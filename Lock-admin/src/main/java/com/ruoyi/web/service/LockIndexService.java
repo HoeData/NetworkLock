@@ -52,7 +52,7 @@ public class LockIndexService {
             sitePortSumMap.put(vo.getSiteId(),
                 sitePortSumMap.getOrDefault(vo.getSiteId(), 0) + 1);
             siteIdNameMap.put(vo.getSiteId(), vo.getSiteName());
-            if (vo.getLockStatus() == 1) {
+            if (vo.getDeploymentStatus() <3) {
                 controlledTotalMap.put(vo.getSiteId(),
                     controlledTotalMap.getOrDefault(vo.getSiteId(), 0) + 1);
             }
@@ -109,7 +109,6 @@ public class LockIndexService {
         Map<Integer, Integer> idleTotalMap = new HashMap<>();
         for (PortStatisticsVO vo : portStatisticsVOList) {
             siteIdNameMap.put(vo.getSiteId(), vo.getSiteName());
-            if (vo.getLockStatus() == 1) {
                 if (vo.getDeploymentStatus() == 1) {
                     idleTotalMap.put(vo.getSiteId(),
                         idleTotalMap.getOrDefault(vo.getSiteId(), 1) + 1);
@@ -117,7 +116,6 @@ public class LockIndexService {
                     useTotalMap.put(vo.getSiteId(),
                         useTotalMap.getOrDefault(vo.getSiteId(), 1) + 1);
                 }
-            }
         }
         lockSiteList.forEach(lockSite -> {
             Map<String, Object> numberMap = new HashMap<>();

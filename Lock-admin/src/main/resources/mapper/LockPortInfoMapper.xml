@@ -16,6 +16,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="equipmentId != null ">
             AND t.equipment_id =#{equipmentId}
         </if>
+        order by t.create_time desc
     </select>
     <select id="selectPortTotal" resultType="java.lang.Integer">
         select count(*)
@@ -26,14 +27,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select count(*)
         from lock_port_info
         where del_flag = '0'
-          and lock_status = 1;
+          and deployment_status <![CDATA[< ]]> 3;
     </select>
     <select id="selectUseTotal" resultType="java.lang.Integer">
         select count(*)
         from lock_port_info
         where del_flag = '0'
           and deployment_status = 2
-          and lock_status = 1;
 
     </select>
     <select id="selectNoUseTotal" resultType="java.lang.Integer">
@@ -42,28 +42,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where del_flag = '0'
           and deployment_status = 1;
     </select>
-    <select id="selectonitorPortList"
-            resultType="com.ruoyi.web.domain.vo.MonitorPortViewVO">
-        SELECT e.ip             AS ip,
-               e.community      AS community,
-               pi.serial_number AS port_index,
-               pi.id            AS port_id
-        FROM lock_port_info pi
-                 INNER JOIN lock_equipment e ON e.id = pi.equipment_id
-        WHERE pi.deployment_status = 1
-          AND pi.lock_status = 1
-          AND pi.del_flag = 0
-          AND e.ip != ""
-          and e.active_defense_flag = 1
-	AND e.community != ''
-	AND e.del_flag = 0
-
-    </select>
     <select id="selectPortStatisticsVOList"
             resultType="com.ruoyi.web.domain.vo.index.PortStatisticsVO">
         SELECT site.id   AS site_id,
                site.name AS site_name,
-               pi.lock_status,
                pi.deployment_status,
                pi.user_code
         FROM lock_port_info pi
@@ -76,13 +58,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
                  INNER JOIN lock_site site ON site.id = room.site_id
             AND site.del_flag = '0'
 
+
     </select>
     <select id="selectIdleTotal" resultType="java.lang.Integer">
         select count(*)
         from lock_port_info
         where del_flag = '0'
           and deployment_status = 1
-          and lock_status = 1;
     </select>
-
+    <select id="selectonitorPortList"
+      resultType="com.ruoyi.web.domain.vo.MonitorPortViewVO">
+        SELECT e.ip             AS ip,
+               e.community      AS community,
+               pi.serial_number AS port_index,
+               pi.id            AS port_id
+        FROM lock_port_info pi
+                 INNER JOIN lock_equipment e ON e.id = pi.equipment_id
+        WHERE pi.deployment_status <![CDATA[< ]]> 3
+          AND pi.del_flag = 0
+          AND e.ip != ""
+          and e.active_defense_flag = 1
+	AND e.community != ''
+	AND e.del_flag = 0
+        order by pi.create_time desc
+    </select>
 </mapper>

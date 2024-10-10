@@ -10,7 +10,7 @@
         equipment_type_name,em.name as equipment_model_name,company.name as company_name,
         site.name as site_name, room.name as machine_room_name,port.serial_number as
         port_index,port.update_time as update_time,port.deployment_status as deployment_status,
-        port.lock_status as lock_status,equ.name as equipment_name
+        equ.name as equipment_name
         from lock_info t
         left join lock_port_info as port on port.user_code=t.serial_number and port.del_flag = '0'
         left join lock_equipment equ on port.equipment_id=equ.id and equ.del_flag = '0'
@@ -28,6 +28,9 @@
             </if>
             <if test="serialNumber != null and serialNumber !='' ">
                 AND t.serial_number like concat('%',#{serialNumber},'%')
+            </if>
+            <if test="type != null ">
+                AND t.type = #{type}
             </if>
         </where>
 

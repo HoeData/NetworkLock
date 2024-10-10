@@ -6,6 +6,7 @@ import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.RelPdaUserPort;
 import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
+import com.ruoyi.web.domain.vo.pda.PdaDataVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
 import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
@@ -66,12 +67,12 @@ public class PdaService {
         return pdaMergeDataVO;
     }
 
-    public void update(PdaMergeDataVO fromPdaData) {
-        if(fromPdaData.getPortInfoList().size()>0){
-            portInfoService.updateBatchById(fromPdaData.getPortInfoList());
+    public void update(PdaDataVO fromPdaData) {
+        if(fromPdaData.getLockPortInfo().size()>0){
+            portInfoService.updateBatchById(fromPdaData.getLockPortInfo());
         }
-        if(fromPdaData.getUnlockLogList().size()>0){
-            unlockLogService.updateBatchById(fromPdaData.getUnlockLogList());
+        if(fromPdaData.getLockUnlockLog().size()>0){
+            unlockLogService.updateBatchById(fromPdaData.getLockUnlockLog());
         }
     }
 }

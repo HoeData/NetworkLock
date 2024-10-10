@@ -7,7 +7,6 @@ public class PortStatisticsVO {
 
     private Integer siteId;
     private String siteName;
-    private Integer lockStatus;
     private Integer deploymentStatus;
     private String userCode;
 }

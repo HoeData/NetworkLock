@@ -6,8 +6,7 @@ public class LicenseParamVO {
 
     private String batchNo;
     private Integer lockNumber;
-
-    private List<String> lockSerialNumberList;
+    private List<LockLicenseInfoVO> lockInfoList;
     public String getBatchNo() {
         return batchNo;
     }
@@ -24,11 +23,11 @@ public class LicenseParamVO {
         this.lockNumber = lockNumber;
     }
 
-    public List<String> getLockSerialNumberList() {
-        return lockSerialNumberList;
+    public List<LockLicenseInfoVO> getLockInfoList() {
+        return lockInfoList;
     }
 
-    public void setLockSerialNumberList(List<String> lockSerialNumberList) {
-        this.lockSerialNumberList = lockSerialNumberList;
+    public void setLockInfoList(List<LockLicenseInfoVO> lockInfoList) {
+        this.lockInfoList = lockInfoList;
     }
 }

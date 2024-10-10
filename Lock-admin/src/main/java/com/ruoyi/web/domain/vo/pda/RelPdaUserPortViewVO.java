@@ -1,12 +1,14 @@
 package com.ruoyi.web.domain.vo.pda;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 import lombok.Data;
 
 @Data
 public class RelPdaUserPortViewVO {
-
+    private Integer id;
     private String companyName;
     private String deptName;
     private String siteName;
@@ -16,7 +18,6 @@ public class RelPdaUserPortViewVO {
     private String equipmentModelName;
     private String equipmentName;
     private Integer equipmentId;
-
     private Integer portInfoId;
     private Integer portInfoIndex;
     private String portInfoUserCode;
