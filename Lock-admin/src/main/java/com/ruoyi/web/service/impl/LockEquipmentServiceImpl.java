@@ -50,15 +50,24 @@ public class LockEquipmentServiceImpl extends
         LockEquipment lockEquipment = new LockEquipment();
         BeanUtils.copyProperties(lockEquipmentAddParamVO, lockEquipment);
         save(lockEquipment);
+        List<LockPortInfo> lockPortInfoList = new ArrayList<>();
         if (lockEquipment.getPortNumber() > 0) {
-            List<LockPortInfo> lockPortInfoList = new ArrayList<>();
             for (int i = 0; i < lockEquipment.getPortNumber(); i++) {
                 LockPortInfo lockPortInfo = new LockPortInfo();
                 lockPortInfo.setEquipmentId(lockEquipment.getId());
-                lockPortInfo.setSerialNumber(i + 1);
+                lockPortInfo.setSerialNumber(String.valueOf(i + 1));
                 CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
                 lockPortInfoList.add(lockPortInfo);
             }
+        }
+        if(lockEquipmentAddParamVO.getConsoleFlag()==1){
+            LockPortInfo lockPortInfo = new LockPortInfo();
+            lockPortInfo.setEquipmentId(lockEquipment.getId());
+            lockPortInfo.setSerialNumber("console口");
+            CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
+            lockPortInfoList.add(lockPortInfo);
+        }
+        if(lockPortInfoList.size()>0){
             lockPortInfoService.saveBatch(lockPortInfoList);
         }
         return 1;

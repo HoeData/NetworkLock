@@ -18,7 +18,7 @@ public class LockWarnInfoViewVO {
     private String equipmentTypeName;
     private String equipmentModelName;
     private Integer portInfoId;
-    private Integer portIndex;
+    private String portIndex;
     private Integer warnInfoId;
     private Integer status;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

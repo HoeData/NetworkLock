@@ -35,11 +35,13 @@ public class Task {
         if (viewVOList.size() > 0) {
             for (MonitorPortViewVO vo : viewVOList) {
                 try {
-                    String inFlow = SnmpUtil.getForSnmp(vo.getIp(), vo.getCommunity(),
-                        SnmpUtil.IF_IN_OCTETS + "." + vo.getPortIndex(), PDU.GET);
-                    String outFlow = SnmpUtil.getForSnmp(vo.getIp(), vo.getCommunity(),
-                        SnmpUtil.IF_OUT_OCTETS + "." + vo.getPortIndex(), PDU.GET);
-                    addWarn(inFlow, outFlow, vo.getPortId());
+                    if(!StringUtils.contains(vo.getPortIndex(),"console")){
+                        String inFlow = SnmpUtil.getForSnmp(vo.getIp(), vo.getCommunity(),
+                            SnmpUtil.IF_IN_OCTETS + "." + vo.getPortIndex(), PDU.GET);
+                        String outFlow = SnmpUtil.getForSnmp(vo.getIp(), vo.getCommunity(),
+                            SnmpUtil.IF_OUT_OCTETS + "." + vo.getPortIndex(), PDU.GET);
+                        addWarn(inFlow, outFlow, vo.getPortId());
+                    }
                 } catch (Exception e) {
 
                 }

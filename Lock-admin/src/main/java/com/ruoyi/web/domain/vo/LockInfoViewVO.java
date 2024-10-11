@@ -17,7 +17,7 @@ public class LockInfoViewVO {
     private String equipmentTypeName;
     private String equipmentModelName;
     private String siteName;
-    private Integer portIndex;
+    private String portIndex;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
     private Integer deploymentStatus;

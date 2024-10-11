@@ -7,6 +7,6 @@ public class MonitorPortViewVO {
 
     private String ip;
     private String community;
-    private Integer portIndex;
+    private String portIndex;
     private Integer portId;
 }

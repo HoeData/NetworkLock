@@ -6,7 +6,7 @@ import lombok.Data;
 public class RelPortViewVO {
 
     private Integer portInfoId;
-    private Integer portInfoIndex;
+    private String portInfoIndex;
     private String portInfoUserCode;
 
 }

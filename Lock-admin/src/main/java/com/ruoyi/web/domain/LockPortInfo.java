@@ -14,7 +14,7 @@ public class LockPortInfo extends LockEntity {
     private Integer id;
     private Integer equipmentId;
     private Integer deploymentStatus;
-    private Integer serialNumber;
+    private String serialNumber;
     private String remark;
     private String delFlag;
     @TableField(fill = FieldFill.UPDATE)

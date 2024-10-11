@@ -19,7 +19,7 @@ public class RelPdaUserPortViewVO {
     private String equipmentName;
     private Integer equipmentId;
     private Integer portInfoId;
-    private Integer portInfoIndex;
+    private String portInfoIndex;
     private String portInfoUserCode;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date validityPeriod;
