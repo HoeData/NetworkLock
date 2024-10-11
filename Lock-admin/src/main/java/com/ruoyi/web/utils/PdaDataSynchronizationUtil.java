@@ -37,7 +37,7 @@ public class PdaDataSynchronizationUtil {
 
     public static String ADB_PATH = "";
     public static final String PDA_DATA_DIR_PATH = "/sdcard/Android/data/uni.UNI77F4334/documents/";
-    private static final String LOCAL_DATA_DIR_PATH = "D:\\out\\";
+    private static final String LOCAL_DATA_DIR_PATH = "C:\\dataSynchronization\\";
     private static final String PDA_STATUS_FILENAME = "status.txt";
     private static final String PC_DATA_NAME = "pcData.txt";
     private static final String PDA_DATA_NAME = "pdaData.txt";
@@ -65,6 +65,7 @@ public class PdaDataSynchronizationUtil {
         LockPdaDataSynchronizationInfo synchronizationInfo = pdaDataSynchronizationInfoService.saveAll(
             deviceId, PdaDataSynchronizationType.AUTHORIZATION_SYNCHRONIZATION);
         statusVO.setReadyFlag(true);
+        mkdirFold(LOCAL_DATA_DIR_PATH+deviceId);
         nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
         List<String> pathList = SpringUtils.getBean(LicenseProperties.class).getPathList();
         List<String> fileNameList = new ArrayList<>();
@@ -102,7 +103,6 @@ public class PdaDataSynchronizationUtil {
         writeStatusToPda();
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
         removePdaFile(deviceId);
-        PdaDataSynchronizationUtil.RUNNING = false;
         PdaDataSynchronizationStopThread.RUNNING=false;
     }
 
@@ -354,7 +354,6 @@ public class PdaDataSynchronizationUtil {
         getPdaGetDataFlag(deviceId);
         getEndFlag(deviceId);
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
-        PdaDataSynchronizationUtil.RUNNING = false;
         PdaDataSynchronizationStopThread.RUNNING = false;
     }
 
@@ -392,16 +391,29 @@ public class PdaDataSynchronizationUtil {
             Process process = Runtime.getRuntime().exec(
                 ADB_PATH + " -s " + deviceId + " shell rm -rf " + PDA_DATA_DIR_PATH + "*");
             int exitCode = process.waitFor();
-            log.info("Push command executed with exit code: " + exitCode);
+            log.info("remove command executed with exit code: " + exitCode);
             if (exitCode != 0) {
                 PdaDataSynchronizationStopThread.RUNNING = false;
                 throw new IOException(
-                    "Failed to read file from device with exit code: " + exitCode);
+                    "remove to read file from device with exit code: " + exitCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
             PdaDataSynchronizationStopThread.RUNNING = false;
-            log.error("Failed to push file to the device.");
+            log.error("remove to push file to the device.");
+        }
+    }
+    private static void mkdirFold(String folderPath){
+        File folder = new File(folderPath);
+        // 检查文件夹是否存在
+        if (!folder.exists()) {
+            // 文件夹不存在，尝试创建它
+            boolean wasSuccessful = folder.mkdirs();
+            if (wasSuccessful) {
+                log.info("文件夹已成功创建: " + folder.getAbsolutePath());
+            } else {
+                log.error("无法创建文件夹: " + folder.getAbsolutePath());
+            }
         }
     }
 }
