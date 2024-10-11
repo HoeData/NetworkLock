@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.vo.PageVO;
 import com.ruoyi.web.domain.vo.pda.LockUnlockViewVO;
+import com.ruoyi.web.domain.vo.pda.UnlockPageParamVO;
 import com.ruoyi.web.mapper.LockUnlockLogMapper;
 import com.ruoyi.web.service.ILockUnlockLogService;
 import java.util.List;
@@ -18,7 +19,7 @@ public class LockUnlockLogServiceImpl extends
     private final LockUnlockLogMapper unlockLogMapper;
 
     @Override
-    public List<LockUnlockViewVO> selectUnlockList(PageVO pageVO) {
+    public List<LockUnlockViewVO> selectUnlockList(UnlockPageParamVO pageVO) {
         return unlockLogMapper.selectUnlockList(pageVO);
     }
 }

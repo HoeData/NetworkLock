@@ -5,6 +5,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.web.domain.vo.PageVO;
 import com.ruoyi.web.domain.vo.pda.LockUnlockViewVO;
+import com.ruoyi.web.domain.vo.pda.UnlockPageParamVO;
 import com.ruoyi.web.service.ILockUnlockLogService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class LockUnlockController extends BaseController {
     private final ILockUnlockLogService unlockLogService;
 
     @PostMapping("/list")
-    public TableDataInfo list(@RequestBody PageVO pageVO) {
+    public TableDataInfo list(@RequestBody UnlockPageParamVO pageVO) {
         PageHelper.startPage(pageVO.getPageNum(), pageVO.getPageSize());
         List<LockUnlockViewVO> list = unlockLogService.selectUnlockList(pageVO);
         return getDataTable(list);

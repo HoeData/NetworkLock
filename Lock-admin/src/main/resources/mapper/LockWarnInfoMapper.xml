@@ -30,21 +30,20 @@
                temp.status   as status
     </sql>
     <sql id="warnListLeftJoin">
-        left join lock_port_info as pt on pt.id = temp.port_id
-                 left join lock_equipment as equ on equ.id = pt.equipment_id
-                 left join lock_cabinet as cabinet
+        inner join lock_port_info as pt on pt.id = temp.port_id
+                 inner join lock_equipment as equ on equ.id = pt.equipment_id
+                 inner join lock_cabinet as cabinet
                            on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
-                 left join lock_machine_room as room
+                 inner join lock_machine_room as room
                            on room.id = cabinet.machine_room_id and room.del_flag = '0'
-                 left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
-                 left join lock_dept as dept on dept.id = equ.dept_id and dept.del_flag = '0'
-                 left join lock_equipment_type as et
+                 inner join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+                 inner join lock_dept as dept on dept.id = equ.dept_id and dept.del_flag = '0'
+                 inner join lock_equipment_type as et
                            on et.id = equ.equipment_type_id and et.del_flag = '0'
-                 left join lock_equipment_model as em
+                 inner join lock_equipment_model as em
                            on em.id = equ.equipment_model_id and em.del_flag = '0'
-                 left join lock_company as company
+                 inner join lock_company as company
                            on company.id = dept.company_id and company.del_flag = '0'
-            order by temp.create_time desc
     </sql>
     <select id="selectTheLastWarn" resultType="com.ruoyi.web.domain.vo.LockWarnInfoViewVO">
         select
@@ -55,7 +54,7 @@
                 and status = 0
               order by id desc limit 1) temp
         <include refid="warnListLeftJoin"/>
-
+        order by temp.create_time desc
     </select>
     <select id="selectWarnInfoList"
             resultType="com.ruoyi.web.domain.vo.LockWarnInfoViewVO">
@@ -66,7 +65,31 @@
         where del_flag = 0
         order by id ) temp
         <include refid="warnListLeftJoin"/>
-
+        <if test="equipmentId != null ">
+            AND equ.id = #{equipmentId}
+        </if>
+        <if test="companyId != null">
+            AND company.id =#{companyId}
+        </if>
+        <if test="deptId != null">
+            AND dept.id =#{deptId}
+        </if>
+        <if test="siteId != null">
+            AND site.id =#{siteId}
+        </if>
+        <if test="machineRoomId != null">
+            AND room.id =#{machineRoomId}
+        </if>
+        <if test="cabinetId != null">
+            AND cabinet.id =#{cabinetId}
+        </if>
+        <if test="equipmentTypeId != null">
+            AND et.equipment_type_id =#{equipmentTypeId}
+        </if>
+        <if test="equipmentModelId != null">
+            AND em.equipment_model_id =#{equipmentModelId}
+        </if>
+        order by temp.create_time desc
     </select>
     <select id="selectTotalByStartAndEndDate"
             resultType="com.ruoyi.web.domain.vo.index.Recent12MonthsStatisticsVO">

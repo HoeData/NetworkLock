@@ -11,10 +11,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         pu.user_name AS pda_user_name
         FROM
         lock_authorization_log au
-        LEFT JOIN lock_pda_user pu ON pu.id = au.pda_user_id
-        LEFT JOIN lock_pda_info pda ON pda.id = pu.pda_id
+        inner JOIN lock_pda_user pu ON pu.id = au.pda_user_id
+        inner JOIN lock_pda_info pda ON pda.id = pu.pda_id
         <if test="successFlag != null">
             AND au.success_flag =#{successFlag}
+        </if>
+        <if test="userName != null">
+            AND pu.user_name like CONCAT('%',#{userName},'%')
         </if>
          order by au.create_time desc
 
