@@ -77,12 +77,13 @@
     <select id="selectAuthorizationList"
       resultType="com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO">
         <include refid="selectFiled"/>
-        ,temp.validity_period,temp.create_time,temp.id ,temp.port_info_user_code AS
+        ,temp.validity_period,temp.create_time,temp.id ,temp.lock_serial_number AS
         port_info_user_code,temp.serial_number as serial_number
         <include refid="fromSql"/>
         INNER JOIN (SELECT pt.id as
         ptid,rel.validity_period,rel.create_time,rel.id,rel.lock_serial_number AS
-        port_info_user_code,rel.serial_number as serial_number
+        port_info_user_code,rel.serial_number as serial_number,rel.lock_serial_number AS
+        lock_serial_number
         FROM rel_pda_user_port rel
         INNER JOIN lock_port_info pt ON pt.id = rel.port_info_id
         AND pt.del_flag = '0' and rel.pda_user_id = #{pdaUserId}) temp ON temp.ptid = pt.id
