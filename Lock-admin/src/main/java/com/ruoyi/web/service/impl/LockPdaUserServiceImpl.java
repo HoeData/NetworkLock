@@ -46,7 +46,7 @@ public class LockPdaUserServiceImpl extends ServiceImpl<LockPdaUserMapper, LockP
     @Override
     public void judgeAdminFlag(LockPdaUser pdaUser) {
         if (null != pdaUser.getAdminFlag() && pdaUser.getAdminFlag() == 0) {
-            throw new ServiceException("默认管理员用户不允许修改");
+            throw new ServiceException("默认用户不允许修改");
         }
     }
 

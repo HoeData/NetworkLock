@@ -3,18 +3,13 @@ package com.ruoyi.web.controller.lock;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.domain.LockPortInfo;
-import com.ruoyi.web.domain.vo.port.LockInfoForAddLockVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
-import com.ruoyi.web.service.ILockInfoService;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.utils.CommonUtils;
 import com.ruoyi.web.utils.LockUtil;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,12 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/lock/portInfo")
 public class LockPortInfoController extends BaseController {
-
     @Resource
     private ILockPortInfoService lockPortInfoService;
-
-    private ILockInfoService lockInfoService;
-    private static final String HEX_MESSAGE = "hexMessage";
 
     @PostMapping("/list")
     public AjaxResult list(@RequestBody LockPortInfoListParamVO portInfoListParamVO) {
@@ -51,24 +42,9 @@ public class LockPortInfoController extends BaseController {
         CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
         return toAjax(lockPortInfoService.updateById(lockPortInfo));
     }
-
     @GetMapping("/getStatisticalQuantity")
     public AjaxResult getStatisticalQuantity() {
         return success(lockPortInfoService.getStatisticalQuantity());
-    }
-
-    @PostMapping("/getHexMessageForAddLock")
-    public AjaxResult getHexMessageForAddLock(@RequestBody @Validated List<LockInfoForAddLockVO> voList) {
-        Map<String, String> map = new HashMap<>(1);
-        map.put(HEX_MESSAGE, lockPortInfoService.getHexMessageForAddLock(voList));
-        return success(map);
-    }
-
-    @PostMapping("/getHexMessageForDelLock")
-    public AjaxResult getHexMessageForDelLock(@RequestBody  List<LockInfoForAddLockVO> list) {
-        Map<String, String> map = new HashMap<>(1);
-        map.put(HEX_MESSAGE, lockPortInfoService.getHexMessageForDelLock(list));
-        return success(map);
     }
 
 }

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,6 +46,7 @@ public class LockUtil {
         int i = calculateChecksum(bytes, 0, bytes.length);
         byte[] checksum = new byte[]{(byte) i};
         byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        System.out.println(bytesToHexWithSpaces(message));
         send(serialPort, message);
         byte[] buffer = new byte[1024];
         receiveByte(serialPort, buffer);
@@ -304,7 +305,7 @@ public class LockUtil {
         byte[] data = new byte[lockInfoList.size() * 19 + 1];
         data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
         for (int i = 0; i < lockInfoList.size(); i++) {
-            int i1 = i + 1;
+            int i1 = i*19 + 1;
             LockInfoVO lockInfo = lockInfoList.get(i);
             data[i1] = lockInfo.getLockNumber();
             byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
@@ -380,36 +381,83 @@ public class LockUtil {
         }
     }
     public static void main(String[] args) throws Exception {
-        //以下为测试开锁的秘钥测试，秘钥为ON，第一步必须要调用锁信息，然后在输入解锁秘钥
-        //获取锁信息报文为68 80 00 01 00 E9，开锁报文为68 82 00 04 54 30 34 3D E3
-        //如果想解析锁信息，需要base64解密报文，然后在转为ascii码来获取真实报文
-        byte[] onData = "ON".getBytes();
-        byte[] encodedBytes = Base64.getEncoder().encode(onData);
-        String hexRepresentation = bytesToHexWithSpaces(encodedBytes);
-        System.out.println(hexRepresentation);
-        byte[] aa= hexStringToByteArray("54 30 34 3D ");
-        byte[] bb = new byte[]{0x68, (byte) 0x82};
+        List<LockInfoVO> lockInfoList = new ArrayList<>();
+        LockInfoVO lockInfo = new LockInfoVO();
+        lockInfo.setLockNumber(
+            (byte) Integer.parseInt(Integer.toHexString(2), 16));
+        lockInfo.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
+        lockInfo.setLockEffective(
+            (byte) Integer.parseInt(Integer.toHexString(255), 16));
+        lockInfo.setLockTime(
+            (byte) Integer.parseInt(Integer.toHexString(4), 16));
+        lockInfoList.add(lockInfo);
+        LockInfoVO lockInfo1 = new LockInfoVO();
+        lockInfo1.setLockNumber(
+            (byte) Integer.parseInt(Integer.toHexString(2), 16));
+        lockInfo1.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
+        lockInfo1.setLockEffective(
+            (byte) Integer.parseInt(Integer.toHexString(255), 16));
+        lockInfo1.setLockTime(
+            (byte) Integer.parseInt(Integer.toHexString(4), 16));
+        lockInfoList.add(lockInfo1);
+        System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
+
+        byte[] aa = "1234567890asdfgh".getBytes(StandardCharsets.US_ASCII);
+        byte[] bb = new byte[]{0x68, (byte) 0x64};
         byte[] len = CheckLen(aa.length);
         byte[] bytes = mergeByteArrays(bb, len, aa);
         int i = calculateChecksum(bytes, 0, bytes.length);
         byte[] checksum = new byte[]{(byte) i};
         byte[] message = mergeByteArrays(bytes, checksum);//报文
         System.out.println(bytesToHexWithSpaces(message));
-        SerialPort serialPort = getSerialPort(dev);
-        serialPort.openPort();
-        send(serialPort, message);
-        byte[] buffer = new byte[100];
-        receiveByte(serialPort, buffer);
-        serialPort.closePort();
-        System.out.println(bytesToHexWithSpaces(buffer));
+//        setKeyId(message);
+//        //以下为测试开锁的秘钥测试，秘钥为ON，第一步必须要调用锁信息，然后在输入解锁秘钥
+//        //获取锁信息报文为68 80 00 01 00 E9，开锁报文为68 82 00 04 54 30 34 3D E3
+//        //如果想解析锁信息，需要base64解密报文，然后在转为ascii码来获取真实报文
+//        byte[] onData = "ON".getBytes();
+//        byte[] encodedBytes = Base64.getEncoder().encode(onData);
+//        String hexRepresentation = bytesToHexWithSpaces(encodedBytes);
+//        System.out.println(hexRepresentation);
+//        byte[] aa= hexStringToByteArray("54 30 34 3D ");
+//        byte[] bb = new byte[]{0x68, (byte) 0x82};
+//        byte[] len = CheckLen(aa.length);
+//        byte[] bytes = mergeByteArrays(bb, len, aa);
+//        int i = calculateChecksum(bytes, 0, bytes.length);
+//        byte[] checksum = new byte[]{(byte) i};
+//        byte[] message = mergeByteArrays(bytes, checksum);//报文
+//        System.out.println(bytesToHexWithSpaces(message));
+//        SerialPort serialPort = getSerialPort(dev);
+//        serialPort.openPort();
+//        send(serialPort, message);
+//        byte[] buffer = new byte[100];
+//        receiveByte(serialPort, buffer);
+//        serialPort.closePort();
+//        System.out.println(bytesToHexWithSpaces(buffer));
         byte[] decodedBytes = hexStringToByteArray(
-            "57 46 6C 61 55 7A 49 30 4D 44 68 42 51 6A 41 77 4D 44 41 30 4D 77 3D 3D ");
-        String decodedString = new String(decodedBytes);
-        // 输出解码后的字符串
-        System.out.println(decodedString);
-        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
-        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
-        System.out.println(decodedStringa);
-//        System.out.println(getStrForAscii("31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 23 "));
+            "58 59 5A 53 32 34 30 38 41 42 30 30 30 30 33 36 FF 04"
+//                + "FF 08 02 30 30 30 30 30 "
+//                + "30 30 30 30 30 30 30 30 30 30 30 00 00 03 30 30 30 30 30 30 30 30 30 30 30 "
+//                + "30 30 30 30 30 00 00 04 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 "
+//                + "00 05 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 00 06 58 59 5A 53 "
+//                + "32 34 30 38 41 42 30 30 30 30 34 34 FF 08 07 58 59 5A 53 32 34 30 38 41 42 "
+//                + "30 30 30 30 33 34 FF 08 08 58 59 5A 53 32 34 30 38 41 42 30 30 30 30 34 31 "
+//                + "FF 08 09 58 59 5A 53 32 34 30 38 41 42 30 30 30 30 34 33 FF 08 0A 58 59 5A "
+//                + "53 32 34 30 38 41 42 30 30 30 30 33 36 FF 08 0B 58 59 5A 53 32 34 30 38 41 "
+//                + "42 30 30 30 30 33 37 FF 08 0C 58 59 5A 53 32 34 30 38 41 42 30 30 30 30 33 "
+//                + "38 FF 08 0D 58 59 5A 53 32 34 30 38 41 42 30 30 30 30 33 39 FF 08 0E 30 30 "
+//                + "30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 00 0F 30 30 30 30 30 30 30 30 "
+//                + "30 30 30 30 30 30 30 30 00 00 10 30 30 30 30 30 30 30 30 30 30 30 30 30 30 "
+//                + "30 30 00 00 11 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 00 12 30 "
+//                + "30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 00 13 30 30 30 30 30 30 30 "
+//                + "30 30 30 30 30 30 30 30 30 00 00 14 30 30 30 30 30 30 30 30 30 30 30 30 30 "
+//                + "30 30 30 00"
+                + " ");
+        System.out.println(new String(decodedBytes, StandardCharsets.US_ASCII).substring(0,16));
+//        // 输出解码后的字符串
+//        System.out.println(decodedString);
+//        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
+//        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
+//        System.out.println(decodedStringa);
+////        System.out.println(getStrForAscii("31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 23 "));
     }
 }

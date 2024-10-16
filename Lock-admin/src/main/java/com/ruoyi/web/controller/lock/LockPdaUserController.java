@@ -4,8 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
-import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.web.constants.PdaUserConst;
 import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.service.ILockPdaUserService;
@@ -37,7 +35,6 @@ public class LockPdaUserController extends BaseController {
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockPdaUser pdaUser) {
         pdaUserService.judgeWhetherEdit(pdaUser.getPdaId());
-        pdaUserService.judgeAdminFlag(pdaUser);
         pdaUserService.judgeUserName(pdaUser);
         if (null == pdaUser.getId()) {
             pdaUser.setPassword("");

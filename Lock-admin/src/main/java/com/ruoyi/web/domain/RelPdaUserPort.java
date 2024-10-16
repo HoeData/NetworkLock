@@ -18,5 +18,7 @@ public class RelPdaUserPort {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date validityPeriod;
     private Date createTime;
+    private Integer serialNumber;
+    private String lockSerialNumber;
 
 }

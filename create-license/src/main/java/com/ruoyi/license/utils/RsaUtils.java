@@ -10,8 +10,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class RsaUtils {
 
@@ -42,11 +44,7 @@ public class RsaUtils {
         List<Map<String, Object>> list = new ArrayList<>();
         for (int i = 0; i <= 9; i++) {
             Map<String, Object> map = new HashMap<>();
-            if (i < 5) {
-                map.put("type", 1);
-            } else {
-                map.put("type", 0);
-            }
+            map.put("type", 1);
             map.put("serialNumber", "qwertyuiopasdfg" + i);
             list.add(map);
         }
@@ -90,6 +88,37 @@ public class RsaUtils {
         map7.put("serialNumber", "XYZS2408AB000044");
         list.add(map7);
 
+        Set<String> lockList = new HashSet<>();
+        lockList.add("XYZS2408AB000025");
+        lockList.add("XYZS2408AB000197");
+        lockList.add("XYZS2408AB000193");
+        lockList.add("XYZS2408AB000026");
+        lockList.add("XYZS2408AB000022");
+        lockList.add("XYZS2408AB000192");
+        lockList.add("XYZS2408AB000181");
+        lockList.add("XYZS2408AB000173");
+        lockList.add("XYZS2408AB000023");
+        lockList.add("XYZS2408AB000178");
+        lockList.add("XYZS2408AB000019");
+        lockList.add("XYZS2408AB000024");
+        lockList.add("XYZS2408AB000183");
+        lockList.add("XYZS2408AB000200");
+        lockList.add("XYZS2408AB000195");
+        lockList.add("XYZS2408AB000004");
+        lockList.add("XYZS2408AB000182");
+        lockList.add("XYZS2408AB000200");
+        lockList.add("XYZS2408AB000195");
+        lockList.add("XYZS2408AB000004");
+        lockList.add("XYZS2408AB000005");
+        lockList.add("XYZS2408AB000006");
+        lockList.add("XYZS2408AB000007");
+        lockList.add("XYZS2408AB000008");
+        lockList.forEach(lock -> {
+            Map<String, Object> addMap = new HashMap<>();
+            addMap.put("type", 2);
+            addMap.put("serialNumber", lock);
+            list.add(addMap);
+        });
         resultMap.put("lockInfoList", list);
         String encrypt2 = rsa.encryptBase64(
             StrUtil.bytes(JSON.toJSONString(resultMap), CharsetUtil.CHARSET_UTF_8),

@@ -13,6 +13,6 @@ public interface RelPdaUserPortMapper extends BaseMapper<RelPdaUserPort> {
 
     List<RelPdaUserPortViewVO> selectAuthorizationList(RelPdaUserPortParamVO vo);
     List<LockPortInfo> selectAuthorizationPortList(Integer pdaUserId);
-
     void deleteByPdaUserId(Integer pdaUserId);
+    List<RelPdaUserPort> selectByPdaUserId(Integer pdaUserId);
 }
