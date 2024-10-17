@@ -72,7 +72,7 @@
         <include refid="fromSql"/>
         where equ.del_flag = '0'
         <include refid="whereSql"/>
-        order by equ.id desc
+        order by pt.update_time desc
     </select>
     <select id="selectAuthorizationList"
       resultType="com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO">
@@ -83,13 +83,13 @@
         INNER JOIN (SELECT pt.id as
         ptid,rel.validity_period,rel.create_time,rel.id,rel.lock_serial_number AS
         port_info_user_code,rel.serial_number as serial_number,rel.lock_serial_number AS
-        lock_serial_number
+        lock_serial_number,rel.id as rel_id
         FROM rel_pda_user_port rel
         INNER JOIN lock_port_info pt ON pt.id = rel.port_info_id
         AND pt.del_flag = '0' and rel.pda_user_id = #{pdaUserId}) temp ON temp.ptid = pt.id
         where equ.del_flag= '0'
         <include refid="whereSql"/>
-        order by equ.id desc
+        order by temp.rel_id desc
     </select>
     <select id="selectAuthorizationPortList"
             resultType="com.ruoyi.web.domain.LockPortInfo">
