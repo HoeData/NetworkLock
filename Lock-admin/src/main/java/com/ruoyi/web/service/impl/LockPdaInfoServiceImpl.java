@@ -67,8 +67,7 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
             lockPdaUser.setUserName(PdaUserConst.DEFAULT_USER_NAME);
             lockPdaUser.setAdminFlag(0);
             lockPdaUser.setDescription(PdaUserConst.DEFAULT_USER_DESCRIPTION);
-            lockPdaUser.setPassword(
-                SecurityUtils.encryptPassword(PdaUserConst.DEFAULT_USER_PASSWORD));
+            lockPdaUser.setPassword("");
             CommonUtils.addCommonParams(lockPdaUser, null);
             return pdaUserService.save(lockPdaUser) ? 1 : 0;
         }

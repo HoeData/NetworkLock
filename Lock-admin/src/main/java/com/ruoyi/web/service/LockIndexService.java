@@ -1,9 +1,14 @@
 package com.ruoyi.web.service;
 
+import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.LockSite;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO;
 import com.ruoyi.web.domain.vo.index.PortStatisticsChartVO;
 import com.ruoyi.web.domain.vo.index.PortStatisticsVO;
 import com.ruoyi.web.domain.vo.index.Recent12MonthsStatisticsVO;
+import com.ruoyi.web.enums.QueryLatitudeType;
+import com.ruoyi.web.mapper.LockEquipmentMapper;
 import com.ruoyi.web.mapper.LockPortInfoMapper;
 import com.ruoyi.web.mapper.LockUnlockLogMapper;
 import com.ruoyi.web.mapper.LockWarnInfoMapper;
@@ -12,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +29,7 @@ public class LockIndexService {
     private final LockWarnInfoMapper warnInfoMapper;
     private final LockUnlockLogMapper lockUnlockLogMapper;
     private final ILockSiteService lockSiteService;
+    private final LockEquipmentMapper lockEquipmentMapper;
 
     public Map<String, Object> getIndexStatisticalQuantity() {
         Map<String, Object> resultMap = new HashMap<>();
@@ -128,5 +135,43 @@ public class LockIndexService {
             list.add(numberMap);
         });
         return list;
+    }
+
+    public Map<String, Object> getLockStatusListByLatitudeType(String type, Integer value) {
+        LockEquipmentParamVO lockEquipmentParamVO = new LockEquipmentParamVO();
+        QueryLatitudeType.setField(lockEquipmentParamVO, type, value);
+        List<LockEquipmentViewVO> list = lockEquipmentMapper.selectEquipmentList(
+            lockEquipmentParamVO);
+        List<Integer> equipmentIdList = list.stream().map(LockEquipmentViewVO::getId).collect(
+            Collectors.toList());
+        List<LockPortInfo> portInfoList = new ArrayList<>();
+        if (equipmentIdList.size() > 0) {
+            portInfoList = lockPortInfoMapper.selectListByEquipmentIds(
+                equipmentIdList);
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("equipmentTotal", list.size());
+        resultMap.put("allPortTotal", portInfoList.size());
+        int blockedPortTotal = 0;
+        int idleTotal = 0;
+        int useTotal = 0;
+        int consoleTotal = 0;
+        for (LockPortInfo portInfo : portInfoList) {
+            if (portInfo.getDeploymentStatus() == 1) {
+                idleTotal++;
+            } else if (portInfo.getDeploymentStatus() == 2) {
+                useTotal++;
+            } else if (portInfo.getDeploymentStatus() == 4) {
+                consoleTotal++;
+            }
+            if (portInfo.getSerialNumber().equals("console口")) {
+                consoleTotal++;
+            }
+        }
+        resultMap.put("blockedPortTotal", blockedPortTotal);
+        resultMap.put("idleTotal", idleTotal);
+        resultMap.put("useTotal", useTotal);
+        resultMap.put("consoleTotal", consoleTotal);
+        return resultMap;
     }
 }

@@ -109,7 +109,7 @@ public class RelPdaUserPortServiceImpl extends
             if (lockInfoList.size() == 48) {
                 hexMessageList.add(
                     LockUtil.bytesToHexWithSpaces(LockUtil.getByteForAddLock(lockInfoList)));
-                hexMessageList = new ArrayList<>();
+                lockInfoList = new ArrayList<>();
             }
             LockInfoVO lockInfo = new LockInfoVO();
             lockInfo.setLockNumber(

@@ -2,6 +2,7 @@ package com.ruoyi.web.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.RelPdaUserPort;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
 import com.ruoyi.web.domain.vo.index.PortStatisticsVO;
@@ -27,4 +28,6 @@ public interface LockPortInfoMapper extends BaseMapper<LockPortInfo> {
     List<PortStatisticsVO> selectPortStatisticsVOList();
 
     Integer selectIdleTotal();
+
+    List<LockPortInfo> selectListByEquipmentIds(List<Integer> equipmentIdList);
 }

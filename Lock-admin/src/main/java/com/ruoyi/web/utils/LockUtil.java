@@ -382,26 +382,18 @@ public class LockUtil {
     }
     public static void main(String[] args) throws Exception {
         List<LockInfoVO> lockInfoList = new ArrayList<>();
-        LockInfoVO lockInfo = new LockInfoVO();
-        lockInfo.setLockNumber(
-            (byte) Integer.parseInt(Integer.toHexString(2), 16));
-        lockInfo.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
-        lockInfo.setLockEffective(
-            (byte) Integer.parseInt(Integer.toHexString(255), 16));
-        lockInfo.setLockTime(
-            (byte) Integer.parseInt(Integer.toHexString(4), 16));
-        lockInfoList.add(lockInfo);
-        LockInfoVO lockInfo1 = new LockInfoVO();
-        lockInfo1.setLockNumber(
-            (byte) Integer.parseInt(Integer.toHexString(2), 16));
-        lockInfo1.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
-        lockInfo1.setLockEffective(
-            (byte) Integer.parseInt(Integer.toHexString(255), 16));
-        lockInfo1.setLockTime(
-            (byte) Integer.parseInt(Integer.toHexString(4), 16));
-        lockInfoList.add(lockInfo1);
+        for(int i=1;i<48;i++){
+            LockInfoVO lockInfo = new LockInfoVO();
+            lockInfo.setLockNumber(
+                (byte) Integer.parseInt(Integer.toHexString(i), 16));
+            lockInfo.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
+            lockInfo.setLockEffective(
+                (byte) Integer.parseInt(Integer.toHexString(255), 16));
+            lockInfo.setLockTime(
+                (byte) Integer.parseInt(Integer.toHexString(4), 16));
+            lockInfoList.add(lockInfo);
+        }
         System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
-
         byte[] aa = "1234567890asdfgh".getBytes(StandardCharsets.US_ASCII);
         byte[] bb = new byte[]{0x68, (byte) 0x64};
         byte[] len = CheckLen(aa.length);
@@ -434,7 +426,7 @@ public class LockUtil {
 //        serialPort.closePort();
 //        System.out.println(bytesToHexWithSpaces(buffer));
         byte[] decodedBytes = hexStringToByteArray(
-            "58 59 5A 53 32 34 30 38 41 42 30 30 30 30 33 36 FF 04"
+            "30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30"
 //                + "FF 08 02 30 30 30 30 30 "
 //                + "30 30 30 30 30 30 30 30 30 30 30 00 00 03 30 30 30 30 30 30 30 30 30 30 30 "
 //                + "30 30 30 30 30 00 00 04 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 "

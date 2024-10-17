@@ -6,6 +6,7 @@ import com.ruoyi.web.service.LockIndexService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -21,5 +22,9 @@ public class LockIndexController extends BaseController {
     @GetMapping("/getLockNumberByStatusAndSite")
     public AjaxResult getLockNumberByStatusAndSite() {
         return success(lockIndexService.getLockNumberByStatusAndSite());
+    }
+    @GetMapping("/getLockStatusListByLatitudeType")
+    public AjaxResult getLockStatusListByLatitudeType(@RequestParam String type,@RequestParam Integer value) {
+        return success(lockIndexService.getLockStatusListByLatitudeType(type,value));
     }
 }
