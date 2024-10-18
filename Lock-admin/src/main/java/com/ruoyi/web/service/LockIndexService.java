@@ -162,7 +162,7 @@ public class LockIndexService {
             } else if (portInfo.getDeploymentStatus() == 2) {
                 useTotal++;
             } else if (portInfo.getDeploymentStatus() == 4) {
-                consoleTotal++;
+                blockedPortTotal++;
             }
             if (portInfo.getSerialNumber().equals("console口")) {
                 consoleTotal++;

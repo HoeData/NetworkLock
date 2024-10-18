@@ -7,7 +7,11 @@ import lombok.Getter;
 
 @Getter
 public enum QueryLatitudeType {
-    SITE("site", "siteId");
+    COMPANY("company", "companyId"),
+    SITE("site", "siteId"),
+    MACHINE_ROOM("machineRoom", "machineRoomId"),
+    CABINET("cabinet", "cabinetId"),
+    ;
     private String type;
     private String fieldName;
 
