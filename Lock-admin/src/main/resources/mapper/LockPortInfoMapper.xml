@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select count(*)
         from lock_port_info
         where del_flag = '0'
-          and deployment_status = 1;
+          and deployment_status = 1
         and user_code != '';
     </select>
     <select id="selectPortStatisticsVOList"
