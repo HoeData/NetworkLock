@@ -78,7 +78,8 @@
       resultType="com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO">
         <include refid="selectFiled"/>
         ,temp.validity_period,temp.create_time,temp.id ,temp.lock_serial_number AS
-        port_info_user_code,temp.serial_number as serial_number
+        port_info_user_code,temp.serial_number as serial_number,temp.lock_serial_number AS
+        lock_serial_number
         <include refid="fromSql"/>
         INNER JOIN (SELECT pt.id as
         ptid,rel.validity_period,rel.create_time,rel.id,rel.lock_serial_number AS

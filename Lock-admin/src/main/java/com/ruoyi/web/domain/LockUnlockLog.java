@@ -13,7 +13,6 @@ public class LockUnlockLog {
     private Integer portId;
     private String lockSerialNumber;
     private LocalDateTime createTime;
-    private String pdaDescription;
     private Integer status;
     private String errorMsg;
 }

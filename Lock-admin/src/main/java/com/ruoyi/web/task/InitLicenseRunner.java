@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -97,11 +98,14 @@ public class InitLicenseRunner implements ApplicationRunner {
                 List<LockInfo> lockInfoList = new ArrayList<>();
                 for (LockLicenseInfoVO lockInfoVO : list) {
                     LockCache.lockSerialNumberSet.add(lockInfoVO.getSerialNumber());
-                    LockInfo lockInfo = new LockInfo();
-                    lockInfo.setSerialNumber(lockInfoVO.getSerialNumber());
-                    lockInfo.setBatchNo(licenseParamVO.getBatchNo());
-                    lockInfo.setType(lockInfoVO.getType());
-                    lockInfoList.add(lockInfo);
+                    if(StringUtils.isNotBlank(lockInfoVO.getSerialNumber())){
+                        LockInfo lockInfo = new LockInfo();
+                        lockInfo.setSerialNumber(lockInfoVO.getSerialNumber());
+                        lockInfo.setBatchNo(licenseParamVO.getBatchNo());
+                        lockInfo.setType(lockInfoVO.getType());
+                        lockInfoList.add(lockInfo);
+                    }
+
                 }
                 lockInfoService.saveOrUpdateBatch(lockInfoList);
             }

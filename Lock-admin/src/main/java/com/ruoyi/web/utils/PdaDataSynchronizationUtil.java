@@ -137,13 +137,15 @@ public class PdaDataSynchronizationUtil {
         int error = 0;
         while (true) {
             try {
-                fromPdaData = JSON.parseObject(
-                    readFileContentFromDevice(deviceId, PDA_DATA_DIR_PATH + PDA_DATA_NAME),
-                    PdaDataVO.class);
-                if (error > 5) {
+                if (error > 10) {
                     PdaDataSynchronizationStopThread.RUNNING = false;
+                    statusVO.setErrorFlag(true);
+                    writeStatusToPda();
                     break;
                 }
+                fromPdaData = JSON.parseObject(
+                    readFileContentFromDevice(deviceId, PDA_DATA_DIR_PATH + PDA_DATA_NAME)                    ,
+                    PdaDataVO.class);
                 break;
             } catch (Exception e) {
                 error++;
@@ -258,22 +260,27 @@ public class PdaDataSynchronizationUtil {
             pdaMergeDataVO.getUnlockLogList().addAll(lockUnlockLogList);
         }
 
-        Map<Integer, LockPortInfo> pcPortMap = new HashMap<>();
         int value = 0;
+        List<LockPortInfo> list=new ArrayList<>();
         for (LockPortInfo lockPortInfo : pcPortList) {
             if(pdaPortMap.containsKey(lockPortInfo.getId())){
-                lockPortInfo=pdaPortMap.get(lockPortInfo.getId());
+                list.add(pdaPortMap.get(lockPortInfo.getId()));
+            }else{
+                list.add(lockPortInfo);
             }
-            pcPortMap.put(lockPortInfo.getId(), lockPortInfo);
             if (StringUtils.isNotBlank(lockPortInfo.getUserCode())) {
                 value++;
             }
         }
         if (value > LockCache.lockNumber) {
-            PdaDataSynchronizationStopThread.RUNNING = false;
+            statusVO.setErrorFlag(true);
+            writeStatusToPda();
             setNowStatusMsgAndAddProcess(synchronizationInfo,
                 PdaDataSynchronizationStatusType.MAXIMUM_NUMBER_EXCEEDED);
+            PdaDataSynchronizationStopThread.RUNNING = false;
+
         }
+        pdaMergeDataVO.setPortInfoList(list);
     }
     private static void writeDataToPda(String deviceId, PdaMergeDataVO givePdaData) {
         writeStringToFile(JSON.toJSONString(givePdaData),
@@ -415,5 +422,9 @@ public class PdaDataSynchronizationUtil {
                 log.error("无法创建文件夹: " + folder.getAbsolutePath());
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getConnectedDeviceId());
     }
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.web.domain.LockPdaUser;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.RelPdaUserPort;
 import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.domain.vo.pda.PdaDataVO;
@@ -60,6 +61,9 @@ public class PdaService {
                 RelPdaUserPort relPdaUserPort = new RelPdaUserPort();
                 relPdaUserPort.setPdaUserId(pdaUser.getId());
                 relPdaUserPort.setPortInfoId(item.getPortInfoId());
+                relPdaUserPort.setSerialNumber(item.getSerialNumber());
+                relPdaUserPort.setLockSerialNumber(item.getLockSerialNumber());
+                relPdaUserPort.setValidityPeriod(item.getValidityPeriod());
                 relPdaUserPortList.add(relPdaUserPort);
             });
         });
@@ -72,7 +76,7 @@ public class PdaService {
             portInfoService.updateBatchById(fromPdaData.getLockPortInfo());
         }
         if(fromPdaData.getLockUnlockLog().size()>0){
-            unlockLogService.updateBatchById(fromPdaData.getLockUnlockLog());
+            unlockLogService.saveOrUpdateBatch(fromPdaData.getLockUnlockLog());
         }
     }
 }
