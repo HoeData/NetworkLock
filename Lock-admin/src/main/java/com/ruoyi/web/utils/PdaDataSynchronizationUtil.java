@@ -60,10 +60,6 @@ public class PdaDataSynchronizationUtil {
         if (StringUtils.isBlank(deviceId)) {
             PdaDataSynchronizationStopThread.RUNNING = false;
         }
-        ILockPdaDataSynchronizationInfoService pdaDataSynchronizationInfoService = SpringUtils.getBean(
-            ILockPdaDataSynchronizationInfoService.class);
-        LockPdaDataSynchronizationInfo synchronizationInfo = pdaDataSynchronizationInfoService.saveAll(
-            deviceId, PdaDataSynchronizationType.AUTHORIZATION_SYNCHRONIZATION);
         statusVO.setReadyFlag(true);
         mkdirFold(LOCAL_DATA_DIR_PATH+deviceId);
         nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
@@ -81,9 +77,13 @@ public class PdaDataSynchronizationUtil {
         PdaService pdaService = SpringUtils.getBean(PdaService.class);
         PdaMergeDataVO pdaMergeDataVO = pdaService.getAllData();
         //等待PDA创建数据文件完成
+        waitPdaCreateData(deviceId);
+        ILockPdaDataSynchronizationInfoService pdaDataSynchronizationInfoService = SpringUtils.getBean(
+            ILockPdaDataSynchronizationInfoService.class);
+        LockPdaDataSynchronizationInfo synchronizationInfo = pdaDataSynchronizationInfoService.saveAll(
+            deviceId, PdaDataSynchronizationType.AUTHORIZATION_SYNCHRONIZATION);
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
-        waitPdaCreateData(deviceId);
         //获取PDA创建文件内容
         setNowStatusMsgAndAddProcess(synchronizationInfo,
             PdaDataSynchronizationStatusType.PC_GET_DATA);
