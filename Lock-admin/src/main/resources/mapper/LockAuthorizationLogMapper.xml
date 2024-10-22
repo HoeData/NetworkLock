@@ -8,7 +8,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         SELECT
         au.*,
         pda.description AS pda_description,
-        pu.user_name AS pda_user_name
+        pu.user_name AS pda_user_name,
+        CASE
+        WHEN au.success_flag =1 THEN '成功'
+        ELSE '失败'
+        END AS success_flag_str
         FROM
         lock_authorization_log au
         inner JOIN lock_pda_user pu ON pu.id = au.pda_user_id
@@ -19,7 +23,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="userName != null">
             AND pu.user_name like CONCAT('%',#{userName},'%')
         </if>
-         order by au.create_time desc
+        order by au.create_time desc
 
     </select>
 </mapper>

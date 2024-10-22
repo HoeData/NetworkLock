@@ -12,4 +12,8 @@ public class LockPdaDataSynchronizationInfoPageParamVO extends PageDomain {
     private Integer pdaId;
     private Integer status;
     private Integer type;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date queryStartDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date queryEndDate;
 }

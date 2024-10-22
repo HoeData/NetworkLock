@@ -51,10 +51,10 @@ public class Task {
 
     @Scheduled(cron = "0/5 * * * * ?")
     public void pdaDataSynchronization() {
-        if (InitLicenseRunner.isWin()) {
-            log.error("pdaDataSynchronization=" + JSON.toJSONString(
-                PdaDataSynchronizationController.pdaDataSynchronization()));
-        }
+//        if (InitLicenseRunner.isWin()) {
+//            log.error("pdaDataSynchronization=" + JSON.toJSONString(
+//                PdaDataSynchronizationController.pdaDataSynchronization()));
+//        }
     }
 
     public void addWarn(String inFlow, String outFlow, Integer portInfoId) {

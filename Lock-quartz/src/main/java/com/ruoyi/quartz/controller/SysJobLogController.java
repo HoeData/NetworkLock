@@ -15,7 +15,6 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.quartz.domain.SysJobLog;
 import com.ruoyi.quartz.service.ISysJobLogService;
 
@@ -43,18 +42,18 @@ public class SysJobLogController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 导出定时任务调度日志列表
-     */
-    @PreAuthorize("@ss.hasPermi('monitor:job:export')")
-    @Log(title = "任务调度日志", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, SysJobLog sysJobLog)
-    {
-        List<SysJobLog> list = jobLogService.selectJobLogList(sysJobLog);
-        ExcelUtil<SysJobLog> util = new ExcelUtil<SysJobLog>(SysJobLog.class);
-        util.exportExcel(response, list, "调度日志");
-    }
+//    /**
+//     * 导出定时任务调度日志列表
+//     */
+//    @PreAuthorize("@ss.hasPermi('monitor:job:export')")
+//    @Log(title = "任务调度日志", businessType = BusinessType.EXPORT)
+//    @PostMapping("/export")
+//    public void export(HttpServletResponse response, SysJobLog sysJobLog)
+//    {
+//        List<SysJobLog> list = jobLogService.selectJobLogList(sysJobLog);
+//        ExcelUtil<SysJobLog> util = new ExcelUtil<SysJobLog>(SysJobLog.class);
+//        util.exportExcel(response, list, "调度日志");
+//    }
     
     /**
      * 根据调度编号获取详细信息

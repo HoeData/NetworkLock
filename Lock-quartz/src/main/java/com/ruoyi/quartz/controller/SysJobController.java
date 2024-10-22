@@ -21,7 +21,6 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.exception.job.TaskException;
 import com.ruoyi.common.utils.StringUtils;
-import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.quartz.domain.SysJob;
 import com.ruoyi.quartz.service.ISysJobService;
 import com.ruoyi.quartz.util.CronUtils;
@@ -51,18 +50,18 @@ public class SysJobController extends BaseController
         return getDataTable(list);
     }
 
-    /**
-     * 导出定时任务列表
-     */
-    @PreAuthorize("@ss.hasPermi('monitor:job:export')")
-    @Log(title = "定时任务", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(HttpServletResponse response, SysJob sysJob)
-    {
-        List<SysJob> list = jobService.selectJobList(sysJob);
-        ExcelUtil<SysJob> util = new ExcelUtil<SysJob>(SysJob.class);
-        util.exportExcel(response, list, "定时任务");
-    }
+//    /**
+//     * 导出定时任务列表
+//     */
+//    @PreAuthorize("@ss.hasPermi('monitor:job:export')")
+//    @Log(title = "定时任务", businessType = BusinessType.EXPORT)
+//    @PostMapping("/export")
+//    public void export(HttpServletResponse response, SysJob sysJob)
+//    {
+//        List<SysJob> list = jobService.selectJobList(sysJob);
+//        ExcelUtil<SysJob> util = new ExcelUtil<SysJob>(SysJob.class);
+//        util.exportExcel(response, list, "定时任务");
+//    }
 
     /**
      * 获取定时任务详细信息

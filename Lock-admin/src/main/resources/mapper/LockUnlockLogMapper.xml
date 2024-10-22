@@ -13,6 +13,10 @@
     </select>
     <select id="selectUnlockList" resultType="com.ruoyi.web.domain.vo.pda.LockUnlockViewVO">
         SELECT unlog.*,
+        CASE
+        WHEN unlog.status =1 THEN '成功'
+        ELSE '失败'
+        END AS status_str,
         pda.description as pda_description,
         pu.user_name as pda_user_name,
         equ.name AS equipment_name,
@@ -30,6 +34,12 @@
         </if>
         <if test="lockSerialNumber != null">
             AND pi.user_code like CONCAT('%',#{lockSerialNumber},'%')
+        </if>
+        <if test="queryStartDate != null">
+            AND unlog.create_time <![CDATA[ >= ]]> =#{queryStartDate}
+        </if>
+        <if test="queryEndDate != null">
+            AND unlog.create_time <![CDATA[ <= ]]> =#{queryEndDate}
         </if>
         order by unlog.create_time desc
     </select>

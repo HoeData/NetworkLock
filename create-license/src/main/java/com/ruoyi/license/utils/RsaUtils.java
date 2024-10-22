@@ -39,15 +39,15 @@ public class RsaUtils {
             + "veM6K6605Eo0gA==";
         RSA rsa = new RSA(privateKey, publicKey);
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("batchNo", "123456");
+        resultMap.put("batchNo", "一批次");
         resultMap.put("lockNumber", 5000);
         List<Map<String, Object>> list = new ArrayList<>();
-        for (int i = 0; i <= 9; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("type", 1);
-            map.put("serialNumber", "qwertyuiopasdfg" + i);
-            list.add(map);
-        }
+//        for (int i = 0; i <= 9; i++) {
+//            Map<String, Object> map = new HashMap<>();
+//            map.put("type", 1);
+//            map.put("serialNumber", "qwertyuiopasdfg" + i);
+//            list.add(map);
+//        }
         Map<String, Object> map = new HashMap<>();
         map.put("type", 1);
         map.put("serialNumber", "XYZS2408AB000036");
@@ -119,6 +119,20 @@ public class RsaUtils {
             addMap.put("serialNumber", lock);
             list.add(addMap);
         });
+        for (int i = 1; i < 200; i++) {
+            Map<String, Object> addMap = new HashMap<>();
+            addMap.put("type", 2);
+            String s = String.valueOf(i);
+            int length = s.length();
+            if(length==1){
+                s = "00" + s;
+            }else if(length==2){
+                s = "0" + s;
+            }
+            addMap.put("serialNumber", "XYZS2526AB000" +s);
+            list.add(addMap);
+        }
+
         resultMap.put("lockInfoList", list);
         String encrypt2 = rsa.encryptBase64(
             StrUtil.bytes(JSON.toJSONString(resultMap), CharsetUtil.CHARSET_UTF_8),
