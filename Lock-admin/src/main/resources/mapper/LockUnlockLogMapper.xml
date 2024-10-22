@@ -36,10 +36,10 @@
             AND pi.user_code like CONCAT('%',#{lockSerialNumber},'%')
         </if>
         <if test="queryStartDate != null">
-            AND unlog.create_time <![CDATA[ >= ]]> =#{queryStartDate}
+            AND unlog.create_time <![CDATA[ >= ]]> #{queryStartDate}
         </if>
         <if test="queryEndDate != null">
-            AND unlog.create_time <![CDATA[ <= ]]> =#{queryEndDate}
+            AND unlog.create_time <![CDATA[ <= ]]> #{queryEndDate}
         </if>
         order by unlog.create_time desc
     </select>

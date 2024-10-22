@@ -27,6 +27,12 @@
         <if test="type != null">
             AND info.type = #{type}
         </if>
+        <if test="queryStartDate != null">
+            AND info.create_time <![CDATA[ >= ]]> #{queryStartDate}
+        </if>
+        <if test="queryEndDate != null">
+            AND info.create_time <![CDATA[ <= ]]> #{queryEndDate}
+        </if>
         order by info.create_time desc
     </select>
 </mapper>

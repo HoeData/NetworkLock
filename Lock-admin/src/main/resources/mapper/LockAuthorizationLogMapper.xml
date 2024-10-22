@@ -23,6 +23,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="userName != null">
             AND pu.user_name like CONCAT('%',#{userName},'%')
         </if>
+        <if test="queryStartDate != null">
+            AND au.create_time <![CDATA[ >= ]]> #{queryStartDate}
+        </if>
+        <if test="queryEndDate != null">
+            AND au.create_time <![CDATA[ <= ]]> #{queryEndDate}
+        </if>
         order by au.create_time desc
 
     </select>

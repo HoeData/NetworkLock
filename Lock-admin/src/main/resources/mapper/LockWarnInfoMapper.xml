@@ -89,6 +89,12 @@
         <if test="equipmentModelId != null">
             AND em.equipment_model_id =#{equipmentModelId}
         </if>
+        <if test="queryStartDate != null">
+            AND temp.create_time <![CDATA[ >= ]]> #{queryStartDate}
+        </if>
+        <if test="queryEndDate != null">
+            AND temp.create_time <![CDATA[ <= ]]> #{queryEndDate}
+        </if>
         order by temp.create_time desc
     </select>
     <select id="selectTotalByStartAndEndDate"
