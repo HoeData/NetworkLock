@@ -8,6 +8,6 @@ public class LockMonitorFlowPageParamVO extends PageVO {
 
     @NotNull(message = "网口不能为空")
     private Integer portInfoId;
-    private Integer inOutType;
+
 
 }

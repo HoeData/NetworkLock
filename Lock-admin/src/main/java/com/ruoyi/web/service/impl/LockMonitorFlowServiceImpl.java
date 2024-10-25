@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LockMonitorFlowServiceImpl extends
     ServiceImpl<LockMonitorFlowMapper, LockMonitorFlow> implements ILockMonitorFlowService {
-
     private final LockMonitorFlowMapper lockMonitorFlowMapper;
 
     @Override
@@ -33,28 +32,35 @@ public class LockMonitorFlowServiceImpl extends
     }
 
     @Override
-    public List<Map<String, String>> getWeekTrend(LockMonitorFlowPageParamVO vo) {
+    public Map<String, List<Map<String, String>>> getWeekTrend(LockMonitorFlowPageParamVO vo) {
 //        LocalDate now = LocalDate.now();
         LocalDate now = LocalDate.of(2024, 9, 1);
-        int inOutType = null != vo.getInOutType() ? vo.getInOutType() : 1;
         List<LockMonitorFlow> list = getLastOneGroupByDate(now.minusDays(6), now,
             vo.getPortInfoId());
-        List<Map<String, String>> resultList = new ArrayList<>();
+        List<Map<String, String>> inFlowTrendList = new ArrayList<>();
+        List<Map<String, String>> outFlowTrendList = new ArrayList<>();
         Map<String, LockMonitorFlow> map = list.stream().collect(Collectors.toMap(
             lockMonitorFlow -> DateFormatUtils.format(lockMonitorFlow.getCreateTime(),
                 "yyyy-MM-dd"), lockMonitorFlow -> lockMonitorFlow, (a, b) -> b));
         for (int i = 0; i < 7; i++) {
-            Map<String, String> trendMap = new HashMap<>();
+            Map<String, String> inMap = new HashMap<>();
+            Map<String, String> outMap = new HashMap<>();
             String dataStr = now.minusDays(i).toString();
-            trendMap.put("date", dataStr);
-            trendMap.put("flow", "0");
+            inMap.put("date", dataStr);
+            inMap.put("flow", "0");
+            outMap.put("date", dataStr);
+            outMap.put("flow", "0");
             if (map.containsKey(dataStr)) {
-                trendMap.put("flow", inOutType == 1 ? map.get(dataStr).getInFlow()
-                    : map.get(dataStr).getOutFlow());
+                inMap.put("flow", map.get(dataStr).getInFlow());
+                outMap.put("flow", map.get(dataStr).getOutFlow());
             }
-            resultList.add(trendMap);
+            inFlowTrendList.add(inMap);
+            outFlowTrendList.add(outMap);
         }
-        return resultList;
+        Map<String, List<Map<String, String>>> resultMap = new HashMap<>(2);
+        resultMap.put("inFlowTrendList", inFlowTrendList);
+        resultMap.put("outFlowTrendList", outFlowTrendList);
+        return resultMap;
     }
 
 

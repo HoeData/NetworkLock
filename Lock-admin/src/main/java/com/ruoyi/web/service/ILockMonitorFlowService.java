@@ -12,5 +12,5 @@ public interface ILockMonitorFlowService extends IService<LockMonitorFlow> {
 
     List<LockMonitorFlow> selectMonitorFlowList(LockMonitorFlowPageParamVO vo);
 
-    List<Map<String, String>> getWeekTrend(LockMonitorFlowPageParamVO vo);
+    Map<String,List<Map<String, String>>> getWeekTrend(LockMonitorFlowPageParamVO vo);
 }
