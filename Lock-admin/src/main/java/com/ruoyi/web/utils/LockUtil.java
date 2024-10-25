@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -381,27 +382,27 @@ public class LockUtil {
         }
     }
     public static void main(String[] args) throws Exception {
-        List<LockInfoVO> lockInfoList = new ArrayList<>();
-        for(int i=1;i<48;i++){
-            LockInfoVO lockInfo = new LockInfoVO();
-            lockInfo.setLockNumber(
-                (byte) Integer.parseInt(Integer.toHexString(i), 16));
-            lockInfo.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
-            lockInfo.setLockEffective(
-                (byte) Integer.parseInt(Integer.toHexString(255), 16));
-            lockInfo.setLockTime(
-                (byte) Integer.parseInt(Integer.toHexString(4), 16));
-            lockInfoList.add(lockInfo);
-        }
-        System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
-        byte[] aa = "1234567890asdfgh".getBytes(StandardCharsets.US_ASCII);
-        byte[] bb = new byte[]{0x68, (byte) 0x64};
-        byte[] len = CheckLen(aa.length);
-        byte[] bytes = mergeByteArrays(bb, len, aa);
-        int i = calculateChecksum(bytes, 0, bytes.length);
-        byte[] checksum = new byte[]{(byte) i};
-        byte[] message = mergeByteArrays(bytes, checksum);//报文
-        System.out.println(bytesToHexWithSpaces(message));
+//        List<LockInfoVO> lockInfoList = new ArrayList<>();
+//        for(int i=1;i<48;i++){
+//            LockInfoVO lockInfo = new LockInfoVO();
+//            lockInfo.setLockNumber(
+//                (byte) Integer.parseInt(Integer.toHexString(i), 16));
+//            lockInfo.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
+//            lockInfo.setLockEffective(
+//                (byte) Integer.parseInt(Integer.toHexString(255), 16));
+//            lockInfo.setLockTime(
+//                (byte) Integer.parseInt(Integer.toHexString(4), 16));
+//            lockInfoList.add(lockInfo);
+//        }
+//        System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
+//        byte[] aa = "1234567890asdfgh".getBytes(StandardCharsets.US_ASCII);
+//        byte[] bb = new byte[]{0x68, (byte) 0x64};
+//        byte[] len = CheckLen(aa.length);
+//        byte[] bytes = mergeByteArrays(bb, len, aa);
+//        int i = calculateChecksum(bytes, 0, bytes.length);
+//        byte[] checksum = new byte[]{(byte) i};
+//        byte[] message = mergeByteArrays(bytes, checksum);//报文
+//        System.out.println(bytesToHexWithSpaces(message));
 //        setKeyId(message);
 //        //以下为测试开锁的秘钥测试，秘钥为ON，第一步必须要调用锁信息，然后在输入解锁秘钥
 //        //获取锁信息报文为68 80 00 01 00 E9，开锁报文为68 82 00 04 54 30 34 3D E3
@@ -426,7 +427,7 @@ public class LockUtil {
 //        serialPort.closePort();
 //        System.out.println(bytesToHexWithSpaces(buffer));
         byte[] decodedBytes = hexStringToByteArray(
-            "30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30"
+            "4D 46 68 5A 57 6A 49 30 4D 54 42 42 51 6A 41 77 4D 44 41 77 4D 67 3D 3D"
 //                + "FF 08 02 30 30 30 30 30 "
 //                + "30 30 30 30 30 30 30 30 30 30 30 00 00 03 30 30 30 30 30 30 30 30 30 30 30 "
 //                + "30 30 30 30 30 00 00 04 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 "
@@ -444,12 +445,12 @@ public class LockUtil {
 //                + "30 30 30 30 30 30 30 30 30 00 00 14 30 30 30 30 30 30 30 30 30 30 30 30 30 "
 //                + "30 30 30 00"
                 + " ");
-        System.out.println(new String(decodedBytes, StandardCharsets.US_ASCII).substring(0,16));
+        String decodedString=new String(decodedBytes);
 //        // 输出解码后的字符串
 //        System.out.println(decodedString);
-//        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
-//        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
-//        System.out.println(decodedStringa);
+        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
+        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
+        System.out.println(decodedStringa);
 ////        System.out.println(getStrForAscii("31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 23 "));
     }
 }

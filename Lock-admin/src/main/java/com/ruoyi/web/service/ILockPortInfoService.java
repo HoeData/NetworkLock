@@ -20,4 +20,5 @@ public interface ILockPortInfoService extends IService<LockPortInfo> {
     List<MonitorPortViewVO> getMonitorPortList();
 
     List<LockPortInfo> getAll();
+    void judgeUserCode(Integer id,String userCode);
 }

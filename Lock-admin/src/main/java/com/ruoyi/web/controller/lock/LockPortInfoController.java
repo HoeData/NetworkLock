@@ -39,6 +39,7 @@ public class LockPortInfoController extends BaseController {
         if (StringUtils.isNotBlank(lockPortInfo.getUserCode())) {
             LockUtil.checkASCIILength(lockPortInfo.getUserCode(), "锁的用户码不正确,请重新输入");
         }
+        lockPortInfoService.judgeUserCode(lockPortInfo.getId(), lockPortInfo.getUserCode());
         CommonUtils.addCommonParams(lockPortInfo, lockPortInfo.getId());
         return toAjax(lockPortInfoService.updateById(lockPortInfo));
     }
