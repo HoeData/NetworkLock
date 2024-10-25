@@ -18,4 +18,18 @@
           and del_flag = 0
         order by id desc limit 1
     </select>
+    <select id="selectLastOneGroupByDate"
+            resultType="com.ruoyi.web.domain.LockMonitorFlow">
+        SELECT t1.*
+        FROM lock_monitor_flow AS t1
+                 JOIN (SELECT DATE (create_time) AS date, MAX(create_time) AS max_create_time
+        FROM lock_monitor_flow
+        where port_id = #{portInfoId}
+          and create_time <![CDATA[ >= ]]> #{queryStartTime}
+          and create_time <![CDATA[ <= ]]> #{queryEndTime}
+          and del_flag = 0
+        GROUP BY DATE (create_time)
+            ) AS t2
+        ON DATE (t1.create_time) = t2.date AND t1.create_time = t2.max_create_time;
+    </select>
 </mapper>
