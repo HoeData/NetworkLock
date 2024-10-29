@@ -34,6 +34,7 @@ public class LockAuthorizationLogController extends BaseController {
     @PostMapping("/download")
     public void downloadFailedUsingJson(HttpServletResponse response,
         @RequestBody UnlockPageParamVO pageVO) {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         EasyExcelUtil.simpleDownload(UnlockViewVO.class, "授权日志" + LocalDateTime.now(),
             "授权日志", response, lockAuthorizationLogService.getAllList(pageVO));
     }

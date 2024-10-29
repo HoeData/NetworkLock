@@ -33,6 +33,7 @@ public class LockUnlockController extends BaseController {
     @PostMapping("/download")
     public void downloadFailedUsingJson(HttpServletResponse response,
         @RequestBody UnlockPageParamVO pageVO) {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         EasyExcelUtil.simpleDownload(LockUnlockViewVO.class, "开锁日志" + LocalDateTime.now(),
             "开锁日志", response, unlockLogService.selectUnlockList(pageVO));
     }
