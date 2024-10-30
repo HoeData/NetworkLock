@@ -34,6 +34,7 @@ public class LockEquipmentTypeController extends BaseController {
 
     @GetMapping("/getAll")
     public AjaxResult getAll() {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockEquipmentType> list = lockEquipmentTypeService.selectEquipmentTypeList(new LockCommonParamVO());
         return success(list);
     }

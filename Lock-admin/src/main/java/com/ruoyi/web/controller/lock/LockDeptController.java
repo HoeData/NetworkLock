@@ -35,6 +35,7 @@ public class LockDeptController extends BaseController {
 
     @GetMapping("/getAll")
     public AjaxResult getAll() {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockCommonViewVO> list = lockDeptService.selectDeptList(new LockCommonParamVO());
         return success(list);
     }

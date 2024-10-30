@@ -35,6 +35,7 @@ public class LockCabinetController extends BaseController {
 
     @GetMapping("/getAll")
     public AjaxResult getAll() {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockCommonViewVO> list = lockCabinetService.selectCabinetList(new LockCommonParamVO());
         return success(list);
     }

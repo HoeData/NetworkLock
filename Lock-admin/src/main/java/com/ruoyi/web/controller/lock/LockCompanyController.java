@@ -34,6 +34,7 @@ public class LockCompanyController extends BaseController {
 
     @GetMapping("/getAll")
     public AjaxResult getAll() {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockCompany> list = lockCompanyService.selectCompanyList(new LockCommonParamVO());
         return success(list);
     }

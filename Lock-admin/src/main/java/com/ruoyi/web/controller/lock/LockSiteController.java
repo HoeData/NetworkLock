@@ -35,6 +35,7 @@ public class LockSiteController extends BaseController {
 
     @GetMapping("/getAll")
     public AjaxResult getAll() {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockCommonViewVO> list = lockSiteService.selectSiteList(new LockCommonParamVO());
         return success(list);
     }
