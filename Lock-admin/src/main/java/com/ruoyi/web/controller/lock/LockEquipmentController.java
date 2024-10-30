@@ -1,7 +1,5 @@
 package com.ruoyi.web.controller.lock;
 
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -12,7 +10,6 @@ import com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO;
 import com.ruoyi.web.service.ILockEquipmentService;
 import com.ruoyi.web.utils.CommonUtils;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
