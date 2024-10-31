@@ -84,10 +84,10 @@
             AND cabinet.id =#{cabinetId}
         </if>
         <if test="equipmentTypeId != null">
-            AND et.equipment_type_id =#{equipmentTypeId}
+            AND et.id =#{equipmentTypeId}
         </if>
         <if test="equipmentModelId != null">
-            AND em.equipment_model_id =#{equipmentModelId}
+            AND em.id =#{equipmentModelId}
         </if>
         <if test="queryStartDate != null">
             AND temp.create_time <![CDATA[ >= ]]> #{queryStartDate}
