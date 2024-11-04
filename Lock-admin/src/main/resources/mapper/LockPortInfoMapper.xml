@@ -20,29 +20,77 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectPortTotal" resultType="java.lang.Integer">
         select count(*)
-        from lock_port_info
-        where del_flag = '0';
+        from lock_port_info t
+        INNER JOIN lock_equipment equ
+        ON equ.id = t.equipment_id AND equ.del_flag = '0'
+        left join lock_cabinet as cabinet
+        on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room
+        on room.id = cabinet.machine_room_id and room.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_company as company
+        on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
     <select id="selectLockPortTotal" resultType="java.lang.Integer">
         select count(*)
-        from lock_port_info
-        where del_flag = '0'
-          and deployment_status <![CDATA[< ]]> 3
-          and user_code != '';
+        from lock_port_info t
+        INNER JOIN lock_equipment equ
+        ON equ.id = t.equipment_id AND equ.del_flag = '0'
+        left join lock_cabinet as cabinet
+        on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room
+        on room.id = cabinet.machine_room_id and room.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_company as company
+        on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        and t.deployment_status <![CDATA[< ]]> 3
+        and t.user_code != ''
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
     <select id="selectUseTotal" resultType="java.lang.Integer">
         select count(*)
-        from lock_port_info
-        where del_flag = '0'
-          and deployment_status = 2
-          and user_code != '';
+        from lock_port_info t
+        INNER JOIN lock_equipment equ
+        ON equ.id = t.equipment_id AND equ.del_flag = '0'
+        left join lock_cabinet as cabinet
+        on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room
+        on room.id = cabinet.machine_room_id and room.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_company as company
+        on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        and t.deployment_status = 2
+        and t.user_code != ''
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
     <select id="selectNoUseTotal" resultType="java.lang.Integer">
         select count(*)
-        from lock_port_info
-        where del_flag = '0'
-          and deployment_status = 1
-        and user_code != '';
+        from lock_port_info t
+        INNER JOIN lock_equipment equ
+        ON equ.id = t.equipment_id AND equ.del_flag = '0'
+        left join lock_cabinet as cabinet
+        on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room
+        on room.id = cabinet.machine_room_id and room.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_company as company
+        on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        and t.deployment_status = 1
+        and t.user_code != ''
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
     <select id="selectPortStatisticsVOList"
             resultType="com.ruoyi.web.domain.vo.index.PortStatisticsVO">
@@ -64,10 +112,22 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
     <select id="selectIdleTotal" resultType="java.lang.Integer">
         select count(*)
-        from lock_port_info
-        where del_flag = '0'
-          and deployment_status = 1
-          and user_code != '';
+        from lock_port_info t
+        INNER JOIN lock_equipment equ
+        ON equ.id = t.equipment_id AND equ.del_flag = '0'
+        left join lock_cabinet as cabinet
+        on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room
+        on room.id = cabinet.machine_room_id and room.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_company as company
+        on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        and t.deployment_status = 1
+        and t.user_code != ''
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
     <select id="selectonitorPortList"
       resultType="com.ruoyi.web.domain.vo.MonitorPortViewVO">
@@ -91,6 +151,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
         and del_flag = '0'
+    </select>
+    <select id="selectAllList" resultType="com.ruoyi.web.domain.LockPortInfo">
+        select t.*
+        from lock_port_info t
+                 INNER JOIN lock_equipment equ
+                            ON equ.id = t.equipment_id AND equ.del_flag = '0'
+                 left join lock_cabinet as cabinet
+                           on cabinet.id = equ.cabinet_id and cabinet.del_flag = '0'
+                 left join lock_machine_room as room
+                           on room.id = cabinet.machine_room_id and room.del_flag = '0'
+                 left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+                 left join lock_company as company
+                           on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
 
 </mapper>

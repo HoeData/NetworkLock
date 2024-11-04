@@ -8,6 +8,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.web.constants.LockCache;
 import com.ruoyi.web.core.config.LicenseProperties;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
+import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.RelPdaUserPort;
@@ -17,6 +18,7 @@ import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.enums.PdaDataSynchronizationStatusType;
 import com.ruoyi.web.enums.PdaDataSynchronizationType;
 import com.ruoyi.web.service.ILockPdaDataSynchronizationInfoService;
+import com.ruoyi.web.service.ILockPdaInfoService;
 import com.ruoyi.web.service.PdaService;
 import com.ruoyi.web.task.InitLicenseRunner;
 import java.io.BufferedReader;
@@ -57,6 +59,7 @@ public class PdaDataSynchronizationUtil {
         statusVO = new PdaDataSynchronizationStatusVO();
         //获取连接设备ID
         String deviceId = getConnectedDeviceId();
+        LockPdaInfo pdaInfo = SpringUtils.getBean(ILockPdaInfoService.class).getByKey(deviceId);
         if (StringUtils.isBlank(deviceId)) {
             PdaDataSynchronizationStopThread.RUNNING = false;
         }
@@ -75,7 +78,7 @@ public class PdaDataSynchronizationUtil {
         writeStatusToPda();
         //获取所有同步数据
         PdaService pdaService = SpringUtils.getBean(PdaService.class);
-        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllData();
+        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllDataByPda(pdaInfo);
         //等待PDA创建数据文件完成
         waitPdaCreateData(deviceId);
         ILockPdaDataSynchronizationInfoService pdaDataSynchronizationInfoService = SpringUtils.getBean(

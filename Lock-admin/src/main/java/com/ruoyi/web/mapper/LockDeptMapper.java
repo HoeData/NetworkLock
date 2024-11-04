@@ -12,4 +12,6 @@ public interface LockDeptMapper extends BaseMapper<LockDept> {
     List<LockCommonViewVO> selectDeptList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    List<LockDept> selectAllList(LockCommonParamVO lockCommonParamVO);
 }

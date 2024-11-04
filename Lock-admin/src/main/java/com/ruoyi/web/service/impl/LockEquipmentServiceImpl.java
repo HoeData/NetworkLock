@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.bean.BeanUtils;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockEquipment;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.equipment.ActiveDefenseSaveOrUpdateParamVO;
@@ -35,8 +36,10 @@ public class LockEquipmentServiceImpl extends
 
 
     @Override
-    public List<LockEquipmentViewVO> selectEquipmentList(LockEquipmentParamVO lockCommonParamVO) {
-        return lockEquipmentMapper.selectEquipmentList(lockCommonParamVO);
+    @CompanyScope()
+    public List<LockEquipmentViewVO> selectEquipmentList(
+        LockEquipmentParamVO lockEquipmentParamVO) {
+        return lockEquipmentMapper.selectEquipmentList(lockEquipmentParamVO);
     }
 
     @Override
@@ -83,13 +86,6 @@ public class LockEquipmentServiceImpl extends
     }
 
     @Override
-    public int setTrust(LockEquipmentAddParamVO lockEquipmentAddParamVO) {
-        LockEquipment lockEquipment = new LockEquipment();
-        lockEquipment.setId(lockEquipmentAddParamVO.getId());
-        return updateById(lockEquipment) ? 1 : 0;
-    }
-
-    @Override
     public void judgeName(Integer id, String name, Integer cabinetId) {
         LambdaQueryWrapper<LockEquipment> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(LockEquipment::getName, name);
@@ -104,13 +100,6 @@ public class LockEquipmentServiceImpl extends
                 throw new ServiceException("同机柜下设备名称已存在");
             }
         }
-    }
-
-    @Override
-    public List<LockEquipment> getAll() {
-        LambdaQueryWrapper<LockEquipment> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(LockEquipment::getDelFlag, 0);
-        return list(wrapper);
     }
 
     @Override
@@ -140,5 +129,11 @@ public class LockEquipmentServiceImpl extends
     @Override
     public int removeActiveDefenseByIds(String[] ids) {
         return lockEquipmentMapper.removeActiveDefenseByIds(ids);
+    }
+
+    @Override
+    @CompanyScope()
+    public List<LockEquipment> getAll(LockEquipmentParamVO lockEquipmentParamVO) {
+        return lockEquipmentMapper.selectAllList(lockEquipmentParamVO);
     }
 }

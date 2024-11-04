@@ -35,10 +35,9 @@ public class LockEquipmentController extends BaseController {
     }
 
     @GetMapping("/getAll")
-    public AjaxResult getAll() {
+    public AjaxResult getAll(LockEquipmentParamVO lockEquipmentParamVO) {
         PageHelper.startPage(1, Integer.MAX_VALUE);
-        List<LockEquipmentViewVO> list = lockEquipmentService.selectEquipmentList(
-            new LockEquipmentParamVO());
+        List<LockEquipmentViewVO> list = lockEquipmentService.selectEquipmentList(lockEquipmentParamVO);
         return success(list);
     }
 
@@ -61,11 +60,5 @@ public class LockEquipmentController extends BaseController {
     @DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(lockEquipmentService.deleteByIds(ids));
-    }
-
-
-    @PostMapping("/setTrust")
-    public AjaxResult setTrust(@RequestBody LockEquipmentAddParamVO lockEquipmentAddParamVO){
-        return toAjax(lockEquipmentService.setTrust(lockEquipmentAddParamVO));
     }
 }

@@ -1,6 +1,7 @@
 package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.vo.PageVO;
 import com.ruoyi.web.domain.vo.pda.LockUnlockViewVO;
@@ -19,6 +20,7 @@ public class LockUnlockLogServiceImpl extends
     private final LockUnlockLogMapper unlockLogMapper;
 
     @Override
+    @CompanyScope(companyAlias = "company")
     public List<LockUnlockViewVO> selectUnlockList(UnlockPageParamVO pageVO) {
         return unlockLogMapper.selectUnlockList(pageVO);
     }

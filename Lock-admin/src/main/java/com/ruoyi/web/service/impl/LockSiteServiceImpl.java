@@ -3,6 +3,7 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockDept;
 import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
@@ -22,6 +23,7 @@ public class LockSiteServiceImpl extends
 
 
     @Override
+    @CompanyScope()
     public List<LockCommonViewVO> selectSiteList(LockCommonParamVO lockCommonParamVO) {
         return lockSiteMapper.selectSiteList(lockCommonParamVO);
     }
@@ -49,9 +51,8 @@ public class LockSiteServiceImpl extends
     }
 
     @Override
-    public List<LockSite> getAll() {
-        LambdaQueryWrapper<LockSite> wrapper=new LambdaQueryWrapper<>();
-        wrapper.eq(LockSite::getDelFlag,0);
-        return list(wrapper);
+    @CompanyScope()
+    public List<LockSite> getAll(LockCommonParamVO lockCommonParamVO) {
+        return lockSiteMapper.selectAllList(lockCommonParamVO);
     }
 }

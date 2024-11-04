@@ -27,23 +27,23 @@ public class LockCompanyController extends BaseController {
 
     @PostMapping("/list")
     public TableDataInfo list(@RequestBody LockCommonParamVO lockCommonParamVO) {
-        PageHelper.startPage(lockCommonParamVO.getPageNum(), lockCommonParamVO.getPageSize());
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockCompany> list = lockCompanyService.selectCompanyList(lockCommonParamVO);
-         return getDataTable(list);
+        return getDataTable(list);
     }
 
     @GetMapping("/getAll")
-    public AjaxResult getAll() {
+    public AjaxResult getAll(LockCommonParamVO lockCommonParamVO) {
         PageHelper.startPage(1, Integer.MAX_VALUE);
-        List<LockCompany> list = lockCompanyService.selectCompanyList(new LockCommonParamVO());
-        return success(list);
+        List<LockCompany> list = lockCompanyService.selectCompanyList(lockCommonParamVO);
+        return success(lockCompanyService.buildTreeSelect(list));
     }
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockCompany lockCompany) {
         lockCompanyService.judgeName(lockCompany.getName(),lockCompany.getId());
         CommonUtils.addCommonParams(lockCompany, lockCompany.getId());
-        return toAjax(lockCompanyService.saveOrUpdate(lockCompany));
+        return toAjax(lockCompanyService.saveOrUpdateAll(lockCompany));
     }
 
     @DeleteMapping("/{ids}")

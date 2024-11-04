@@ -35,10 +35,9 @@ public class LockMachineRoomController extends BaseController {
     }
 
     @GetMapping("/getAll")
-    public AjaxResult getAll() {
+    public AjaxResult getAll(LockCommonParamVO lockCommonParamVO) {
         PageHelper.startPage(1, Integer.MAX_VALUE);
-        List<LockCommonViewVO> list = lockMachineRoomService.selectMachineRoomList(
-            new LockCommonParamVO());
+        List<LockCommonViewVO> list = lockMachineRoomService.selectMachineRoomList(lockCommonParamVO);
         return success(list);
     }
 

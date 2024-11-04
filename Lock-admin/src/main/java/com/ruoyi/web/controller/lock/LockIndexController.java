@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.lock;
 
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.service.LockIndexService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,8 +17,8 @@ public class LockIndexController extends BaseController {
 
     private final LockIndexService lockIndexService;
     @GetMapping("/getIndexStatisticalQuantity")
-    public AjaxResult getIndexStatisticalQuantity() {
-        return success(lockIndexService.getIndexStatisticalQuantity());
+    public AjaxResult getIndexStatisticalQuantity(LockCommonParamVO vo) {
+        return success(lockIndexService.getIndexStatisticalQuantity(vo));
     }
     @GetMapping("/getLockNumberByStatusAndSite")
     public AjaxResult getLockNumberByStatusAndSite() {

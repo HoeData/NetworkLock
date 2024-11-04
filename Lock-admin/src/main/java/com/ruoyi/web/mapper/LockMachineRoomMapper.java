@@ -11,4 +11,6 @@ public interface LockMachineRoomMapper extends BaseMapper<LockMachineRoom> {
     List<LockCommonViewVO> selectMachineRoomList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    List<LockMachineRoom> selectAllList(LockCommonParamVO lockCommonParamVO);
 }

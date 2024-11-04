@@ -13,6 +13,4 @@ public interface ILockEquipmentModelService extends IService<LockEquipmentModel>
     int deleteByIds(String[] ids);
 
     void judgeName(LockEquipmentModel lockEquipmentModel);
-
-    List<LockEquipmentModel> getAll();
 }

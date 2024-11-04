@@ -14,5 +14,5 @@ public interface ILockSiteService extends IService<LockSite> {
 
     void judgeName(LockSite lockSite);
 
-    List<LockSite> getAll();
+    List<LockSite> getAll(LockCommonParamVO lockCommonParamVO);
 }

@@ -16,4 +16,6 @@ public class LockCommonParamVO extends PageVO{
     private Integer machineRoomId;
     private String machineRoomName;
 
+    private String path;
+
 }

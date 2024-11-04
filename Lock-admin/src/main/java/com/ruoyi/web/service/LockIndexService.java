@@ -1,7 +1,9 @@
 package com.ruoyi.web.service;
 
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.LockSite;
+import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentViewVO;
 import com.ruoyi.web.domain.vo.index.PortStatisticsChartVO;
@@ -31,23 +33,24 @@ public class LockIndexService {
     private final ILockSiteService lockSiteService;
     private final LockEquipmentMapper lockEquipmentMapper;
 
-    public Map<String, Object> getIndexStatisticalQuantity() {
+    @CompanyScope
+    public Map<String, Object> getIndexStatisticalQuantity(LockCommonParamVO vo) {
         Map<String, Object> resultMap = new HashMap<>();
         List<PortStatisticsChartVO> controlledTotalStatisticsList = setPortStatistics();
         resultMap.put("controlledTotalStatistics", controlledTotalStatisticsList);
         resultMap.put("warnRecent12MonthsTotalStatistics", getRecent12MonthsStatistics(1));
         resultMap.put("unlockRecent12MonthsTotalStatistics", getRecent12MonthsStatistics(2));
         Map<String,Integer> lockTotalStatistics = new HashMap<>();
-        lockTotalStatistics.put("lockTotal", lockPortInfoMapper.selectLockPortTotal());
-        lockTotalStatistics.put("idleTotal",lockPortInfoMapper.selectIdleTotal());
-        lockTotalStatistics.put("useTotal", lockPortInfoMapper.selectUseTotal());
+        lockTotalStatistics.put("lockTotal", lockPortInfoMapper.selectLockPortTotal(vo));
+        lockTotalStatistics.put("idleTotal",lockPortInfoMapper.selectIdleTotal(vo));
+        lockTotalStatistics.put("useTotal", lockPortInfoMapper.selectUseTotal(vo));
         resultMap.put("lockTotalStatistics", lockTotalStatistics);
         return resultMap;
     }
 
     private List<PortStatisticsChartVO> setPortStatistics() {
         List<PortStatisticsChartVO> controlledTotalStatisticsList = new ArrayList<>();
-        List<LockSite> lockSiteList = lockSiteService.getAll();
+        List<LockSite> lockSiteList = lockSiteService.getAll(new LockCommonParamVO());
         if(lockSiteList.size()==0){
             return controlledTotalStatisticsList;
         }
@@ -106,7 +109,7 @@ public class LockIndexService {
 
     public List<Map<String, Object>> getLockNumberByStatusAndSite() {
         List<Map<String, Object>> list = new ArrayList<>();
-        List<LockSite> lockSiteList = lockSiteService.getAll();
+        List<LockSite> lockSiteList = lockSiteService.getAll(new LockCommonParamVO());
         if(lockSiteList.size()==0){
             return list;
         }

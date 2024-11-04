@@ -11,22 +11,18 @@ import java.util.List;
 public interface ILockEquipmentService extends IService<LockEquipment> {
 
 
-    List<LockEquipmentViewVO> selectEquipmentList(LockEquipmentParamVO lockCommonParamVO);
+    List<LockEquipmentViewVO> selectEquipmentList(LockEquipmentParamVO lockEquipmentParamVO);
 
     int deleteByIds(String[] ids);
 
     int add(LockEquipmentAddParamVO lockEquipmentAddParamVO);
     int update(LockEquipmentAddParamVO lockEquipmentAddParamVO);
-
-    int setTrust(LockEquipmentAddParamVO lockEquipmentAddParamVO);
-
     void judgeName(Integer id, String name, Integer cabinetId);
-
-    List<LockEquipment> getAll();
 
     int setActiveDefenseFlag(ActiveDefenseSaveOrUpdateParamVO vo);
 
     int updateActiveDefenseFlag(ActiveDefenseSaveOrUpdateParamVO vo);
 
     int removeActiveDefenseByIds(String[] ids);
+    List<LockEquipment> getAll(LockEquipmentParamVO lockEquipmentParamVO);
 }

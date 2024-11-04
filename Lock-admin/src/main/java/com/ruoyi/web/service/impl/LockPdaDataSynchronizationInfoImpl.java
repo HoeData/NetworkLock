@@ -1,6 +1,7 @@
 package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationProcess;
 import com.ruoyi.web.domain.LockPdaInfo;
@@ -65,6 +66,7 @@ public class LockPdaDataSynchronizationInfoImpl extends
     }
 
     @Override
+    @CompanyScope(companyAlias ="company")
     public List<LockPdaDataSynchronizationInfoViewVO> selectSynchronizationInfoList(
         LockPdaDataSynchronizationInfoPageParamVO viewVO) {
         List<LockPdaDataSynchronizationInfoViewVO> list = infoMapper.selectSynchronizationInfoList(

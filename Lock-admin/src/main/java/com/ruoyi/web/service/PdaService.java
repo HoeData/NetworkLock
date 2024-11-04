@@ -1,21 +1,22 @@
 package com.ruoyi.web.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.web.aspectj.CompanyScopeAspect;
+import com.ruoyi.web.domain.LockCompany;
+import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPdaUser;
-import com.ruoyi.web.domain.LockPortInfo;
-import com.ruoyi.web.domain.LockUnlockLog;
 import com.ruoyi.web.domain.RelPdaUserPort;
+import com.ruoyi.web.domain.vo.LockCommonParamVO;
+import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
 import com.ruoyi.web.domain.vo.pda.LockPdaUserPageParamVO;
 import com.ruoyi.web.domain.vo.pda.PdaDataVO;
+import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
-import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
+import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.utils.PdaDataSynchronizationUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,17 +37,28 @@ public class PdaService {
     private final IRelPdaUserPortService relPdaUserPortService;
     private final ILockUnlockLogService unlockLogService;
 
-    public PdaMergeDataVO getAllData() {
+    public PdaMergeDataVO getAllDataByPda(LockPdaInfo lockPdaInfo) {
+        LockCommonParamVO lockCommonParamVO = new LockCommonParamVO();
+        LockEquipmentParamVO lockEquipmentParamVO = new LockEquipmentParamVO();
+        LockPortInfoListParamVO lockPortInfoListParamVO = new LockPortInfoListParamVO();
+        LockCompany lockCompany = companyService.getByIdCache(lockPdaInfo.getCompanyId());
+        String sqlString = "company.id in (select id from lock_company where path like '%"
+            + lockCompany.getPath() + "')";
+        lockCommonParamVO.getParamMap().put(CompanyScopeAspect.COMPANY_SCOPE, sqlString);
+        lockEquipmentParamVO.getParamMap().put(CompanyScopeAspect.COMPANY_SCOPE, sqlString);
+        lockPortInfoListParamVO.getParamMap().put(CompanyScopeAspect.COMPANY_SCOPE, sqlString);
         PdaMergeDataVO pdaMergeDataVO = new PdaMergeDataVO();
-        pdaMergeDataVO.setCompanyList(companyService.getAll());
-        pdaMergeDataVO.setDeptList(deptService.getAll());
-        pdaMergeDataVO.setSiteList(siteService.getAll());
-        pdaMergeDataVO.setMachineRoomList(machineRoomService.getAll());
-        pdaMergeDataVO.setCabinetList(cabinetService.getAll());
-        pdaMergeDataVO.setEquipmentModelList(equipmentModelService.getAll());
-        pdaMergeDataVO.setEquipmentTypeList(equipmentTypeService.getAll());
-        pdaMergeDataVO.setEquipmentList(equipmentService.getAll());
-        pdaMergeDataVO.setPortInfoList(portInfoService.getAll());
+        pdaMergeDataVO.setCompanyList(companyService.selectCompanyList(lockCommonParamVO));
+        pdaMergeDataVO.setDeptList(deptService.getAll(lockCommonParamVO));
+        pdaMergeDataVO.setSiteList(siteService.getAll(lockCommonParamVO));
+        pdaMergeDataVO.setMachineRoomList(machineRoomService.getAll(lockCommonParamVO));
+        pdaMergeDataVO.setCabinetList(cabinetService.getAll(lockCommonParamVO));
+        pdaMergeDataVO.setEquipmentModelList(
+            equipmentModelService.selectEquipmentModelList(lockCommonParamVO));
+        pdaMergeDataVO.setEquipmentTypeList(
+            equipmentTypeService.selectEquipmentTypeList(lockCommonParamVO));
+        pdaMergeDataVO.setEquipmentList(equipmentService.getAll(lockEquipmentParamVO));
+        pdaMergeDataVO.setPortInfoList(portInfoService.getAll(lockPortInfoListParamVO));
         LockPdaUserPageParamVO vo = new LockPdaUserPageParamVO();
         vo.setPdaId(pdaService.getByKey(PdaDataSynchronizationUtil.getConnectedDeviceId()).getId());
         List<LockPdaUser> pdaUserList = pdaUserService.getPdaUserList(vo);

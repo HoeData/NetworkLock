@@ -16,8 +16,9 @@
             resultType="com.ruoyi.web.domain.vo.pda.LockPdaDataSynchronizationInfoViewVO">
         select info.*,pda.only_key as pda_key,pda.description as pda_description
         from lock_pda_data_synchronization_info info
-        inner  join lock_pda_info pda on pda.id = info.pda_id and pda.del_flag = '0'
-        where  info.del_flag ='0'
+        inner join lock_pda_info pda on pda.id = info.pda_id and pda.del_flag = '0'
+        inner join lock_company company on pda.company_id = company.id
+        where info.del_flag ='0'
         <if test="pdaId != null">
             AND info.pda_id = #{pdaId}
         </if>
@@ -32,6 +33,9 @@
         </if>
         <if test="queryEndDate != null">
             AND info.create_time <![CDATA[ <= ]]> #{queryEndDate}
+        </if>
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            AND ${paramMap.companyScope}
         </if>
         order by info.create_time desc
     </select>

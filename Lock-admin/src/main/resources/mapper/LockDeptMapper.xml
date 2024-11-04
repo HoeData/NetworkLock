@@ -12,8 +12,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 
     <select id="selectDeptList" resultType="com.ruoyi.web.domain.vo.LockCommonViewVO">
-        select t.*,c.name as company_name from lock_dept t left join lock_company c on t.company_id
-        = c.id and c.del_flag = '0'
+        select t.*,company.name as company_name from lock_dept t left join lock_company company on t.company_id
+        = company.id and company.del_flag = '0'
         where t.del_flag = '0'
         <if test="name != null and name !='' ">
             AND t.name like concat('%',#{name},'%')
@@ -22,11 +22,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             AND t.description like concat('%',#{description},'%')
         </if>
         <if test="companyId != null ">
-            AND c.id =#{companyId}
+            AND company.id =#{companyId}
         </if>
         <if test="companyName != null and companyName !='' ">
-            AND c.name like concat('%',#{companyName},'%')
+            AND company.name like concat('%',#{companyName},'%')
+        </if>
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
         </if>
         order by t.create_time desc
+    </select>
+    <select id="selectAllList" resultType="com.ruoyi.web.domain.LockDept">
+        select t.*
+        from lock_dept t
+                 left join lock_company company on t.company_id = company.id and company.del_flag = '0'
+        where t.del_flag = '0'
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
     </select>
 </mapper>

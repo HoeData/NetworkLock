@@ -2,11 +2,12 @@ package com.ruoyi.web.domain.vo.pda;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ruoyi.common.core.page.PageDomain;
+import com.ruoyi.web.domain.vo.PageVO;
 import java.util.Date;
 import lombok.Data;
 
 @Data
-public class LockPdaDataSynchronizationInfoPageParamVO extends PageDomain {
+public class LockPdaDataSynchronizationInfoPageParamVO extends PageVO {
 
     private Integer id;
     private Integer pdaId;

@@ -3,8 +3,8 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockMachineRoom;
-import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.LockCommonViewVO;
 import com.ruoyi.web.mapper.LockMachineRoomMapper;
@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class LockMachineRoomServiceImpl extends
     ServiceImpl<LockMachineRoomMapper, LockMachineRoom> implements ILockMachineRoomService {
-
     @Resource
     private LockMachineRoomMapper lockMachineRoomMapper;
 
     @Override
+    @CompanyScope()
     public List<LockCommonViewVO> selectMachineRoomList(LockCommonParamVO lockCommonParamVO) {
         return lockMachineRoomMapper.selectMachineRoomList(lockCommonParamVO);
     }
@@ -48,9 +48,8 @@ public class LockMachineRoomServiceImpl extends
     }
 
     @Override
-    public List<LockMachineRoom> getAll() {
-        LambdaQueryWrapper<LockMachineRoom> wrapper=new LambdaQueryWrapper<>();
-        wrapper.eq(LockMachineRoom::getDelFlag,0);
-        return list(wrapper);
+    @CompanyScope()
+    public List<LockMachineRoom> getAll(LockCommonParamVO lockCommonParamVO) {
+        return lockMachineRoomMapper.selectAllList(lockCommonParamVO);
     }
 }

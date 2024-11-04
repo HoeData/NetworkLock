@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.constants.PdaUserConst;
 import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPdaUser;
@@ -39,6 +40,7 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
     }
 
     @Override
+    @CompanyScope(companyAlias = "company")
     public List<LockPdaInfo> getPdaInfoList(LockPadPageParamVO padPageParamVO) {
         return pdaInfoMapper.selectPdaInfoList(padPageParamVO);
     }

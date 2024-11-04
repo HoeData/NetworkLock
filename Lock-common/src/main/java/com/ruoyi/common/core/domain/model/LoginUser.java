@@ -70,7 +70,6 @@ public class LoginUser implements UserDetails
      * 用户信息
      */
     private SysUser user;
-
     public LoginUser()
     {
     }
@@ -88,7 +87,6 @@ public class LoginUser implements UserDetails
         this.user = user;
         this.permissions = permissions;
     }
-
     public Long getUserId()
     {
         return userId;

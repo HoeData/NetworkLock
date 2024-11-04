@@ -21,5 +21,8 @@ public class LockPdaInfo extends LockEntity {
     @NotBlank(message = "描述不能为空")
     private String description;
     private String delFlag;
+    @NotNull(message = "所属公司不能为空")
+    private Integer companyId;
+
 
 }

@@ -17,19 +17,26 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         lock_authorization_log au
         inner JOIN lock_pda_user pu ON pu.id = au.pda_user_id
         inner JOIN lock_pda_info pda ON pda.id = pu.pda_id
-        <if test="successFlag != null">
-            AND au.success_flag =#{successFlag}
-        </if>
-        <if test="userName != null">
-            AND pu.user_name like CONCAT('%',#{userName},'%')
-        </if>
-        <if test="queryStartDate != null">
-            AND au.create_time <![CDATA[ >= ]]> #{queryStartDate}
-        </if>
-        <if test="queryEndDate != null">
-            AND au.create_time <![CDATA[ <= ]]> #{queryEndDate}
-        </if>
-        order by au.create_time desc
+        inner join lock_company company on company.id = pda.company_id
+        <where>
+            <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+                and ${paramMap.companyScope}
+            </if>
+            <if test="successFlag != null">
+                AND au.success_flag =#{successFlag}
+            </if>
+            <if test="userName != null">
+                AND pu.user_name like CONCAT('%',#{userName},'%')
+            </if>
+            <if test="queryStartDate != null">
+                AND au.create_time <![CDATA[ >= ]]> #{queryStartDate}
+            </if>
+            <if test="queryEndDate != null">
+                AND au.create_time <![CDATA[ <= ]]> #{queryEndDate}
+            </if>
+            order by au.create_time desc
+        </where>
+
 
     </select>
 </mapper>

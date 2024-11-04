@@ -2,6 +2,7 @@ package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.port.LockInfoForAddLockVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoStatisticalQuantityVO;
@@ -15,10 +16,10 @@ public interface ILockPortInfoService extends IService<LockPortInfo> {
 
     List<LockPortInfo> selectPortInfoList(LockPortInfoListParamVO portInfoListParamVO);
 
-    LockPortInfoStatisticalQuantityVO getStatisticalQuantity();
+    LockPortInfoStatisticalQuantityVO getStatisticalQuantity(LockCommonParamVO vo);
 
     List<MonitorPortViewVO> getMonitorPortList();
 
-    List<LockPortInfo> getAll();
+    List<LockPortInfo> getAll(LockPortInfoListParamVO portInfoListParamVO);
     void judgeUserCode(Integer id,String userCode);
 }

@@ -3,6 +3,7 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockCabinet;
 import com.ruoyi.web.domain.LockMachineRoom;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
@@ -21,6 +22,7 @@ public class LockCabinetServiceImpl extends
     private LockCabinetMapper lockCabinetMapper;
 
     @Override
+    @CompanyScope()
     public List<LockCommonViewVO> selectCabinetList(LockCommonParamVO lockCommonParamVO) {
         return lockCabinetMapper.selectCabinetList(lockCommonParamVO);
     }
@@ -48,9 +50,8 @@ public class LockCabinetServiceImpl extends
     }
 
     @Override
-    public List<LockCabinet> getAll() {
-        LambdaQueryWrapper<LockCabinet> wrapper=new LambdaQueryWrapper<>();
-        wrapper.eq(LockCabinet::getDelFlag,0);
-        return list(wrapper);
+    @CompanyScope()
+    public List<LockCabinet> getAll(LockCommonParamVO lockCommonParamVO) {
+        return lockCabinetMapper.selectAllList(lockCommonParamVO);
     }
 }

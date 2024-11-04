@@ -24,7 +24,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         room.name as machine_room_name,room.id as machine_room_id
         from lock_equipment t
         left join lock_cabinet as cabinet on cabinet.id=t.cabinet_id and cabinet.del_flag = '0'
-        left join lock_machine_room as room on room.id=cabinet.machine_room_id and room.del_flag ='0'
+        left join lock_machine_room as room on room.id=cabinet.machine_room_id and room.del_flag
+        ='0'
         left join lock_dept as dept on dept.id = t.dept_id and dept.del_flag = '0'
         left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
         left join lock_equipment_type as et on et.id = t.equipment_type_id and et.del_flag = '0'
@@ -64,9 +65,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="activeDefenseFlag != null ">
             AND t.active_defense_flag = #{activeDefenseFlag}
         </if>
-    order by t.create_time desc
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
+        order by t.create_time desc
     </select>
     <select id="selectConsoleTotal" resultType="java.lang.Integer">
-        select count(*) from lock_equipment  where console_flag =1;
+        select count(*) from lock_equipment t
+        left join lock_cabinet as cabinet
+        on cabinet.id = t.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room
+        on room.id = cabinet.machine_room_id and room.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_company as company
+        on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0' and t.console_flag =1
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
+    </select>
+    <select id="selectAllList" resultType="com.ruoyi.web.domain.LockEquipment">
+        select t.*
+        from lock_equipment t
+                 left join lock_cabinet as cabinet
+                           on cabinet.id = t.cabinet_id and cabinet.del_flag = '0'
+                 left join lock_machine_room as room
+                           on room.id = cabinet.machine_room_id and room.del_flag = '0'
+                 left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+                 left join lock_company as company
+                           on company.id = site.company_id and company.del_flag = '0'
+        where t.del_flag = '0'
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            and ${paramMap.companyScope}
+        </if>
+
     </select>
 </mapper>

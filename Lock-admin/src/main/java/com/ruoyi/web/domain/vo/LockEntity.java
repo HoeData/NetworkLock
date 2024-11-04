@@ -1,9 +1,11 @@
 package com.ruoyi.web.domain.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.collect.Maps;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 public class LockEntity implements Serializable {
 
@@ -31,8 +33,16 @@ public class LockEntity implements Serializable {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+    @TableField(exist = false)
+    private Map<String, String> paramMap = Maps.newHashMap();
 
+    public Map<String, String> getParamMap() {
+        return paramMap;
+    }
 
+    public void setParamMap(Map<String, String> paramMap) {
+        this.paramMap = paramMap;
+    }
 
     public String getCreateBy() {
         return createBy;

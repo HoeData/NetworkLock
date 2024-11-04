@@ -14,5 +14,5 @@ public interface ILockDeptService extends IService<LockDept> {
 
     void judgeName(LockDept lockDept);
 
-    List<LockDept> getAll();
+    List<LockDept> getAll(LockCommonParamVO lockCommonParamVO);
 }

@@ -12,4 +12,6 @@ public interface LockSiteMapper extends BaseMapper<LockSite> {
     List<LockCommonViewVO> selectSiteList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    List<LockSite> selectAllList(LockCommonParamVO lockCommonParamVO);
 }

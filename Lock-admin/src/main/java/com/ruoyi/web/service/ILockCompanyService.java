@@ -1,6 +1,7 @@
 package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ruoyi.web.domain.CompanyTreeSelect;
 import com.ruoyi.web.domain.LockCompany;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import java.util.List;
@@ -14,5 +15,9 @@ public interface ILockCompanyService extends IService<LockCompany> {
 
     void judgeName(String name, Integer id);
 
-    List<LockCompany> getAll();
+
+    int saveOrUpdateAll(LockCompany lockCompany);
+
+    List<CompanyTreeSelect> buildTreeSelect(List<LockCompany> list);
+    LockCompany getByIdCache(Integer companyId);
 }

@@ -3,8 +3,10 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockCabinet;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoStatisticalQuantityVO;
@@ -35,14 +37,15 @@ public class LockPortInfoServiceImpl extends
     }
 
     @Override
-    public LockPortInfoStatisticalQuantityVO getStatisticalQuantity() {
+    @CompanyScope
+    public LockPortInfoStatisticalQuantityVO getStatisticalQuantity(LockCommonParamVO vo) {
         LockPortInfoStatisticalQuantityVO lockPortInfoStatisticalQuantityVO = new LockPortInfoStatisticalQuantityVO();
-        lockPortInfoStatisticalQuantityVO.setPortTotal(lockPortInfoMapper.selectPortTotal());
+        lockPortInfoStatisticalQuantityVO.setPortTotal(lockPortInfoMapper.selectPortTotal(vo));
         lockPortInfoStatisticalQuantityVO.setLockPortTotal(
-            lockPortInfoMapper.selectLockPortTotal());
-        lockPortInfoStatisticalQuantityVO.setConsoleTotal(lockEquipmentMapper.selectConsoleTotal());
-        lockPortInfoStatisticalQuantityVO.setUseTotal(lockPortInfoMapper.selectUseTotal());
-        lockPortInfoStatisticalQuantityVO.setNoUseTotal(lockPortInfoMapper.selectNoUseTotal());
+            lockPortInfoMapper.selectLockPortTotal(vo));
+        lockPortInfoStatisticalQuantityVO.setConsoleTotal(lockEquipmentMapper.selectConsoleTotal(vo));
+        lockPortInfoStatisticalQuantityVO.setUseTotal(lockPortInfoMapper.selectUseTotal(vo));
+        lockPortInfoStatisticalQuantityVO.setNoUseTotal(lockPortInfoMapper.selectNoUseTotal(vo));
         return lockPortInfoStatisticalQuantityVO;
     }
 
@@ -52,10 +55,8 @@ public class LockPortInfoServiceImpl extends
     }
 
     @Override
-    public List<LockPortInfo> getAll() {
-        LambdaQueryWrapper<LockPortInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(LockPortInfo::getDelFlag, 0);
-        return list(wrapper);
+    public List<LockPortInfo> getAll(LockPortInfoListParamVO portInfoListParamVO) {
+        return lockPortInfoMapper.selectAllList(portInfoListParamVO);
     }
 
     @Override

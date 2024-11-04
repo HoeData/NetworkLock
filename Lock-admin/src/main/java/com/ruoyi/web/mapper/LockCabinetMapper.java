@@ -11,4 +11,6 @@ public interface LockCabinetMapper extends BaseMapper<LockCabinet> {
     List<LockCommonViewVO> selectCabinetList(LockCommonParamVO lockCommonParamVO);
 
     int deleteByIds(String[] ids);
+
+    List<LockCabinet> selectAllList(LockCommonParamVO lockCommonParamVO);
 }

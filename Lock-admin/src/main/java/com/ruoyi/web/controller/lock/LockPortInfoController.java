@@ -1,8 +1,10 @@
 package com.ruoyi.web.controller.lock;
 
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.domain.LockPortInfo;
+import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.utils.CommonUtils;
@@ -25,6 +27,7 @@ public class LockPortInfoController extends BaseController {
 
     @PostMapping("/list")
     public AjaxResult list(@RequestBody LockPortInfoListParamVO portInfoListParamVO) {
+        PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockPortInfo> list = lockPortInfoService.selectPortInfoList(portInfoListParamVO);
         return success(list);
     }
@@ -44,8 +47,8 @@ public class LockPortInfoController extends BaseController {
         return toAjax(lockPortInfoService.updateById(lockPortInfo));
     }
     @GetMapping("/getStatisticalQuantity")
-    public AjaxResult getStatisticalQuantity() {
-        return success(lockPortInfoService.getStatisticalQuantity());
+    public AjaxResult getStatisticalQuantity(LockCommonParamVO vo) {
+        return success(lockPortInfoService.getStatisticalQuantity(vo));
     }
 
 }

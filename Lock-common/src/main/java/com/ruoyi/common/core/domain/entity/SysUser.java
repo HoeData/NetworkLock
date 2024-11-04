@@ -71,9 +71,29 @@ public class SysUser extends BaseEntity
     /** 角色ID */
     private Long roleId;
 
+    private Integer companyId;
+
+    private String companyName;
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
     public SysUser()
     {
 
+    }
+
+    public Integer getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Integer companyId) {
+        this.companyId = companyId;
     }
 
     public SysUser(Long userId)

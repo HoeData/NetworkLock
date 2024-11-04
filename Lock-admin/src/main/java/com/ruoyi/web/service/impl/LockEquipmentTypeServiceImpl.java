@@ -45,10 +45,4 @@ public class LockEquipmentTypeServiceImpl extends
         }
     }
 
-    @Override
-    public List<LockEquipmentType> getAll() {
-        LambdaQueryWrapper<LockEquipmentType> wrapper=new LambdaQueryWrapper<>();
-        wrapper.eq(LockEquipmentType::getDelFlag,0);
-        return list(wrapper);
-    }
 }
