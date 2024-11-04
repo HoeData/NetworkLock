@@ -17,5 +17,7 @@ public class CommonUtils {
             lockEntity.setUpdateTime(new Date());
         }
     }
-
+    public static void addCommonParams(Object entity) {
+        addCommonParams(entity,null);
+    }
 }

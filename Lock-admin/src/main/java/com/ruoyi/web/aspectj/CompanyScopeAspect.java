@@ -60,8 +60,8 @@ public class CompanyScopeAspect {
             companyAlias = companyAlias + CommonConst.POINT;
         }
         String sqlString =
-            " " + companyAlias + "id in (select id from lock_company where path like '%"
-                + lockCompany.getPath() + "')";
+            " " + companyAlias + "id in (select id from lock_company where path like '"
+                + lockCompany.getPath() + "%')";
         if (StringUtils.isNotBlank(sqlString)) {
             Object params = joinPoint.getArgs()[0];
             if (StringUtils.isNotNull(params) && params instanceof LockEntity) {

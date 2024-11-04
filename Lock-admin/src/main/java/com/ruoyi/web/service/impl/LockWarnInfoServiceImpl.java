@@ -1,6 +1,7 @@
 package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.domain.LockWarnInfo;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.equipment.LockEquipmentParamVO;
@@ -30,6 +31,7 @@ public class LockWarnInfoServiceImpl extends
     }
 
     @Override
+    @CompanyScope
     public List<LockWarnInfoViewVO> selectWarnInfoList(LockEquipmentParamVO lockEquipmentParamVO) {
         return lockWarnInfoMapper.selectWarnInfoList(lockEquipmentParamVO);
     }
