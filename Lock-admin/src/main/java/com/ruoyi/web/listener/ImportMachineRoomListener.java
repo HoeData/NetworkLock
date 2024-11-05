@@ -82,6 +82,7 @@ public class ImportMachineRoomListener implements ReadListener<ImportMachineRoom
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         if (StringUtils.isNotBlank(uuid)) {
             ImportErrorCache.errorMap.put(uuid, importMachineRoomVOList);
+            return;
         }
         SpringUtils.getBean(ILockMachineRoomService.class).saveBatch(cachedDataList);
     }

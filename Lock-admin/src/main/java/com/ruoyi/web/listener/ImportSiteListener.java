@@ -83,6 +83,7 @@ public class ImportSiteListener implements ReadListener<ImportSiteVO> {
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         if (StringUtils.isNotBlank(uuid)) {
             ImportErrorCache.errorMap.put(uuid, importSiteVOList);
+            return;
         }
         SpringUtils.getBean(ILockSiteService.class).saveBatch(cachedDataList);
     }

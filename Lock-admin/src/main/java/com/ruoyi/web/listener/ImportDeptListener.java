@@ -81,6 +81,7 @@ public class ImportDeptListener implements ReadListener<ImportDeptVO> {
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         if (StringUtils.isNotBlank(uuid)) {
             ImportErrorCache.errorMap.put(uuid, importDeptVOList);
+            return;
         }
         SpringUtils.getBean(ILockDeptService.class).saveBatch(cachedDataList);
     }

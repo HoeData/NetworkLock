@@ -1,6 +1,7 @@
 package com.ruoyi.web.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.web.domain.vo.LockEntity;
@@ -23,6 +24,6 @@ public class LockPdaInfo extends LockEntity {
     private String delFlag;
     @NotNull(message = "所属公司不能为空")
     private Integer companyId;
-
-
+    @TableField(exist = false)
+    private String companyName;
 }

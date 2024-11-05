@@ -13,12 +13,11 @@
 
 
     <select id="selectPdaInfoList" resultType="com.ruoyi.web.domain.LockPdaInfo">
-        select t.*
-        from lock_pda_info t left join lock_company company on t.company_id = company.id and company.del_flag = '0'
+        select t.*,company.id as company_id,company.name as company_name
+        from lock_pda_info t left join lock_company company on t.company_id = company.id and
+        company.del_flag = '0'
         where t.del_flag = '0'
-        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
-            AND ${paramMap.companyScope}
-        </if>
+
         <if test="type != null ">
             AND t.type =#{type}
         </if>
@@ -28,10 +27,10 @@
         <if test="description != null and description !='' ">
             AND t.description like concat('%',#{description},'%')
         </if>
+        <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
+            AND ${paramMap.companyScope}
+        </if>
         order by t.create_time desc
-
-
-
 
 
     </select>

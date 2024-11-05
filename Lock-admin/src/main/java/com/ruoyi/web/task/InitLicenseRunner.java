@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 public class InitLicenseRunner implements ApplicationRunner {
 
     public static String JAR_PATH = "";
-    private static final String PRIVATE_KEY =
+    public static final String PRIVATE_KEY =
         "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALGsZKvnqHNtJFuj\n"
             + "9qCwNblC+dVIE010vGNgy8/atzFKXVEYHJbYeU24T5HA3aEiFMkcnjtSIcTzKZY7\n"
             + "6X2k6M2HWUt1YBQj7OwO3jSihdsB8ArrNs/FAquqoU+PxuwG5DvL2YiHtJNt1Nye\n"
@@ -125,6 +125,7 @@ public class InitLicenseRunner implements ApplicationRunner {
         } catch (IOException e) {
             e.getMessage();
         }
+        LockCache.licenseStrList.add(value);
         return value;
     }
 

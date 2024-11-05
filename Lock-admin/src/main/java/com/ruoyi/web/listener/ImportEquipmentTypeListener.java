@@ -65,6 +65,7 @@ public class ImportEquipmentTypeListener implements ReadListener<ImportEquipment
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         if (StringUtils.isNotBlank(uuid)) {
             ImportErrorCache.errorMap.put(uuid, importEquipmentTypeVOList);
+            return;
         }
         SpringUtils.getBean(ILockEquipmentTypeService.class).saveBatch(cachedDataList);
     }

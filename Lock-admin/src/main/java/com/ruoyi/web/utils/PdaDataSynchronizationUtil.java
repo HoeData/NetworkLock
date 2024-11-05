@@ -1,8 +1,6 @@
 package com.ruoyi.web.utils;
 
 import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.web.constants.LockCache;
@@ -330,10 +328,14 @@ public class PdaDataSynchronizationUtil {
     private static void setNowStatusMsgAndAddProcess(
         LockPdaDataSynchronizationInfo synchronizationInfo,
         PdaDataSynchronizationStatusType statusType) {
-        ILockPdaDataSynchronizationInfoService pdaDataSynchronizationInfoService = SpringUtils.getBean(
-            ILockPdaDataSynchronizationInfoService.class);
+        if (null != synchronizationInfo) {
+            ILockPdaDataSynchronizationInfoService pdaDataSynchronizationInfoService = SpringUtils.getBean(
+                ILockPdaDataSynchronizationInfoService.class);
+            pdaDataSynchronizationInfoService.updateStatus(synchronizationInfo,
+                statusType.getValue());
+        }
         nowStatusMsg = statusType.getMsg();
-        pdaDataSynchronizationInfoService.updateStatus(synchronizationInfo, statusType.getValue());
+
     }
 
 
@@ -427,7 +429,47 @@ public class PdaDataSynchronizationUtil {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(getConnectedDeviceId());
+
+    public static void pdaOfflineDataSynchronization(PdaMergeDataVO pdaMergeDataVO,
+        List<String> licenseStrList) {
+        statusVO = new PdaDataSynchronizationStatusVO();
+        //获取连接设备ID
+        String deviceId = getConnectedDeviceId();
+        if (StringUtils.isBlank(deviceId)) {
+            PdaDataSynchronizationStopThread.RUNNING = false;
+        }
+        statusVO.setReadyFlag(true);
+        mkdirFold(LOCAL_DATA_DIR_PATH + deviceId);
+        nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
+        //TODO 重写生成license文件地址
+//        List<String> pathList = SpringUtils.getBean(LicenseProperties.class).getPathList();
+//        List<String> fileNameList = new ArrayList<>();
+//        pathList.forEach(path -> {
+//            String fileName = getFileName(path);
+//            fileNameList.add(fileName);
+//            pushFileToDevice(deviceId, InitLicenseRunner.JAR_PATH + File.separator + "license" + File.separator
+//                + fileName, PDA_DATA_DIR_PATH + fileName);
+//        });
+//        statusVO.setLicensesNameList(fileNameList);
+        writeStatusToPda();
+        //等待PDA创建数据文件完成
+        waitPdaCreateData(deviceId);
+        setNowStatusMsgAndAddProcess(null, PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
+        //获取PDA创建文件内容
+        setNowStatusMsgAndAddProcess(null, PdaDataSynchronizationStatusType.PC_GET_DATA);
+        PdaDataVO fromPdaData = getFromPda(deviceId);
+        //创建需要同步给PDA的数据
+        setNowStatusMsgAndAddProcess(null, PdaDataSynchronizationStatusType.PC_CREATE_DATA);
+        judgePdaData(pdaMergeDataVO, fromPdaData, null);
+        setNowStatusMsgAndAddProcess(null,
+            PdaDataSynchronizationStatusType.PDA_GET_DATA);
+        writeDataToPda(deviceId, pdaMergeDataVO);
+        getPdaGetDataFlag(deviceId);
+        fromPdaData.setLockPortInfo(pdaMergeDataVO.getPortInfoList());
+        statusVO.setEndFlag(true);
+        writeStatusToPda();
+        setNowStatusMsgAndAddProcess(null, PdaDataSynchronizationStatusType.END);
+        removePdaFile(deviceId);
+        PdaDataSynchronizationStopThread.RUNNING = false;
     }
 }

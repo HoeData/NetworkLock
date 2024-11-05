@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 public class PdaDataSynchronizationStopThread implements Runnable {
 
     public volatile static boolean RUNNING = true;
-
     @Override
     public void run() {
         while (RUNNING) {

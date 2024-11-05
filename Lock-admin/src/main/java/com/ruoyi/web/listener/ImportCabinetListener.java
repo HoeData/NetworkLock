@@ -80,6 +80,7 @@ public class ImportCabinetListener implements ReadListener<ImportCabinetVO> {
     public void doAfterAllAnalysed(AnalysisContext analysisContext) {
         if (StringUtils.isNotBlank(uuid)) {
             ImportErrorCache.errorMap.put(uuid, importCabinetVOList);
+            return;
         }
         SpringUtils.getBean(ILockCabinetService.class).saveBatch(cachedDataList);
     }

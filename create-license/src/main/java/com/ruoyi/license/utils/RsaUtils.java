@@ -132,7 +132,21 @@ public class RsaUtils {
             addMap.put("serialNumber", "XYZS2526AB000" +s);
             list.add(addMap);
         }
-
+        Map<String, Object> addMap = new HashMap<>();
+        addMap.put("type", 2);
+        addMap.put("serialNumber", "0XYZ2410AB000000");
+        list.add(addMap);
+//        for (int i = 1; i < 21; i++) {
+//            Map<String, Object> addMap = new HashMap<>();
+//            addMap.put("type", 2);
+//            String s = String.valueOf(i);
+//            int length = s.length();
+//            if(length==1){
+//                s = "0" + s;
+//            }
+//            addMap.put("serialNumber", "0XYZ2410AB0000" +s);
+//            list.add(addMap);
+//        }
         resultMap.put("lockInfoList", list);
         String encrypt2 = rsa.encryptBase64(
             StrUtil.bytes(JSON.toJSONString(resultMap), CharsetUtil.CHARSET_UTF_8),
