@@ -75,12 +75,12 @@ public class LockEquipmentModelController extends BaseController {
         if (StringUtils.isNotBlank(importEquipmentModelListener.getUuid())) {
             Map<String, String> map = Maps.newHashMap();
             map.put("downloadId", importEquipmentModelListener.getUuid());
-            return AjaxResult.error("数据校验失败，请下载错误原因EXCEL,修改后重新上传", map);
+            return AjaxResult.success("数据校验失败，已为您下载错误原因EXCEL,请修改后重新上传", map);
         }
         return AjaxResult.success("设备型号导入成功");
     }
 
-    @GetMapping("/download/{downloadId}")
+    @PostMapping("/download/{downloadId}")
     public void downloadFailedUsingJson(HttpServletResponse response,
         @PathVariable String downloadId) {
         EasyExcelUtil.simpleDownload(ImportEquipmentModelVO.class,

@@ -3,10 +3,8 @@ package com.manniu.offline.domain;
 import lombok.Data;
 
 @Data
-@TableName(value = "lock_equipment")
 public class LockEquipment extends LockEntity {
 
-    @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer deptId;
     private Integer cabinetId;

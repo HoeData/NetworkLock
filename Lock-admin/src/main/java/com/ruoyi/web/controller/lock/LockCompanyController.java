@@ -1,9 +1,11 @@
 package com.ruoyi.web.controller.lock;
 
 import com.github.pagehelper.PageHelper;
+import com.google.common.base.Preconditions;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.web.domain.LockCompany;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.service.ILockCompanyService;
@@ -41,7 +43,10 @@ public class LockCompanyController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockCompany lockCompany) {
-        lockCompanyService.judgeName(lockCompany.getName(),lockCompany.getId());
+        if (!SecurityUtils.getLoginUser().getUser().isAdmin()) {
+            Preconditions.checkArgument(0 != lockCompany.getParentId(), "所属公司不能为空");
+        }
+        lockCompanyService.judgeName(lockCompany.getName(), lockCompany.getId());
         CommonUtils.addCommonParams(lockCompany, lockCompany.getId());
         return toAjax(lockCompanyService.saveOrUpdateAll(lockCompany));
     }

@@ -38,12 +38,18 @@ public class LockCompanyServiceImpl extends
 
     @Override
     public int deleteByIds(String[] ids) {
+        judgeDelete(ids);
         return lockCompanyMapper.deleteByIds(ids);
     }
 
     private void judgeDelete(String[] ids) {
         for (String id : ids) {
-
+            LambdaQueryWrapper<LockCompany> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(LockCompany::getParentId, id);
+            lambdaQueryWrapper.eq(LockCompany::getDelFlag, 0);
+            if (list(lambdaQueryWrapper).size() > 0) {
+                throw new ServiceException("删除公司存在下属公司,无法删除");
+            }
         }
     }
 

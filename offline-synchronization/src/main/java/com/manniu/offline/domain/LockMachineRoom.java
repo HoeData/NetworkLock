@@ -1,15 +1,8 @@
 package com.manniu.offline.domain;
 
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.manniu.domain.vo.LockEntity;
-
-@TableName(value = "lock_machine_room")
 public class LockMachineRoom extends LockEntity {
 
-    @TableId(type = IdType.AUTO)
     private Integer id;
     private Integer siteId;
     private String name;
