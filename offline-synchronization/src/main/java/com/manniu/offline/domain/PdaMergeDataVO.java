@@ -7,7 +7,6 @@ import lombok.Data;
 
 @Data
 public class PdaMergeDataVO implements Serializable {
-
     private List<LockCompany> companyList = new ArrayList<>();
     private List<LockSite> siteList = new ArrayList<>();
     private List<LockDept> deptList = new ArrayList<>();

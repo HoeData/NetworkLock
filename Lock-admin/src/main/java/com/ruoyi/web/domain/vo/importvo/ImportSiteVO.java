@@ -11,10 +11,10 @@ public class ImportSiteVO {
     private String siteName;
     @ExcelProperty("站点描述")
     private String siteDescription;
-    @ExcelProperty("纬度")
-    private String latitude;
     @ExcelProperty("经度")
     private String longitude;
+    @ExcelProperty("纬度")
+    private String latitude;
     @ExcelProperty("所属公司*")
     private String companyName;
     @ExcelProperty("错误原因")

@@ -85,10 +85,11 @@ public class LockPdaInfoController extends BaseController {
     @SneakyThrows
     @GetMapping(value = "/downloadSynchronizationFile/{id}", produces = "application/octet-stream")
     public void downloadSynchronizationFile(@PathVariable String id, HttpServletResponse response) {
-        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllDataByPda(pdaInfoService.getById(id));
-        List<LicenseParamVO> licenseParamVOList = LockCache.licenseParamVOList;
+        LockPdaInfo pdaInfo = pdaInfoService.getById(id);
+        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllDataByPda(pdaInfo);
         Map<String, Object> map = Maps.newHashMap();
-//        map.put("pdaMergeDataVO", pdaMergeDataVO);
+        map.put("pdaMergeDataVO", pdaMergeDataVO);
+        map.put("pdaKey", pdaInfo.getOnlyKey());
         map.put("licenseStrList", LockCache.licenseStrList);
         RSA rsa = new RSA(null, PDA_EXPORT_PUBLIC_KEY);
         String encrypt2 = rsa.encryptBase64(
