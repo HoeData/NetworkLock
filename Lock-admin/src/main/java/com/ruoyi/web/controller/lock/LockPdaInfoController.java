@@ -22,8 +22,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,7 +48,7 @@ public class LockPdaInfoController extends BaseController {
     }
 
     @PostMapping("/saveOrUpdate")
-    public AjaxResult saveOrUpdate(@RequestBody LockPdaInfo lockPdaInfo) {
+    public AjaxResult saveOrUpdate(@RequestBody @Validated LockPdaInfo lockPdaInfo) {
         pdaInfoService.judgeKey(lockPdaInfo);
         CommonUtils.addCommonParams(lockPdaInfo, lockPdaInfo.getId());
         return toAjax(pdaInfoService.saveOrUpdateAll(lockPdaInfo));

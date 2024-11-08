@@ -1,8 +1,11 @@
 package com.manniu.offline.controller;
 
+import cn.hutool.core.io.FileUtil;
+import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.http.HttpUtil;
+import cn.hutool.setting.Setting;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Maps;
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,7 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/lock/pdaOfflineSynchronization")
 public class PdaOfflineSynchronizationController {
 
-    public static String ADB_PATH = "D:\\out\\platform-tools-latest-windows\\platform-tools\\adb.exe";
+    public static String ADB_PATH = "";
     public static final String PDA_DATA_DIR_PATH = "/sdcard/Android/data/uni.UNI77F4334/documents/";
     private static final String LOCAL_DATA_DIR_PATH = "C:\\dataSynchronization\\";
     private static final String PDA_STATUS_FILENAME = "status.txt";
@@ -48,30 +52,29 @@ public class PdaOfflineSynchronizationController {
     public static PdaDataSynchronizationStatusVO statusVO;
     public static String nowStatusMsg;
     public static final String AES_KEY = "uuNbz89psCnbtJlm";
-    private static String SERVER_URL = "http://127.0.0.1:8081";
+    private static String SERVER_URL = "";
     private static boolean serverConnectFlag = false;
 
 
-    @GetMapping("/start")
+    @PostMapping("/start")
     public Object start(MultipartFile file) {
-        SynchronizationVO synchronizationVO = null;
+        SynchronizationVO synchronizationVO;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("code", 200);
         resultMap.put("msg", "同步成功");
         try {
-//            ADB_PATH = System.getProperty("user.dir") + File.separator + "config" + File.separator
-//                + "platform-tools" + File.separator + "adb.exe";
+            ADB_PATH = System.getProperty("user.dir") + File.separator + "config" + File.separator
+                + "platform-tools" + File.separator + "adb.exe";
             String deviceId = getConnectedDeviceId();
             if (StringUtils.isBlank(deviceId)) {
                 throw new RuntimeException("未识别到PDA");
             }
-//            Setting setting = new Setting(FileUtil.touch(
-//                System.getProperty("user.dir") + File.separator + "config" + File.separator
-//                    + "config.setting"), CharsetUtil.CHARSET_UTF_8, true);
-//            SERVER_URL = setting.getStr("serverUrl", "");
-
+            Setting setting = new Setting(FileUtil.touch(
+                System.getProperty("user.dir") + File.separator + "config" + File.separator
+                    + "config.setting"), CharsetUtil.CHARSET_UTF_8, true);
+            SERVER_URL = setting.getStr("serverUrl", "");
             synchronizationVO = getDataForApi(deviceId);
-            if (synchronizationVO == null && StringUtils.isBlank( file.getOriginalFilename())) {
+            if (synchronizationVO == null && (null==file||StringUtils.isBlank(file.getOriginalFilename()))) {
                 throw new RuntimeException("与服务端连接超时,请上传同步文件进行同步");
             }
             if (null == synchronizationVO) {
@@ -85,6 +88,7 @@ public class PdaOfflineSynchronizationController {
             }
             pdaOfflineDataSynchronization(synchronizationVO);
         } catch (Exception e) {
+            e.printStackTrace();
             resultMap.put("code", "500");
             resultMap.put("msg", e.getMessage());
         }
@@ -92,7 +96,7 @@ public class PdaOfflineSynchronizationController {
         return resultMap;
     }
 
-    @GetMapping("/exportPdaData")
+    @PostMapping("/exportPdaData")
     public Object exportPdaData() {
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("code", 200);
@@ -105,7 +109,9 @@ public class PdaOfflineSynchronizationController {
             if (null == pdaDataVO) {
                 throw new RuntimeException("PDA数据获取失败,请检查后重试");
             }
-            writeStringToFile(JSON.toJSONString(pdaDataVO),
+            AES aes = SecureUtil.aes(AES_KEY.getBytes());
+            String encryptHex = aes.encryptHex(JSON.toJSONString(pdaDataVO));
+            writeStringToFile(encryptHex,
                 LOCAL_DATA_DIR_PATH + deviceId + File.separator + "pdaData.cer");
             resultMap.put("msg",
                 "导出PDA数据成功,文件已存放在" + LOCAL_DATA_DIR_PATH + deviceId + File.separator

@@ -3,7 +3,6 @@ package com.ruoyi.web.controller.pda;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.symmetric.AES;
 import com.alibaba.fastjson2.JSON;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -78,7 +77,6 @@ public class PdaDataSynchronizationController {
 
     @PostMapping("/updatePdaDataForFile")
     public AjaxResult updatePdaDataForFile(@RequestParam("file") MultipartFile file) {
-        LockPdaInfo pdaInfo = null;
         LockPdaDataSynchronizationInfo lockPdaDataSynchronizationInfo = null;
         try {
             String content = new BufferedReader(
@@ -86,7 +84,7 @@ public class PdaDataSynchronizationController {
                 .collect(Collectors.joining("\n"));
             AES aes = SecureUtil.aes(AES_KEY.getBytes());
             PdaDataVO fromPdaData = JSON.parseObject(aes.decryptStr(content), PdaDataVO.class);
-            pdaInfo = lockPdaInfoService.getById(fromPdaData.getPdaId());
+            LockPdaInfo pdaInfo = lockPdaInfoService.getById(fromPdaData.getPdaId());
             lockPdaDataSynchronizationInfo = pdaDataSynchronizationInfoService.saveAll(
                 pdaInfo.getOnlyKey(), PdaDataSynchronizationType.getEnum(2));
             List<LockPortInfo> portInfoList = portInfoService.getAll(new LockPortInfoListParamVO());
@@ -127,6 +125,7 @@ public class PdaDataSynchronizationController {
                 pdaDataSynchronizationInfoService.updateStatus(lockPdaDataSynchronizationInfo,
                     PdaDataSynchronizationStatusType.ERROR.getValue());
             }
+            e.printStackTrace();
             return AjaxResult.error("同步失败");
         }
 

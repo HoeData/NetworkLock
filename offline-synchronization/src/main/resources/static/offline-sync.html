@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>离线同步</title>
+  <style>
+    html {
+      color: #fff;
+      font-size: 14px;
+    }
+    body, h1, h2, h3, h4, h5 {
+      margin: 0;
+    }
+    #app {
+      height: 100vh;
+      overflow: hidden;
+      background-size: 100% 100%;
+      background-image: url('img/background.png');
+      background-color: #000;
+    }
+    .nav {
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5vw;
+      z-index: 99;
+      position: fixed;
+      user-select: none;
+      background-size: 100% 100%;
+      background-image: url('img/nav.png');
+    }
+    .title {
+      cursor: pointer;
+			font-size: 1.8vw;
+      line-height: 1.1;
+			text-shadow: 0px 4px 10px rgba(0, 160, 150, 1);
+			letter-spacing: 8px;
+      top: 1vw;
+			left: 50%;
+			position: absolute;
+			transform: translateX(-50%);
+		}
+
+    .main {
+      top: 50%;
+      left: 50%;
+      position: fixed;
+      transform: translate(-50%, -50%);
+    }
+
+    .panel {
+      width: 720px;
+      padding: 30px;
+      text-align: center;
+      letter-spacing: 2px;
+      background-size: 100% 100%;
+      background-image: url('img/panel.png');
+    }
+
+    .panel + .panel {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="nav">
+      <h1 class="title">离线同步</h1>
+    </div>
+    <div class="main">
+      <div class="panel">
+        <h3>向PDA同步流程</h3>
+        <p>1、使用数据线将PDA与电脑进行连接。</p>
+        <p>2、PDA打开USB调试。</p>
+        <p>3、PDA打开“内网数据同步”页面等待同步完成。</p>
+        <p>4、点击下方“开始同步”按钮，会自动检测在线同步还是离线同步，如果是离线同步，则需要添加同步文件。</p>
+        <input id="input" style="width: 180px;" type="file">
+        <button id="button1">开始同步</button>
+        <p style="color: #00A096;">注：不要在同步过程中断开连接，同步过程会在PDA展示。</p>
+      </div>
+      <div class="panel">
+        <h3>向PC同步流程</h3>
+        <p>1、使用数据线将PDA与电脑进行连接。</p>
+        <p>2、PDA打开USB调试。</p>
+        <p>3、PDA打开“我的”页面点击“离线数据导出”按钮。</p>
+        <p>4、导出成功后，点击下方“生成文件”按钮，将PDA导出的数据生成加密文件并移动到当前电脑指定目录下。</p>
+        <p>5、进入“网安设备态势感知系统”平台，打开“PDA/钥匙管理”页面，点击“同步”按钮上传文件即可。</p>
+        <button id="button2">生成文件</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    let input = document.querySelector('#input')
+    let button1 = document.querySelector('#button1')
+    let button2 = document.querySelector('#button2')
+
+    button1.onclick = function (e) {
+      if (button1.innerHTML == '开始同步') {
+        button1.innerHTML = '正在同步...'
+        let body = new FormData()
+        if (input.files[0]) {
+          body.append('file', input.files[0])
+        }
+        fetch('http://127.0.0.1:8080/lock/pdaOfflineSynchronization/start', {
+          body,
+          method: 'post'
+        }).then(data => {
+          return data.json()
+        }).then(data => {
+          alert(data.msg)
+          button1.innerHTML = '开始同步'
+        }).catch(errr => {
+          alert('接口请求失败')
+          button1.innerHTML = '开始同步'
+        })
+      }
+    }
+
+    button2.onclick = function (e) {
+      if (button2.innerHTML == '生成文件') {
+        button2.innerHTML = '正在生成...'
+        fetch('http://127.0.0.1:8080/lock/pdaOfflineSynchronization/exportPdaData', {
+          method: 'post'
+        }).then(data => {
+          return data.json()
+        }).then(data => {
+          alert(data.msg)
+          button2.innerHTML = '生成文件'
+        }).catch(errr => {
+          alert('接口请求失败')
+          button2.innerHTML = '生成文件'
+        })
+      }
+    }
+  </script>
+</body>
+</html>
