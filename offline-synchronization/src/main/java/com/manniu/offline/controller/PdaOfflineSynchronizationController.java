@@ -1,15 +1,20 @@
 package com.manniu.offline.controller;
 
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.symmetric.AES;
+import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.manniu.offline.domain.LockPdaDataSynchronizationInfo;
 import com.manniu.offline.domain.LockPortInfo;
 import com.manniu.offline.domain.LockUnlockLog;
 import com.manniu.offline.domain.PdaDataSynchronizationStatusType;
 import com.manniu.offline.domain.PdaDataSynchronizationStatusVO;
 import com.manniu.offline.domain.PdaDataVO;
 import com.manniu.offline.domain.PdaMergeDataVO;
+import com.manniu.offline.domain.SynchronizationVO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileWriter;
@@ -20,11 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -32,7 +38,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/lock/pdaOfflineSynchronization")
 public class PdaOfflineSynchronizationController {
 
-    public static String ADB_PATH = "";
+    public static String ADB_PATH = "D:\\out\\platform-tools-latest-windows\\platform-tools\\adb.exe";
     public static final String PDA_DATA_DIR_PATH = "/sdcard/Android/data/uni.UNI77F4334/documents/";
     private static final String LOCAL_DATA_DIR_PATH = "C:\\dataSynchronization\\";
     private static final String PDA_STATUS_FILENAME = "status.txt";
@@ -41,101 +47,156 @@ public class PdaOfflineSynchronizationController {
     public static final String STATUS_NAME = "status.txt";
     public static PdaDataSynchronizationStatusVO statusVO;
     public static String nowStatusMsg;
-    public static final String PDA_EXPORT_PRIVATE_KEY =
-        "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALTFazs4qOsLDsqG\n"
-            + "jlpDo3dERvJoUngltlOcPNhswy0HTQ2EJdtI4l2HKZaJsHZaam7sz2tW6gStIdhx\n"
-            + "YpBc4UlmdsmshAhPe33Z3ArTD/uZgPbjAJnYpyweFYlk7K5AIa62c2LNoW6q95ax\n"
-            + "dwmbCAqIRG1QmvW/4VUfu7y3xYvTAgMBAAECgYAMxsdFcEPAGQ/6kHgPOSicjV7W\n"
-            + "UzlA9KlmT2ydf1JsJE/13JkwXn5hTeRKl4C5XLqZDHO8inAP1IzH13u36Fij0P0q\n"
-            + "WksjmaWl2wV6cNdO3i+3HuvfB3v8UKSUIIeIMIpq0q6LrVZk+fO60dcP6Kjrada9\n"
-            + "pTGfBRU2AzVqkCZUAQJBAOOJEIp1vPWX2mslPc9DE2jW0E5HrUHFarSQmZsPA2p9\n"
-            + "+nIwrAdi7zLcDBfYNgGXaxPscCeYOY/maF/m7yxRc8ECQQDLYrS91AxNcLWF9pwH\n"
-            + "rtuBp6WNCmQ5bGDE/kMSLMVb6Aza9IusCxTk1dyH1KvSbi/h4DJxHsyeSCDmG6sx\n"
-            + "NRSTAkAchz3srlBv1odLMdMrHnTbizt45SHDAlabpxmrSFmcS4lQMewPzQbCsLZP\n"
-            + "cwtqbaq+R8HUJRDqivABPjo0q03BAkBKB+jAPCIqQf9g/s32ofg2bn59Iy4uFLv4\n"
-            + "mJBzWiaQeJvNSzxX6ES3svyt2ISeeQsmzcOul0Zlyt1mxOWAaNDPAkEA2vKdKGKa\n"
-            + "IIlsov/7x+dl/4c32S79V7SWMscbg2HXO7PCoDgZviEvWV2wQ2OsYIsT5c+2s56s\n"
-            + "G5698YMwYLHHxw==";
-    public static final String LICENSE_PRIVATE_KEY =
-        "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALGsZKvnqHNtJFuj\n"
-            + "9qCwNblC+dVIE010vGNgy8/atzFKXVEYHJbYeU24T5HA3aEiFMkcnjtSIcTzKZY7\n"
-            + "6X2k6M2HWUt1YBQj7OwO3jSihdsB8ArrNs/FAquqoU+PxuwG5DvL2YiHtJNt1Nye\n"
-            + "yJ3vfP34X8350071X7Hqp1KUZ4ohAgMBAAECgYBNxjkLRwzl+hDATLXZAUmDH15d\n"
-            + "jn9kmIUeu3B8PDGU0ginRva80WXIL7YlB1f9AP44St64+OrvW8IIkZFT/qwpEJDs\n"
-            + "yMPiJmjRyGPr62iqsnG82e+b/D59hZgrIe1Sb6tdUbUh6J4+4K2HbIdY1t6jPWRr\n"
-            + "ysE413l5MnJQqZSAAQJBAOdYRqOXZXmoIRWP0lKGdmo92PfhiJrzoruYZDkQXx7h\n"
-            + "E4NL1b0AY5HOev3+KkozO/zqWtqVpj3nXVFXUqJxa0ECQQDEm9Aw3iTvj4j/90BW\n"
-            + "YbZODgHfhMUhipfRSU4xg/ffm6uqMQDpQcFb/FCMPekq3HFZMfoN2UEgGvKwoBH4\n"
-            + "xMbhAkAC6m/pe+0BfYb9OJTUCXHQoPrtFOCd41g3uRH6TiSExR1z2C7XdPvMSKfw\n"
-            + "L5Xk3YRyCZofiydPPG1Gqy0VcwyBAkBflPR43XaNdHWBIz4HAMf1WH/2n4CK1usJ\n"
-            + "1x6JmgPGlNK3Ec3EmLAdPSQXmf2iVbtRRqevVeCAcDluPtOd4mRhAkEAvJRIlDON\n"
-            + "b1nSSQShT6Y/cHGh37MLfo6hKO1gqPwlyGoIay941P9hl2MSgjYUp0aVAe/RUQdI\n"
-            + "veM6K6605Eo0gA==";
+    public static final String AES_KEY = "uuNbz89psCnbtJlm";
+    private static String SERVER_URL = "http://127.0.0.1:8081";
+    private static boolean serverConnectFlag = false;
+
 
     @GetMapping("/start")
-    public Map<String, Object> error(@RequestParam("file") MultipartFile file) {
+    public Object start(MultipartFile file) {
+        SynchronizationVO synchronizationVO = null;
         Map<String, Object> resultMap = Maps.newHashMap();
         resultMap.put("code", 200);
         resultMap.put("msg", "同步成功");
         try {
-            String content = new BufferedReader(
-                new InputStreamReader(file.getInputStream())).lines()
-                .collect(Collectors.joining("\n"));
-            RSA rsa = new RSA(PDA_EXPORT_PRIVATE_KEY, null);
-            Map<String, Object> map = JSON.parseObject(rsa.decryptStr(content, KeyType.PrivateKey),
-                Map.class);
-            if (!StringUtils.equals(getConnectedDeviceId(), map.get("pdaKey").toString())) {
-                throw new RuntimeException("PDA不匹配");
+//            ADB_PATH = System.getProperty("user.dir") + File.separator + "config" + File.separator
+//                + "platform-tools" + File.separator + "adb.exe";
+            String deviceId = getConnectedDeviceId();
+            if (StringUtils.isBlank(deviceId)) {
+                throw new RuntimeException("未识别到PDA");
             }
-            PdaMergeDataVO pdaMergeDataVO = (PdaMergeDataVO) map.get("pdaMergeDataVO");
-            List<String> licenseStrList = (List<String>) map.get("licenseStrList");
+//            Setting setting = new Setting(FileUtil.touch(
+//                System.getProperty("user.dir") + File.separator + "config" + File.separator
+//                    + "config.setting"), CharsetUtil.CHARSET_UTF_8, true);
+//            SERVER_URL = setting.getStr("serverUrl", "");
 
+            synchronizationVO = getDataForApi(deviceId);
+            if (synchronizationVO == null && StringUtils.isBlank( file.getOriginalFilename())) {
+                throw new RuntimeException("与服务端连接超时,请上传同步文件进行同步");
+            }
+            if (null == synchronizationVO) {
+                synchronizationVO = getDataForFile(file);
+            }
+            if (null == synchronizationVO) {
+                throw new RuntimeException("同步文件检测失败无法同步");
+            }
+            if (!StringUtils.equals(deviceId, synchronizationVO.getDeviceId())) {
+                throw new RuntimeException("PDA不匹配" + deviceId);
+            }
+            pdaOfflineDataSynchronization(synchronizationVO);
         } catch (Exception e) {
             resultMap.put("code", "500");
-            resultMap.put("msg", "同步失败,请重试");
+            resultMap.put("msg", e.getMessage());
         }
         //TODO 开始同步代码
         return resultMap;
     }
 
-    public static void pdaOfflineDataSynchronization(PdaMergeDataVO pdaMergeDataVO,
-        List<String> licenseStrList) {
+    @GetMapping("/exportPdaData")
+    public Object exportPdaData() {
+        Map<String, Object> resultMap = Maps.newHashMap();
+        resultMap.put("code", 200);
+        try {
+            String deviceId = getConnectedDeviceId();
+            if (StringUtils.isBlank(deviceId)) {
+                throw new RuntimeException("未识别到PDA");
+            }
+            PdaDataVO pdaDataVO = getFromPda(deviceId);
+            if (null == pdaDataVO) {
+                throw new RuntimeException("PDA数据获取失败,请检查后重试");
+            }
+            writeStringToFile(JSON.toJSONString(pdaDataVO),
+                LOCAL_DATA_DIR_PATH + deviceId + File.separator + "pdaData.cer");
+            resultMap.put("msg",
+                "导出PDA数据成功,文件已存放在" + LOCAL_DATA_DIR_PATH + deviceId + File.separator
+                    + "pdaData.cer");
+            return resultMap;
+        } catch (Exception e) {
+            resultMap.put("code", "500");
+            resultMap.put("msg", e.getMessage());
+        }
+
+        return resultMap;
+    }
+
+    private SynchronizationVO getDataForApi(String deviceId) {
+        SynchronizationVO synchronizationVO = null;
+        try {
+            String result = HttpUtil.get(SERVER_URL + "/pda/dataSynchronization/getStatus", 5000);
+            if ("200".equals(JSON.parseObject(result).get("code").toString())) {
+                String data = HttpUtil.get(
+                    SERVER_URL + "/pda/dataSynchronization/getAllData/" + deviceId,
+                    1000*120);
+                synchronizationVO = JSON.parseObject(data, SynchronizationVO.class);
+                serverConnectFlag = true;
+            }
+            return synchronizationVO;
+        } catch (Exception e) {
+            return null;
+        }
+
+    }
+
+    @SneakyThrows
+    private SynchronizationVO getDataForFile(MultipartFile file) {
+        try {
+            String content = new BufferedReader(
+                new InputStreamReader(file.getInputStream())).lines()
+                .collect(Collectors.joining("\n"));
+            AES aes = SecureUtil.aes(AES_KEY.getBytes());
+            SynchronizationVO synchronizationVO = JSON.parseObject(aes.decryptStr(content),
+                SynchronizationVO.class);
+            return synchronizationVO;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static void pdaOfflineDataSynchronization(SynchronizationVO synchronizationVO) {
         statusVO = new PdaDataSynchronizationStatusVO();
         //获取连接设备ID
         String deviceId = getConnectedDeviceId();
         if (StringUtils.isBlank(deviceId)) {
             throw new RuntimeException("未检测到连接设备,请确认");
         }
-        statusVO.setReadyFlag(true);
         mkdirFold(LOCAL_DATA_DIR_PATH + deviceId);
-        nowStatusMsg = PdaDataSynchronizationStatusType.START.getMsg();
-        //TODO 重写生成license文件地址 打包exe以后再看是否可以获取到license地址，如果可以就不重写，如果不可以，就需要重写
-//        List<String> pathList = SpringUtils.getBean(LicenseProperties.class).getPathList();
-//        List<String> fileNameList = new ArrayList<>();
-//        pathList.forEach(path -> {
-//            String fileName = getFileName(path);
-//            fileNameList.add(fileName);
-//            pushFileToDevice(deviceId, InitLicenseRunner.JAR_PATH + File.separator + "license" + File.separator
-//                + fileName, PDA_DATA_DIR_PATH + fileName);
-//        });
-//        statusVO.setLicensesNameList(fileNameList);
+        statusVO.setReadyFlag(true);
+        List<String> licenseStrList = synchronizationVO.getLicenseStrList();
+        List<String> fileNameList = new ArrayList<>();
+        int lockSize = synchronizationVO.getLicenseMaxNumber();
+        for (int i = 0; i < licenseStrList.size(); i++) {
+            String str = licenseStrList.get(i);
+            String fileName = "lock" + i + ".license";
+            fileNameList.add(fileName);
+            String path = LOCAL_DATA_DIR_PATH + deviceId + File.separator + fileName;
+            writeStringToFile(str, path);
+            pushFileToDevice(deviceId, path, PDA_DATA_DIR_PATH + fileName);
+        }
+        LockPdaDataSynchronizationInfo synchronizationInfo = setSynchronizationInfo(deviceId);
+        setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.START);
         writeStatusToPda();
         //等待PDA创建数据文件完成
         waitPdaCreateData(deviceId);
-        nowStatusMsg = PdaDataSynchronizationStatusType.PDA_CREATE_DATA.getMsg();
+        setNowStatusMsgAndAddProcess(synchronizationInfo,
+            PdaDataSynchronizationStatusType.PDA_CREATE_DATA);
         //获取PDA创建文件内容
-        nowStatusMsg = PdaDataSynchronizationStatusType.PC_GET_DATA.getMsg();
+        setNowStatusMsgAndAddProcess(synchronizationInfo,
+            PdaDataSynchronizationStatusType.PC_GET_DATA);
         PdaDataVO fromPdaData = getFromPda(deviceId);
         //创建需要同步给PDA的数据
-        nowStatusMsg = PdaDataSynchronizationStatusType.PC_CREATE_DATA.getMsg();
-        judgePdaData(pdaMergeDataVO, fromPdaData);
-        nowStatusMsg = PdaDataSynchronizationStatusType.PDA_GET_DATA.getMsg();
-        writeDataToPda(deviceId, pdaMergeDataVO);
+        setNowStatusMsgAndAddProcess(synchronizationInfo,
+            PdaDataSynchronizationStatusType.PC_CREATE_DATA);
+        judgePdaData(synchronizationVO.getPdaMergeDataVO(), fromPdaData, lockSize,
+            synchronizationInfo);
+        setNowStatusMsgAndAddProcess(synchronizationInfo,
+            PdaDataSynchronizationStatusType.PDA_GET_DATA);
+        writeDataToPda(deviceId, synchronizationVO.getPdaMergeDataVO());
         getPdaGetDataFlag(deviceId);
-        fromPdaData.setLockPortInfo(pdaMergeDataVO.getPortInfoList());
+        fromPdaData.setLockPortInfo(synchronizationVO.getPdaMergeDataVO().getPortInfoList());
+        update(fromPdaData);
         statusVO.setEndFlag(true);
         writeStatusToPda();
-        nowStatusMsg = PdaDataSynchronizationStatusType.END.getMsg();
+        setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
         removePdaFile(deviceId);
 
     }
@@ -305,7 +366,8 @@ public class PdaOfflineSynchronizationController {
         return fromPdaData;
     }
 
-    private static void judgePdaData(PdaMergeDataVO pdaMergeDataVO, PdaDataVO fromPdaData) {
+    private static void judgePdaData(PdaMergeDataVO pdaMergeDataVO, PdaDataVO fromPdaData,
+        int lockSize, LockPdaDataSynchronizationInfo synchronizationInfo) {
         List<LockPortInfo> pcPortList = pdaMergeDataVO.getPortInfoList();
         List<LockUnlockLog> lockUnlockLogList;
         Map<Integer, LockPortInfo> pdaPortMap = new HashMap<>();
@@ -317,8 +379,8 @@ public class PdaOfflineSynchronizationController {
             lockUnlockLogList = fromPdaData.getLockUnlockLog();
             pdaMergeDataVO.getUnlockLogList().addAll(lockUnlockLogList);
         }
-
         int value = 0;
+        Set<String> set = Sets.newHashSet();
         List<LockPortInfo> list = new ArrayList<>();
         for (LockPortInfo lockPortInfo : pcPortList) {
             if (pdaPortMap.containsKey(lockPortInfo.getId())) {
@@ -327,8 +389,16 @@ public class PdaOfflineSynchronizationController {
                 list.add(lockPortInfo);
             }
             if (StringUtils.isNotBlank(lockPortInfo.getUserCode())) {
-                value++;
+                set.add(lockPortInfo.getUserCode());
             }
+        }
+        if (value > lockSize) {
+            statusVO.setErrorFlag(true);
+            writeStatusToPda();
+            setNowStatusMsgAndAddProcess(synchronizationInfo,
+                PdaDataSynchronizationStatusType.MAXIMUM_NUMBER_EXCEEDED);
+            throw new RuntimeException(
+                PdaDataSynchronizationStatusType.MAXIMUM_NUMBER_EXCEEDED.getMsg());
         }
         pdaMergeDataVO.setPortInfoList(list);
     }
@@ -367,4 +437,48 @@ public class PdaOfflineSynchronizationController {
             e.printStackTrace();
         }
     }
+
+    private static LockPdaDataSynchronizationInfo setSynchronizationInfo(String deviceId) {
+        if (serverConnectFlag) {
+            try {
+                LockPdaDataSynchronizationInfo synchronizationInfo = JSONObject.parseObject(
+                    JSON.toJSONString(JSONObject.parseObject(HttpUtil.get(
+                            SERVER_URL + "/pda/dataSynchronization/saveAll/" + deviceId + "/2", 5000),
+                        Map.class).get("data")), LockPdaDataSynchronizationInfo.class);
+                return synchronizationInfo;
+            } catch (Exception e) {
+                return null;
+
+            }
+        }
+        return null;
+    }
+
+    private static void setNowStatusMsgAndAddProcess(
+        LockPdaDataSynchronizationInfo synchronizationInfo,
+        PdaDataSynchronizationStatusType statusType) {
+        if (null != synchronizationInfo) {
+            try {
+                synchronizationInfo.setStatus(statusType.getValue());
+                HttpUtil.createPost(SERVER_URL + "/pda/dataSynchronization/update")
+                    .contentType("application/json").body(JSON.toJSONString(synchronizationInfo))
+                    .timeout(1000*10).execute().body();
+
+            } catch (Exception e) {
+            }
+        }
+        nowStatusMsg = statusType.getMsg();
+    }
+
+    private static void update(PdaDataVO fromPdaData) {
+        if (serverConnectFlag) {
+            try {
+                HttpUtil.createPost(SERVER_URL + "/pda/dataSynchronization/updatePdaData")
+                    .contentType("application/json").body(JSON.toJSONString(fromPdaData))
+                    .timeout(1000*60).execute().body();
+            } catch (Exception e) {
+            }
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package com.ruoyi.web.utils;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Deprecated
 public class PdaDataSynchronizationStopThread implements Runnable {
 
     public volatile static boolean RUNNING = true;

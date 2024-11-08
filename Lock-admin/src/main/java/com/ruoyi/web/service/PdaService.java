@@ -13,7 +13,6 @@ import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
-import com.ruoyi.web.utils.PdaDataSynchronizationUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +59,7 @@ public class PdaService {
         pdaMergeDataVO.setEquipmentList(equipmentService.getAll(lockEquipmentParamVO));
         pdaMergeDataVO.setPortInfoList(portInfoService.getAll(lockPortInfoListParamVO));
         LockPdaUserPageParamVO vo = new LockPdaUserPageParamVO();
-        vo.setPdaId(pdaService.getByKey(PdaDataSynchronizationUtil.getConnectedDeviceId()).getId());
+        vo.setPdaId(lockPdaInfo.getId());
         List<LockPdaUser> pdaUserList = pdaUserService.getPdaUserList(vo);
         pdaMergeDataVO.setPdaUserList(pdaUserList);
         List<RelPdaUserPort> relPdaUserPortList = new ArrayList<>();

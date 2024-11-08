@@ -55,6 +55,7 @@ public class LockPortInfoServiceImpl extends
     }
 
     @Override
+    @CompanyScope
     public List<LockPortInfo> getAll(LockPortInfoListParamVO portInfoListParamVO) {
         return lockPortInfoMapper.selectAllList(portInfoListParamVO);
     }

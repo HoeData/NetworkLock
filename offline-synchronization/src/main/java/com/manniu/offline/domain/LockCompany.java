@@ -15,5 +15,4 @@ public class LockCompany extends LockEntity {
 
     private Integer parentId;
     private String path;
-    private List<LockCompany> children = Lists.newArrayList();
 }

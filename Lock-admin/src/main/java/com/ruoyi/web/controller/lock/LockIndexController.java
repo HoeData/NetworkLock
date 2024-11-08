@@ -20,12 +20,17 @@ public class LockIndexController extends BaseController {
     public AjaxResult getIndexStatisticalQuantity(LockCommonParamVO vo) {
         return success(lockIndexService.getIndexStatisticalQuantity(vo));
     }
+
     @GetMapping("/getLockNumberByStatusAndSite")
     public AjaxResult getLockNumberByStatusAndSite() {
         return success(lockIndexService.getLockNumberByStatusAndSite());
     }
+
     @GetMapping("/getLockStatusListByLatitudeType")
-    public AjaxResult getLockStatusListByLatitudeType(@RequestParam String type,@RequestParam Integer value) {
-        return success(lockIndexService.getLockStatusListByLatitudeType(type,value));
+    public AjaxResult getLockStatusListByLatitudeType(@RequestParam String type,
+        @RequestParam Integer value) {
+        return success(lockIndexService.getLockStatusListByLatitudeType(type, value));
     }
+
+
 }

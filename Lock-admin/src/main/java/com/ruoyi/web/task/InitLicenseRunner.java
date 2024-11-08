@@ -140,4 +140,6 @@ public class InitLicenseRunner implements ApplicationRunner {
         // 判断是否为Windows系统
       return osName.toLowerCase().contains("windows");
     }
+
+
 }
