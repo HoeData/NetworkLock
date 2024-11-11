@@ -3,6 +3,8 @@ package com.manniu.offline.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.setting.Setting;
@@ -32,7 +34,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -42,6 +43,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/lock/pdaOfflineSynchronization")
 public class PdaOfflineSynchronizationController {
 
+
+    //    public static String ADB_PATH = "D:\\out\\platform-tools-latest-windows\\platform-tools\\adb.exe";
     public static String ADB_PATH = "";
     public static final String PDA_DATA_DIR_PATH = "/sdcard/Android/data/uni.UNI77F4334/documents/";
     private static final String LOCAL_DATA_DIR_PATH = "C:\\dataSynchronization\\";
@@ -74,7 +77,8 @@ public class PdaOfflineSynchronizationController {
                     + "config.setting"), CharsetUtil.CHARSET_UTF_8, true);
             SERVER_URL = setting.getStr("serverUrl", "");
             synchronizationVO = getDataForApi(deviceId);
-            if (synchronizationVO == null && (null==file||StringUtils.isBlank(file.getOriginalFilename()))) {
+            if (synchronizationVO == null && (null == file || StringUtils.isBlank(
+                file.getOriginalFilename()))) {
                 throw new RuntimeException("与服务端连接超时,请上传同步文件进行同步");
             }
             if (null == synchronizationVO) {
@@ -92,7 +96,6 @@ public class PdaOfflineSynchronizationController {
             resultMap.put("code", "500");
             resultMap.put("msg", e.getMessage());
         }
-        //TODO 开始同步代码
         return resultMap;
     }
 
@@ -178,6 +181,7 @@ public class PdaOfflineSynchronizationController {
             writeStringToFile(str, path);
             pushFileToDevice(deviceId, path, PDA_DATA_DIR_PATH + fileName);
         }
+        statusVO.setLicensesNameList(fileNameList);
         LockPdaDataSynchronizationInfo synchronizationInfo = setSynchronizationInfo(deviceId);
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.START);
         writeStatusToPda();
@@ -204,7 +208,6 @@ public class PdaOfflineSynchronizationController {
         writeStatusToPda();
         setNowStatusMsgAndAddProcess(synchronizationInfo, PdaDataSynchronizationStatusType.END);
         removePdaFile(deviceId);
-
     }
 
     public static String getConnectedDeviceId() {

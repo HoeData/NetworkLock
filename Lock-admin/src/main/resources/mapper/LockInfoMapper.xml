@@ -12,16 +12,22 @@
         port_index,port.update_time as update_time,port.deployment_status as deployment_status,
         equ.name as equipment_name
         from lock_info t
-        inner join lock_port_info as port on port.user_code=t.serial_number and port.del_flag = '0'
-        inner join lock_equipment equ on port.equipment_id=equ.id and equ.del_flag = '0'
-        inner join lock_cabinet as cabinet on cabinet.id=equ.cabinet_id and cabinet.del_flag = '0'
-        inner join lock_machine_room as room on room.id=cabinet.machine_room_id and room.del_flag
+        LEFT JOIN (
+        SELECT
+        b.*
+        FROM
+        ( SELECT id, user_code FROM lock_port_info WHERE del_flag = '0' AND user_code != '' GROUP BY user_code, id ) a
+        LEFT JOIN lock_port_info b ON a.id = b.id
+        ) AS PORT ON PORT.user_code = t.serial_number
+        left join lock_equipment equ on port.equipment_id=equ.id and equ.del_flag = '0'
+        left join lock_cabinet as cabinet on cabinet.id=equ.cabinet_id and cabinet.del_flag = '0'
+        left join lock_machine_room as room on room.id=cabinet.machine_room_id and room.del_flag
         ='0'
-        inner join lock_dept as dept on dept.id = equ.dept_id and dept.del_flag = '0'
-        inner join lock_site as site on site.id = room.site_id and site.del_flag = '0'
-        inner join lock_equipment_type as et on et.id = equ.equipment_type_id and et.del_flag = '0'
-        inner join lock_equipment_model as em on em.id = equ.equipment_model_id and em.del_flag = '0'
-        inner join lock_company as company on company.id = dept.company_id and company.del_flag = '0'
+        left join lock_dept as dept on dept.id = equ.dept_id and dept.del_flag = '0'
+        left join lock_site as site on site.id = room.site_id and site.del_flag = '0'
+        left join lock_equipment_type as et on et.id = equ.equipment_type_id and et.del_flag = '0'
+        left join lock_equipment_model as em on em.id = equ.equipment_model_id and em.del_flag = '0'
+        left join lock_company as company on company.id = dept.company_id and company.del_flag = '0'
         <where>
             <if test="batchNo != null and batchNo !='' ">
                 AND t.batch_no like concat('%',#{batchNo},'%')
@@ -33,6 +39,5 @@
                 AND t.type = #{type}
             </if>
         </where>
-
     </select>
 </mapper>
