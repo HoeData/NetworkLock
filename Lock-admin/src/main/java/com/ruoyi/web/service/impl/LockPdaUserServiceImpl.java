@@ -36,10 +36,8 @@ public class LockPdaUserServiceImpl extends ServiceImpl<LockPdaUserMapper, LockP
         if (null != old && null == pdaUser.getId()) {
             throw new ServiceException("用户名已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(pdaUser.getId())) {
-                throw new ServiceException("用户名已存在");
-            }
+        if (null != old && !old.getId().equals(pdaUser.getId())) {
+            throw new ServiceException("用户名已存在");
         }
     }
 

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.annotation.CompanyScope;
-import com.ruoyi.web.domain.LockCabinet;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.MonitorPortViewVO;
@@ -63,16 +62,14 @@ public class LockPortInfoServiceImpl extends
     @Override
     public void judgeUserCode(Integer id,String userCode) {
         LambdaQueryWrapper<LockPortInfo> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(LockPortInfo::getUserCode,userCode);
+        wrapper.eq(LockPortInfo::getUserCode, userCode);
         wrapper.eq(LockPortInfo::getDelFlag, 0);
         LockPortInfo old = getOne(wrapper);
         if (null != old && null == id) {
             throw new ServiceException("该锁已被绑定,请先解绑,在进行绑定");
         }
-        if (null != old) {
-            if (!old.getId().equals(id)) {
-                throw new ServiceException("该锁已被绑定,请先解绑,在进行绑定");
-            }
+        if (null != old && !old.getId().equals(id)) {
+            throw new ServiceException("该锁已被绑定,请先解绑,在进行绑定");
         }
     }
 }

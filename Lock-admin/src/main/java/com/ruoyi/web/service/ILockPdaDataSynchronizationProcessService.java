@@ -1,7 +1,6 @@
 package com.ruoyi.web.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationProcess;
 import java.util.List;
 

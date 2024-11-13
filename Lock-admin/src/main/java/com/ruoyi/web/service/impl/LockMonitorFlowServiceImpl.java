@@ -33,8 +33,8 @@ public class LockMonitorFlowServiceImpl extends
 
     @Override
     public Map<String, List<Map<String, String>>> getWeekTrend(LockMonitorFlowPageParamVO vo) {
-//        LocalDate now = LocalDate.now();
-        LocalDate now = LocalDate.of(2024, 9, 1);
+        LocalDate now = LocalDate.now();
+//        LocalDate now = LocalDate.of(2024, 9, 1);
         List<LockMonitorFlow> list = getLastOneGroupByDate(now.minusDays(6), now,
             vo.getPortInfoId());
         List<Map<String, String>> inFlowTrendList = new ArrayList<>();

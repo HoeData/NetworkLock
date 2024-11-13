@@ -56,10 +56,8 @@ public class LockCabinetServiceImpl extends ServiceImpl<LockCabinetMapper, LockC
         if (null != old && null == lockCabinet.getId()) {
             throw new ServiceException("机柜名称已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockCabinet.getId())) {
-                throw new ServiceException("机柜名称已存在");
-            }
+        if (null != old && !old.getId().equals(lockCabinet.getId())) {
+            throw new ServiceException("机柜名称已存在");
         }
     }
 

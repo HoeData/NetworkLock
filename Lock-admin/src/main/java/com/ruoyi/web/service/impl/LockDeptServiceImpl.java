@@ -56,10 +56,8 @@ public class LockDeptServiceImpl extends ServiceImpl<LockDeptMapper, LockDept> i
         if (null != old && null == lockDept.getId()) {
             throw new ServiceException("部门名称已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockDept.getId())) {
-                throw new ServiceException("部门名称已存在");
-            }
+        if (null != old && !old.getId().equals(lockDept.getId())) {
+            throw new ServiceException("部门名称已存在");
         }
     }
 

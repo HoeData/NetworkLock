@@ -58,10 +58,8 @@ public class LockSiteServiceImpl extends ServiceImpl<LockSiteMapper, LockSite> i
         if (null != old && null == lockSite.getId()) {
             throw new ServiceException("站点名称已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockSite.getId())) {
-                throw new ServiceException("站点名称已存在");
-            }
+        if (null != old && !old.getId().equals(lockSite.getId())) {
+            throw new ServiceException("站点名称已存在");
         }
     }
 

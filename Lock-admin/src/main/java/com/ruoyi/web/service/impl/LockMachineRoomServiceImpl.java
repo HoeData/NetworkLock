@@ -56,10 +56,8 @@ public class LockMachineRoomServiceImpl extends
         if (null != old && null == lockMachineRoom.getId()) {
             throw new ServiceException("机房名称已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockMachineRoom.getId())) {
-                throw new ServiceException("机房名称已存在");
-            }
+        if (null != old && !old.getId().equals(lockMachineRoom.getId())) {
+            throw new ServiceException("机房名称已存在");
         }
     }
 

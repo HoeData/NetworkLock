@@ -95,10 +95,8 @@ public class LockEquipmentServiceImpl extends
         if (null != old && null == id) {
             throw new ServiceException("同机柜下设备名称已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(id)) {
-                throw new ServiceException("同机柜下设备名称已存在");
-            }
+        if (null != old && !old.getId().equals(id)) {
+            throw new ServiceException("同机柜下设备名称已存在");
         }
     }
 

@@ -80,10 +80,8 @@ public class LockCompanyServiceImpl extends ServiceImpl<LockCompanyMapper, LockC
         if (null != old && null == id) {
             throw new ServiceException("公司名称已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(id)) {
-                throw new ServiceException("公司名称已存在");
-            }
+        if (null != old && !old.getId().equals(id)) {
+            throw new ServiceException("公司名称已存在");
         }
     }
 

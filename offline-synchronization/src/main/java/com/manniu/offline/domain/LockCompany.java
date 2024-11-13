@@ -1,8 +1,5 @@
 package com.manniu.offline.domain;
 
-
-import com.google.common.collect.Lists;
-import java.util.List;
 import lombok.Data;
 
 @Data

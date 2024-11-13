@@ -54,10 +54,8 @@ public class LockEquipmentModelServiceImpl extends
         if (null != old && null == lockEquipmentModel.getId()) {
             throw new ServiceException("设备型号已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockEquipmentModel.getId())) {
-                throw new ServiceException("设备型号已存在");
-            }
+        if (null != old && !old.getId().equals(lockEquipmentModel.getId())) {
+            throw new ServiceException("设备型号已存在");
         }
     }
 

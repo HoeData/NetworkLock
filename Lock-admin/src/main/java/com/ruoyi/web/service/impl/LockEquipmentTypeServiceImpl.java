@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class LockEquipmentTypeServiceImpl extends
     ServiceImpl<LockEquipmentTypeMapper, LockEquipmentType> implements ILockEquipmentTypeService {
-
     private final LockEquipmentServiceImpl lockEquipmentService;
     private final LockEquipmentTypeMapper lockEquipmentTypeMapper;
 
@@ -51,10 +50,8 @@ public class LockEquipmentTypeServiceImpl extends
         if (null != old && null == lockEquipmentType.getId()) {
             throw new ServiceException("设备类型已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockEquipmentType.getId())) {
-                throw new ServiceException("设备类型已存在");
-            }
+        if (null != old && !old.getId().equals(lockEquipmentType.getId())) {
+            throw new ServiceException("设备类型已存在");
         }
     }
 

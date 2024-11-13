@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class PdaService {
-
     private final ILockCompanyService companyService;
     private final ILockDeptService deptService;
     private final ILockSiteService siteService;
@@ -31,7 +30,6 @@ public class PdaService {
     private final ILockEquipmentTypeService equipmentTypeService;
     private final ILockEquipmentService equipmentService;
     private final ILockPortInfoService portInfoService;
-    private final ILockPdaInfoService pdaService;
     private final ILockPdaUserService pdaUserService;
     private final IRelPdaUserPortService relPdaUserPortService;
     private final ILockUnlockLogService unlockLogService;

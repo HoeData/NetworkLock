@@ -3,7 +3,6 @@ package com.ruoyi.web.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
-import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.constants.PdaUserConst;
 import com.ruoyi.web.domain.LockPdaInfo;
@@ -32,10 +31,8 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
         if (null != old && null == lockPdaInfo.getId()) {
             throw new ServiceException("数据已存在");
         }
-        if (null != old) {
-            if (!old.getId().equals(lockPdaInfo.getId())) {
-                throw new ServiceException("数据已存在");
-            }
+        if (null != old && !old.getId().equals(lockPdaInfo.getId())) {
+            throw new ServiceException("数据已存在");
         }
     }
 

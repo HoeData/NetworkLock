@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.google.common.collect.Lists;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.web.domain.LockAuthorizationLog;
@@ -43,14 +44,12 @@ public class RelPdaUserPortServiceImpl extends
 
     @Override
     public List<RelPdaUserPortViewVO> getAllList(RelPdaUserPortParamVO vo) {
-        List<RelPdaUserPortViewVO> list = pdaUserPortMapper.selectAllList(vo);
-        return list;
+        return pdaUserPortMapper.selectAllList(vo);
     }
 
     @Override
     public List<RelPdaUserPortViewVO> getAuthorizationList(RelPdaUserPortParamVO vo) {
-        List<RelPdaUserPortViewVO> list = pdaUserPortMapper.selectAuthorizationList(vo);
-        return list;
+        return pdaUserPortMapper.selectAuthorizationList(vo);
     }
 
     @Override
@@ -71,11 +70,9 @@ public class RelPdaUserPortServiceImpl extends
                 List<RelPdaUserPortViewVO> authorizationList = getAuthorizationList(
                     relPdaUserPortParamVO);
                 Set<String> set = new HashSet<>();
-                authorizationList.forEach(item -> {
-                    set.add(item.getPortInfoId().toString());
-                });
+                authorizationList.forEach(item -> set.add(item.getPortInfoId().toString()));
                 list.forEach(item -> {
-                    if (!set.contains(item.getPortInfoId())) {
+                    if (!set.contains(item.getPortInfoId().toString())) {
                         item.setCreateTime(new Date());
                         addList.add(item);
                     }
@@ -103,8 +100,8 @@ public class RelPdaUserPortServiceImpl extends
             throw new ServiceException("授权有效期过长");
         }
         setSerialNumber(relPdaUserPortList);
-        List<LockInfoVO> lockInfoList = new ArrayList<>();
-        List<String> hexMessageList = new ArrayList<>();
+        List<LockInfoVO> lockInfoList = Lists.newArrayList();
+        List<String> hexMessageList = Lists.newArrayList();
         for (RelPdaUserPort item : relPdaUserPortList) {
             if (lockInfoList.size() == 48) {
                 hexMessageList.add(
