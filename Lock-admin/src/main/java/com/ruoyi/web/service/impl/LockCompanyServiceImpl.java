@@ -10,9 +10,13 @@ import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.constants.CommonConst;
 import com.ruoyi.web.domain.CompanyTreeSelect;
 import com.ruoyi.web.domain.LockCompany;
+import com.ruoyi.web.domain.LockDept;
+import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.mapper.LockCompanyMapper;
 import com.ruoyi.web.service.ILockCompanyService;
+import com.ruoyi.web.service.ILockDeptService;
+import com.ruoyi.web.service.ILockSiteService;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,14 +25,16 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LockCompanyServiceImpl extends
-    ServiceImpl<LockCompanyMapper, LockCompany> implements ILockCompanyService {
+public class LockCompanyServiceImpl extends ServiceImpl<LockCompanyMapper, LockCompany> implements
+    ILockCompanyService {
 
     private final LockCompanyMapper lockCompanyMapper;
 
     private final RedisCache redisCache;
 
     private static final String COMPANY = "company:";
+    private final ILockDeptService lockDeptService;
+    private final ILockSiteService siteService;
 
     @Override
     @CompanyScope()
@@ -47,8 +53,20 @@ public class LockCompanyServiceImpl extends
             LambdaQueryWrapper<LockCompany> lambdaQueryWrapper = new LambdaQueryWrapper<>();
             lambdaQueryWrapper.eq(LockCompany::getParentId, id);
             lambdaQueryWrapper.eq(LockCompany::getDelFlag, 0);
-            if (list(lambdaQueryWrapper).size() > 0) {
+            if (count(lambdaQueryWrapper) > 0) {
                 throw new ServiceException("删除公司存在下属公司,无法删除");
+            }
+            LambdaQueryWrapper<LockDept> lockDeptLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lockDeptLambdaQueryWrapper.eq(LockDept::getCompanyId, id);
+            lockDeptLambdaQueryWrapper.eq(LockDept::getDelFlag, 0);
+            if (lockDeptService.count(lockDeptLambdaQueryWrapper) > 0) {
+                throw new ServiceException("删除公司存在下属部门,无法删除");
+            }
+            LambdaQueryWrapper<LockSite> siteLambdaQueryWrapper = new LambdaQueryWrapper<>();
+            siteLambdaQueryWrapper.eq(LockSite::getCompanyId, id);
+            siteLambdaQueryWrapper.eq(LockSite::getDelFlag, 0);
+            if (siteService.count(siteLambdaQueryWrapper) > 0) {
+                throw new ServiceException("删除公司存在下属站点,无法删除");
             }
         }
     }

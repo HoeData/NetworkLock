@@ -4,22 +4,25 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.annotation.CompanyScope;
-import com.ruoyi.web.domain.LockDept;
+import com.ruoyi.web.domain.LockMachineRoom;
 import com.ruoyi.web.domain.LockSite;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.domain.vo.LockCommonViewVO;
 import com.ruoyi.web.mapper.LockSiteMapper;
+import com.ruoyi.web.service.ILockMachineRoomService;
 import com.ruoyi.web.service.ILockSiteService;
 import java.util.List;
-import javax.annotation.Resource;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LockSiteServiceImpl extends
-    ServiceImpl<LockSiteMapper, LockSite> implements ILockSiteService {
+@RequiredArgsConstructor
+public class LockSiteServiceImpl extends ServiceImpl<LockSiteMapper, LockSite> implements
+    ILockSiteService {
 
-    @Resource
-    private LockSiteMapper lockSiteMapper;
+
+    private final LockSiteMapper lockSiteMapper;
+    private final ILockMachineRoomService machineRoomService;
 
 
     @Override
@@ -30,7 +33,19 @@ public class LockSiteServiceImpl extends
 
     @Override
     public int deleteByIds(String[] ids) {
+        judgeDelete(ids);
         return lockSiteMapper.deleteByIds(ids);
+    }
+
+    private void judgeDelete(String[] ids) {
+        for (String id : ids) {
+            LambdaQueryWrapper<LockMachineRoom> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.eq(LockMachineRoom::getSiteId, id);
+            lambdaQueryWrapper.eq(LockMachineRoom::getDelFlag, 0);
+            if (machineRoomService.count(lambdaQueryWrapper) > 0) {
+                throw new ServiceException("删除站点存在下属机房,无法删除");
+            }
+        }
     }
 
     @Override

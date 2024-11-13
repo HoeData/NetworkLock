@@ -3,13 +3,12 @@ package com.manniu.offline.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.asymmetric.KeyType;
-import cn.hutool.crypto.asymmetric.RSA;
 import cn.hutool.crypto.symmetric.AES;
 import cn.hutool.http.HttpUtil;
 import cn.hutool.setting.Setting;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONObject;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.manniu.offline.domain.LockPdaDataSynchronizationInfo;
@@ -26,7 +25,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,9 +151,7 @@ public class PdaOfflineSynchronizationController {
                 new InputStreamReader(file.getInputStream())).lines()
                 .collect(Collectors.joining("\n"));
             AES aes = SecureUtil.aes(AES_KEY.getBytes());
-            SynchronizationVO synchronizationVO = JSON.parseObject(aes.decryptStr(content),
-                SynchronizationVO.class);
-            return synchronizationVO;
+            return JSON.parseObject(aes.decryptStr(content), SynchronizationVO.class);
         } catch (Exception e) {
             return null;
         }
@@ -171,7 +167,7 @@ public class PdaOfflineSynchronizationController {
         mkdirFold(LOCAL_DATA_DIR_PATH + deviceId);
         statusVO.setReadyFlag(true);
         List<String> licenseStrList = synchronizationVO.getLicenseStrList();
-        List<String> fileNameList = new ArrayList<>();
+        List<String> fileNameList = Lists.newArrayList();
         int lockSize = synchronizationVO.getLicenseMaxNumber();
         for (int i = 0; i < licenseStrList.size(); i++) {
             String str = licenseStrList.get(i);
@@ -390,7 +386,7 @@ public class PdaOfflineSynchronizationController {
         }
         int value = 0;
         Set<String> set = Sets.newHashSet();
-        List<LockPortInfo> list = new ArrayList<>();
+        List<LockPortInfo> list = Lists.newArrayList();
         for (LockPortInfo lockPortInfo : pcPortList) {
             if (pdaPortMap.containsKey(lockPortInfo.getId())) {
                 list.add(pdaPortMap.get(lockPortInfo.getId()));
