@@ -41,7 +41,7 @@ public class LockDeptServiceImpl extends ServiceImpl<LockDeptMapper, LockDept> i
             lambdaQueryWrapper.eq(LockEquipment::getDeptId, id);
             lambdaQueryWrapper.eq(LockEquipment::getDelFlag, 0);
             if (lockEquipmentService.count(lambdaQueryWrapper) > 0) {
-                throw new ServiceException("删除公司存在下属设备,无法删除");
+                throw new ServiceException("删除部门存在下属设备,无法删除");
             }
         }
     }

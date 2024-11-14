@@ -37,7 +37,7 @@ public class LockPdaInfoServiceImpl extends ServiceImpl<LockPdaInfoMapper, LockP
     }
 
     @Override
-    @CompanyScope(companyAlias = "company")
+    @CompanyScope()
     public List<LockPdaInfo> getPdaInfoList(LockPadPageParamVO padPageParamVO) {
         return pdaInfoMapper.selectPdaInfoList(padPageParamVO);
     }

@@ -17,9 +17,11 @@
         from lock_pda_info t left join lock_company company on t.company_id = company.id and
         company.del_flag = '0'
         where t.del_flag = '0'
-
         <if test="type != null ">
             AND t.type =#{type}
+        </if>
+        <if test="companyId != null ">
+            AND t.company_id =#{companyId}
         </if>
         <if test="onlyKey != null and onlyKey !='' ">
             AND t.only_key like concat('%',#{onlyKey},'%')
