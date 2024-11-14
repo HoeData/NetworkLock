@@ -1,11 +1,12 @@
 package com.ruoyi.web.controller.lock;
 
 import com.github.pagehelper.PageHelper;
-import com.google.common.base.Preconditions;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.web.domain.LockCompany;
 import com.ruoyi.web.domain.vo.LockCommonParamVO;
 import com.ruoyi.web.service.ILockCompanyService;
@@ -43,8 +44,17 @@ public class LockCompanyController extends BaseController {
 
     @PostMapping("/saveOrUpdate")
     public AjaxResult saveOrUpdate(@RequestBody LockCompany lockCompany) {
-        if (!SecurityUtils.getLoginUser().getUser().isAdmin()) {
-            Preconditions.checkArgument(0 != lockCompany.getParentId(), "所属公司不能为空");
+        SysUser sysUser = SecurityUtils.getLoginUser().getUser();
+        if (!sysUser.isAdmin()) {
+            if (null == lockCompany.getId()) {
+                if (lockCompany.getParentId() == 0) {
+                    lockCompany.setParentId(sysUser.getCompanyId());
+                }
+            } else {
+                if (!lockCompanyService.getByIdCache(lockCompany.getId()).getParentId().equals(0)) {
+                    lockCompany.setParentId(sysUser.getCompanyId());
+                }
+            }
         }
         lockCompanyService.judgeName(lockCompany.getName(), lockCompany.getId());
         CommonUtils.addCommonParams(lockCompany, lockCompany.getId());
@@ -55,6 +65,4 @@ public class LockCompanyController extends BaseController {
     public AjaxResult remove(@PathVariable String[] ids) {
         return toAjax(lockCompanyService.deleteByIds(ids));
     }
-
-
 }
