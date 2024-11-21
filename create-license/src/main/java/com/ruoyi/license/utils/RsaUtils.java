@@ -79,8 +79,8 @@ public class RsaUtils {
         list.add(map5);
 
         Map<String, Object> map6 = new HashMap<>();
-        map5.put("type", 1);
-        map5.put("serialNumber", "XYZS2408AB000043");
+        map6.put("type", 1);
+        map6.put("serialNumber", "XYZS2408AB000043");
         list.add(map6);
 
         Map<String, Object> map7 = new HashMap<>();
@@ -113,6 +113,18 @@ public class RsaUtils {
         lockList.add("XYZS2408AB000006");
         lockList.add("XYZS2408AB000007");
         lockList.add("XYZS2408AB000008");
+
+        lockList.add("XYZS2408AB000046");
+        lockList.add("XYZS2408AB000048");
+        lockList.add("XYZS2408AB000049");
+        lockList.add("XYZS2408AB000050");
+        lockList.add("XYZS2408AB000051");
+        lockList.add("XYZS2408AB000052");
+        lockList.add("XYZS2408AB000053");
+        lockList.add("XYZS2408AB000058");
+        lockList.add("XYZS2408AB000059");
+        lockList.add("XYZS2408AB000062");
+
         lockList.forEach(lock -> {
             Map<String, Object> addMap = new HashMap<>();
             addMap.put("type", 2);

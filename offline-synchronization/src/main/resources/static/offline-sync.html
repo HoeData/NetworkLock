@@ -102,7 +102,7 @@
         if (input.files[0]) {
           body.append('file', input.files[0])
         }
-        fetch('http://127.0.0.1:8080/lock/pdaOfflineSynchronization/start', {
+        fetch('http://127.0.0.1:9000/lock/pdaOfflineSynchronization/start', {
           body,
           method: 'post'
         }).then(data => {
@@ -120,7 +120,7 @@
     button2.onclick = function (e) {
       if (button2.innerHTML == '生成文件') {
         button2.innerHTML = '正在生成...'
-        fetch('http://127.0.0.1:8080/lock/pdaOfflineSynchronization/exportPdaData', {
+        fetch('http://127.0.0.1:9000/lock/pdaOfflineSynchronization/exportPdaData', {
           method: 'post'
         }).then(data => {
           return data.json()
