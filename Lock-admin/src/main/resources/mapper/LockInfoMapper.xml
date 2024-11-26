@@ -18,7 +18,7 @@
         FROM
         ( SELECT id, user_code FROM lock_port_info WHERE del_flag = '0' AND user_code != '' GROUP BY user_code, id ) a
         LEFT JOIN lock_port_info b ON a.id = b.id
-        ) AS PORT ON PORT.user_code = t.serial_number
+        ) AS port ON port.user_code = t.serial_number
         left join lock_equipment equ on port.equipment_id=equ.id and equ.del_flag = '0'
         left join lock_cabinet as cabinet on cabinet.id=equ.cabinet_id and cabinet.del_flag = '0'
         left join lock_machine_room as room on room.id=cabinet.machine_room_id and room.del_flag

@@ -7,7 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -353,21 +354,27 @@ public class LockUtil {
         return hexString.toString();
     }
 
-    private static byte[] hexStringToByteArray(String s) {
+    public static byte[] hexStringToByteArray(String s, int length) {
         int len = s.length();
-        byte[] data = new byte[len / 3]; // 每个字节占三个字符（两个十六进制数字加上一个空格）
-        for (int i = 0; i < len; i += 3) {
-            int index = i / 3;
+        byte[] data = new byte[len / length]; // 每个字节占三个字符（两个十六进制数字加上一个空格）
+        for (int i = 0; i < len; i += length) {
+            int index = i / length;
             int v = Integer.parseInt(s.substring(i, i + 2), 16);
             data[index] = (byte) v;
         }
         return data;
     }
+
+    public static byte[] hexStringToByteArray(String s) {
+        return hexStringToByteArray(s, 3);
+    }
+
     private static void send(SerialPort serialPort, byte[] data) throws Exception {
         OutputStream outputStream = serialPort.getOutputStream();
         outputStream.write(data);
         outputStream.flush();
     }
+
     private static void receiveByte(SerialPort serialPort, byte[] buffer) throws Exception {
         int i = 0;
         int bytesRead = 0;
@@ -380,20 +387,78 @@ public class LockUtil {
             i++;
         }
     }
+
+    /**
+     * 获取字节用于校对时间
+     *
+     * @return {@link byte[] }
+     */
+    public static byte[] getByteForProofreadingTime() {
+        byte[] bytes = new byte[]{0x68, 0x66, 0x00, 0x06};
+        byte[] time = new byte[6];
+        LocalDateTime now = LocalDateTime.now();
+        time[0] = (byte) (Integer.parseInt(String.valueOf(now.getYear()).substring(2, 4)) & 0xFF);
+        time[1] = (byte) (now.getMonthValue() & 0xFF);
+        time[2] = (byte) (now.getDayOfMonth() & 0xFF);
+        time[3] = (byte) (now.getHour() & 0xFF);
+        time[4] = (byte) (now.getMinute() & 0xFF);
+        time[5] = (byte) (now.getSecond() & 0xFF);
+        byte[] data = mergeByteArrays(bytes, time);
+        int i = calculateChecksum(data, 0, data.length);
+        byte lsb = (byte) (i & 0xFF); // 获取最低有效字节  字符串
+        byte[] checksum = new byte[]{lsb};
+        return mergeByteArrays(data, checksum);
+    }
+
+    /**
+     * 获取字节用于解锁日志
+     *
+     * @return {@link byte[] }
+     */
+    public static byte[] getByteForUnlockLog(int start) {
+        byte[] bytes = new byte[]{0x68, 0x68, 0x00, 0x02, (byte) (start & 0xFF), (byte) (30 & 0xFF)};
+        return mergeByteArrays(bytes,
+            new byte[]{(byte) (calculateChecksum(bytes, 0, bytes.length) & 0xFF)});
+    }
+
     public static void main(String[] args) throws Exception {
-//        List<LockInfoVO> lockInfoList = new ArrayList<>();
-//        for(int i=1;i<48;i++){
-//            LockInfoVO lockInfo = new LockInfoVO();
-//            lockInfo.setLockNumber(
-//                (byte) Integer.parseInt(Integer.toHexString(i), 16));
-//            lockInfo.setLockSerialNumber("XYZS2408AB000002".getBytes(StandardCharsets.US_ASCII));
-//            lockInfo.setLockEffective(
-//                (byte) Integer.parseInt(Integer.toHexString(255), 16));
-//            lockInfo.setLockTime(
-//                (byte) Integer.parseInt(Integer.toHexString(4), 16));
-//            lockInfoList.add(lockInfo);
-//        }
-//        System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
+        System.out.println(bytesToHexWithSpaces(getByteForUnlockLog(1)));
+
+        System.out.println(bytesToHexWithSpaces(getByteForProofreadingTime()));
+       String a = "68 68 02 CA 1F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 14 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 3B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 3A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 29 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 15 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 01 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 29 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 15 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 02 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 2A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 01 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 26 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 13 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 3B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 27 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 13 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 37 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 24 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 10 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 39 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 25 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 0B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 2D 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 03 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0B 2A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0B 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 36 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 21 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 0A 7F 8F ";
+       a=a.replace(" ", "");
+        System.out.println(a);
+
+//        byte[] aa=hexStringToByteArray(a);
+//         int i1 =calculateChecksum(aa,0,aa.length);
+//        byte[] checksum = new byte[]{(byte) i1};
+//        byte[] message = mergeByteArrays(aa, checksum);//报文
+//        System.out.println(bytesToHexWithSpaces(message));
+
+        List<LockInfoVO> lockInfoList = new ArrayList<>();
+        List<String> lockList = new ArrayList<>();
+        lockList.add("XYZS2408AB000046");
+        lockList.add("XYZS2408AB000048");
+        lockList.add("XYZS2408AB000049");
+        lockList.add("XYZS2408AB000050");
+        lockList.add("XYZS2408AB000051");
+        lockList.add("XYZS2408AB000052");
+        lockList.add("XYZS2408AB000053");
+        lockList.add("XYZS2408AB000058");
+        lockList.add("XYZS2408AB000059");
+        lockList.add("XYZS2408AB000062");
+        for (int i = 0; i < 10; i++) {
+            LockInfoVO lockInfo = new LockInfoVO();
+            lockInfo.setLockNumber(
+                (byte) Integer.parseInt(Integer.toHexString(i), 16));
+            lockInfo.setLockSerialNumber(lockList.get(i).getBytes(StandardCharsets.US_ASCII));
+            lockInfo.setLockEffective(
+                (byte) Integer.parseInt(Integer.toHexString(255), 16));
+            lockInfo.setLockTime(
+                (byte) Integer.parseInt(Integer.toHexString(6), 16));
+            lockInfoList.add(lockInfo);
+        }
+        System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
 //        byte[] aa = "1234567890asdfgh".getBytes(StandardCharsets.US_ASCII);
 //        byte[] bb = new byte[]{0x68, (byte) 0x64};
 //        byte[] len = CheckLen(aa.length);
@@ -425,8 +490,8 @@ public class LockUtil {
 //        receiveByte(serialPort, buffer);
 //        serialPort.closePort();
 //        System.out.println(bytesToHexWithSpaces(buffer));
-        byte[] decodedBytes = hexStringToByteArray(
-            "4D 46 68 5A 57 6A 49 30 4D 54 42 42 51 6A 41 77 4D 44 41 77 4D 67 3D 3D"
+//        byte[] decodedBytes = hexStringToByteArray(
+//            "4D 46 68 5A 57 6A 49 30 4D 54 42 42 51 6A 41 77 4D 44 41 77 4D 67 3D 3D"
 //                + "FF 08 02 30 30 30 30 30 "
 //                + "30 30 30 30 30 30 30 30 30 30 30 00 00 03 30 30 30 30 30 30 30 30 30 30 30 "
 //                + "30 30 30 30 30 00 00 04 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 "
@@ -443,13 +508,18 @@ public class LockUtil {
 //                + "30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 00 00 13 30 30 30 30 30 30 30 "
 //                + "30 30 30 30 30 30 30 30 30 00 00 14 30 30 30 30 30 30 30 30 30 30 30 30 30 "
 //                + "30 30 30 00"
-                + " ");
-        String decodedString=new String(decodedBytes);
-//        // 输出解码后的字符串
+//                + " ");
+//        String decodedString=new String(decodedBytes);
+////        // 输出解码后的字符串
 //        System.out.println(decodedString);
-        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
-        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
-        System.out.println(decodedStringa);
+//        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
+//        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
+//        System.out.println(decodedStringa);
 ////        System.out.println(getStrForAscii("31 32 33 34 35 36 37 38 39 3A 3B 3C 3D 3E 3F 23 "));
+//
+//        String a = "30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 30 ";
+//        byte[] b = hexStringToByteArray(a);
+//        String decodedStringa = new String(b, StandardCharsets.US_ASCII);
+//        System.out.println(decodedStringa);
     }
 }

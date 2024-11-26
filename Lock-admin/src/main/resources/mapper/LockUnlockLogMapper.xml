@@ -24,15 +24,18 @@
         FROM lock_unlock_log unlog
         inner JOIN lock_pda_user pu ON pu.id = unlog.pda_user_id
         inner JOIN lock_pda_info pda ON pda.id = pu.pda_id
-        inner JOIN lock_port_info pi ON pi.id = unlog.port_id
-        inner JOIN lock_equipment equ ON pi.equipment_id = equ.id
-        inner join lock_company company ON pda.company_id = company.id
+        left  JOIN lock_port_info pi ON pi.id = unlog.port_id
+        left JOIN lock_equipment equ ON pi.equipment_id = equ.id
+        left join lock_company company ON pda.company_id = company.id
         <where>
             <if test="paramMap.companyScope != null and paramMap.companyScope !='' ">
                 AND ${paramMap.companyScope}
             </if>
             <if test="status != null">
                 AND unlog.status =#{status}
+            </if>
+            <if test="pdaUserId != null">
+                AND unlog.pda_user_id =#{pdaUserId}
             </if>
             <if test="userName != null">
                 AND pu.user_name like CONCAT('%',#{userName},'%')
