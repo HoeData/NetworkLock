@@ -61,9 +61,9 @@ public class Task {
             LockMonitorFlow old = monitorFlowService.getLastForPortId(portInfoId);
             if (null != old) {
                 String oldInFlow = old.getInFlow();
-                String olOutFlow = old.getOutFlow();
+                String oldOutFlow = old.getOutFlow();
                 if ((inflowLong - Long.parseLong(oldInFlow)) / 1024 > 1024 * 3
-                    || (outFlowLong - Long.parseLong(olOutFlow)) / 1024 > 1024 * 3) {
+                    || (outFlowLong - Long.parseLong(oldOutFlow)) / 1024 > 1024 * 3) {
                     warnInfo = new LockWarnInfo();
                     warnInfo.setPortId(portInfoId);
                     warnInfo.setCreateTime(new Date());
