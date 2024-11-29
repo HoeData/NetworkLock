@@ -66,7 +66,7 @@ public class LockPdaDataSynchronizationInfoImpl extends
     }
 
     @Override
-    @CompanyScope(companyAlias ="company")
+    @CompanyScope()
     public List<LockPdaDataSynchronizationInfoViewVO> selectSynchronizationInfoList(
         LockPdaDataSynchronizationInfoPageParamVO viewVO) {
         List<LockPdaDataSynchronizationInfoViewVO> list = infoMapper.selectSynchronizationInfoList(
@@ -77,7 +77,6 @@ public class LockPdaDataSynchronizationInfoImpl extends
             if (null != type) {
                 item.setStatusDesc(type.getMsg());
             }
-
         });
         return list;
     }

@@ -20,7 +20,7 @@ public class LockAuthorizationLogServiceImpl extends
     private final LockAuthorizationLogMapper lockAuthorizationLogMapper;
 
     @Override
-    @CompanyScope(companyAlias = "company")
+    @CompanyScope()
     public List<UnlockViewVO> getAllList(UnlockPageParamVO vo) {
         return lockAuthorizationLogMapper.selectAllList(vo);
     }
