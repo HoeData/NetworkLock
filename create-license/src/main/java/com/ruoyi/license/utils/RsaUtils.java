@@ -5,6 +5,8 @@ import cn.hutool.core.util.CharsetUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.read.listener.PageReadListener;
 import com.alibaba.fastjson2.JSON;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,13 +19,13 @@ import java.util.Set;
 
 public class RsaUtils {
 
-
-    public static void main(String[] args) throws Exception {
-        String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxrGSr56hzbSRbo/agsDW5QvnV\n"
+    public static String publicKey =
+        "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCxrGSr56hzbSRbo/agsDW5QvnV\n"
             + "SBNNdLxjYMvP2rcxSl1RGByW2HlNuE+RwN2hIhTJHJ47UiHE8ymWO+l9pOjNh1lL\n"
             + "dWAUI+zsDt40ooXbAfAK6zbPxQKrqqFPj8bsBuQ7y9mIh7STbdTcnsid73z9+F/N\n"
             + "+dNO9V+x6qdSlGeKIQIDAQAB";
-        String privateKey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALGsZKvnqHNtJFuj\n"
+    public static String privateKey =
+        "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBALGsZKvnqHNtJFuj\n"
             + "9qCwNblC+dVIE010vGNgy8/atzFKXVEYHJbYeU24T5HA3aEiFMkcnjtSIcTzKZY7\n"
             + "6X2k6M2HWUt1YBQj7OwO3jSihdsB8ArrNs/FAquqoU+PxuwG5DvL2YiHtJNt1Nye\n"
             + "yJ3vfP34X8350071X7Hqp1KUZ4ohAgMBAAECgYBNxjkLRwzl+hDATLXZAUmDH15d\n"
@@ -37,7 +39,8 @@ public class RsaUtils {
             + "1x6JmgPGlNK3Ec3EmLAdPSQXmf2iVbtRRqevVeCAcDluPtOd4mRhAkEAvJRIlDON\n"
             + "b1nSSQShT6Y/cHGh37MLfo6hKO1gqPwlyGoIay941P9hl2MSgjYUp0aVAe/RUQdI\n"
             + "veM6K6605Eo0gA==";
-        RSA rsa = new RSA(privateKey, publicKey);
+
+    public static void testOrTemporary() {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("batchNo", "一批次");
         resultMap.put("lockNumber", 5000);
@@ -136,12 +139,12 @@ public class RsaUtils {
             addMap.put("type", 2);
             String s = String.valueOf(i);
             int length = s.length();
-            if(length==1){
+            if (length == 1) {
                 s = "00" + s;
-            }else if(length==2){
+            } else if (length == 2) {
                 s = "0" + s;
             }
-            addMap.put("serialNumber", "XYZS2526AB000" +s);
+            addMap.put("serialNumber", "XYZS2526AB000" + s);
             list.add(addMap);
         }
         Map<String, Object> addMap = new HashMap<>();
@@ -160,6 +163,34 @@ public class RsaUtils {
 //            list.add(addMap);
 //        }
         resultMap.put("lockInfoList", list);
+        createLicense(resultMap);
+    }
+
+    public static void createLicenseForFile(String filePath) {
+        List<LockSerialNumber> lockSerialNumberList = new ArrayList<>();
+        EasyExcel.read(filePath, LockSerialNumber.class,
+            new PageReadListener<LockSerialNumber>(dataList -> {
+                for (LockSerialNumber lockSerialNumber : dataList) {
+                    lockSerialNumberList.add(lockSerialNumber);
+                }
+            })).sheet().doRead();
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("batchNo", "邯郸");
+        resultMap.put("lockNumber", 2000);
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        for (LockSerialNumber lockSerialNumber : lockSerialNumberList) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("type", 1);
+            map.put("serialNumber", lockSerialNumber);
+            mapList.add(map);
+        }
+        resultMap.put("lockInfoList", mapList);
+        createLicense(resultMap);
+    }
+
+    public static void createLicense(Map<String, Object> resultMap) {
+        RSA rsa = new RSA(privateKey, publicKey);
         String encrypt2 = rsa.encryptBase64(
             StrUtil.bytes(JSON.toJSONString(resultMap), CharsetUtil.CHARSET_UTF_8),
             KeyType.PublicKey);
@@ -169,8 +200,10 @@ public class RsaUtils {
             e.printStackTrace();
         }
         System.out.println(JSON.toJSONString(rsa.decryptStr(encrypt2, KeyType.PrivateKey)));
+    }
 
-
+    public static void main(String[] args) throws Exception {
+        createLicenseForFile("C:\\Users\\xiaomi\\Desktop\\620p锁ID - 11月27、28、29日发往邯郸.xlsx");
     }
 
 }
