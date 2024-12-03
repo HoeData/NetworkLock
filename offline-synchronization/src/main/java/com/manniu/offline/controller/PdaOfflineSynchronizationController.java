@@ -42,7 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class PdaOfflineSynchronizationController {
 
 
-    //    public static String ADB_PATH = "D:\\out\\platform-tools-latest-windows\\platform-tools\\adb.exe";
+//    public static String ADB_PATH = "D:\\out\\platform-tools-latest-windows\\platform-tools\\adb.exe";
     public static String ADB_PATH = "";
     public static final String PDA_DATA_DIR_PATH = "/sdcard/Android/data/uni.UNI77F4334/documents/";
     private static final String LOCAL_DATA_DIR_PATH = "C:\\dataSynchronization\\";
@@ -388,7 +388,9 @@ public class PdaOfflineSynchronizationController {
         Set<String> set = Sets.newHashSet();
         List<LockPortInfo> list = Lists.newArrayList();
         for (LockPortInfo lockPortInfo : pcPortList) {
-            if (pdaPortMap.containsKey(lockPortInfo.getId())) {
+            if (pdaPortMap.containsKey(lockPortInfo.getId())
+                && pdaPortMap.get(lockPortInfo.getId()).getUpdateTime().getTime()
+                >= lockPortInfo.getUpdateTime().getTime()) {
                 list.add(pdaPortMap.get(lockPortInfo.getId()));
             } else {
                 list.add(lockPortInfo);
