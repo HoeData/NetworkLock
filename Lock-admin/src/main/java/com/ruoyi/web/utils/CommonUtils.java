@@ -1,7 +1,7 @@
 package com.ruoyi.web.utils;
 
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.web.domain.vo.LockEntity;
+import com.ruoyi.system.domain.LockEntity;
 import java.util.Date;
 
 public class CommonUtils {

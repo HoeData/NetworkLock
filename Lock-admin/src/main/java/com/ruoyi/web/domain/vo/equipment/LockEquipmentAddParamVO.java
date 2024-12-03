@@ -1,6 +1,6 @@
 package com.ruoyi.web.domain.vo.equipment;
 
-import com.ruoyi.web.domain.vo.LockEntity;
+import com.ruoyi.system.domain.LockEntity;
 import lombok.Data;
 
 @Data

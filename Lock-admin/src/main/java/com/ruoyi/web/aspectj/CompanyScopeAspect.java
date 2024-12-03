@@ -8,7 +8,7 @@ import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.web.annotation.CompanyScope;
 import com.ruoyi.web.constants.CommonConst;
 import com.ruoyi.web.domain.LockCompany;
-import com.ruoyi.web.domain.vo.LockEntity;
+import com.ruoyi.system.domain.LockEntity;
 import com.ruoyi.web.service.ILockCompanyService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

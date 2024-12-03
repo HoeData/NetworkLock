@@ -1,6 +1,8 @@
 package com.ruoyi.web.domain.vo;
 
-public class PageVO extends LockEntity{
+import com.ruoyi.system.domain.LockEntity;
+
+public class PageVO extends LockEntity {
 
     private Integer pageSize;
     private Integer pageNum;

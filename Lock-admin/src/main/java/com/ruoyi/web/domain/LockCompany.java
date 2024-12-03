@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.ruoyi.web.domain.vo.LockEntity;
+import com.ruoyi.system.domain.LockEntity;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import lombok.Data;

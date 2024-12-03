@@ -1,10 +1,10 @@
-package com.ruoyi.web.domain.vo;
+package com.ruoyi.system.domain;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.google.common.collect.Maps;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 public class LockEntity implements Serializable {
@@ -34,7 +34,7 @@ public class LockEntity implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
     @TableField(exist = false)
-    private Map<String, String> paramMap = Maps.newHashMap();
+    private Map<String, String> paramMap =new HashMap<>();
 
     public Map<String, String> getParamMap() {
         return paramMap;

@@ -4,7 +4,7 @@ package com.ruoyi.web.domain;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.ruoyi.web.domain.vo.LockEntity;
+import com.ruoyi.system.domain.LockEntity;
 
 @TableName(value = "lock_cabinet")
 public class LockCabinet extends LockEntity {
