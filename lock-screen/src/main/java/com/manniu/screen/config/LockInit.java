@@ -18,6 +18,8 @@ public class LockInit extends MinaServer implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) {
         minaServer.init(8234);
+        ReceiveDeviceMessageImpl receiveDeviceMessage = new ReceiveDeviceMessageImpl();
+        minaServer.MY_OBSERVER_LIST.add(receiveDeviceMessage);
     }
 }
 
