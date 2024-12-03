@@ -396,7 +396,8 @@ public class LockUtil {
     public static byte[] getByteForProofreadingTime() {
         byte[] bytes = new byte[]{0x68, 0x66, 0x00, 0x06};
         byte[] time = new byte[6];
-        LocalDateTime now = LocalDateTime.now();
+//        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.of(2024, 12, 2, 12, 0, 0);
         time[0] = (byte) (Integer.parseInt(String.valueOf(now.getYear()).substring(2, 4)) & 0xFF);
         time[1] = (byte) (now.getMonthValue() & 0xFF);
         time[2] = (byte) (now.getDayOfMonth() & 0xFF);
@@ -422,9 +423,10 @@ public class LockUtil {
     }
 
     public static void main(String[] args) throws Exception {
+        System.out.println(bytesToHexWithSpaces(getByteForProofreadingTime()));
+
         System.out.println(bytesToHexWithSpaces(getByteForUnlockLog(1)));
 
-        System.out.println(bytesToHexWithSpaces(getByteForProofreadingTime()));
        String a = "68 68 02 CA 1F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 14 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 3B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 3A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 29 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 15 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 01 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 29 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 15 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 02 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 2A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 01 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 26 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 13 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 3B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 27 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 13 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 37 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 24 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 10 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 39 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 25 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 0B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 2D 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 03 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0B 2A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0B 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 36 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 21 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 0A 7F 8F ";
        a=a.replace(" ", "");
         System.out.println(a);

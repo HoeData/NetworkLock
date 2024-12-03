@@ -231,7 +231,8 @@
         <module>Lock-generator</module>
         <module>Lock-common</module>
         <module>create-license</module>
-<!--        <module>offline-synchronization</module>-->
+        <module>lock-screen</module>
+        <!--        <module>offline-synchronization</module>-->
     </modules>
     <packaging>pom</packaging>
 

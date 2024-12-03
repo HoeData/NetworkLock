@@ -166,18 +166,20 @@ public class RsaUtils {
         createLicense(resultMap);
     }
 
-    public static void createLicenseForFile(String filePath) {
+    public static void createLicenseForFile(List<String> filePathList, String batchNo,
+        Integer lockNumber) {
         List<LockSerialNumber> lockSerialNumberList = new ArrayList<>();
-        EasyExcel.read(filePath, LockSerialNumber.class,
-            new PageReadListener<LockSerialNumber>(dataList -> {
-                for (LockSerialNumber lockSerialNumber : dataList) {
-                    lockSerialNumberList.add(lockSerialNumber);
-                }
-            })).sheet().doRead();
-
+        for (String filePath : filePathList) {
+            EasyExcel.read(filePath, LockSerialNumber.class,
+                new PageReadListener<LockSerialNumber>(dataList -> {
+                    for (LockSerialNumber lockSerialNumber : dataList) {
+                        lockSerialNumberList.add(lockSerialNumber);
+                    }
+                })).sheet().doRead();
+        }
         Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("batchNo", "邯郸");
-        resultMap.put("lockNumber", 2000);
+        resultMap.put("batchNo", batchNo);
+        resultMap.put("lockNumber", lockNumber);
         List<Map<String, Object>> mapList = new ArrayList<>();
         for (LockSerialNumber lockSerialNumber : lockSerialNumberList) {
             Map<String, Object> map = new HashMap<>();
@@ -203,7 +205,9 @@ public class RsaUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        createLicenseForFile("C:\\Users\\xiaomi\\Desktop\\620p锁ID - 11月27、28、29日发往邯郸.xlsx");
+        List<String> filePath = new ArrayList<>();
+        filePath.add("C:\\Users\\xiaomi\\Desktop\\620p锁ID - 11月27、28、29日发往邯郸.xlsx");
+        createLicenseForFile(filePath, "邯郸", 1000);
     }
 
 }
