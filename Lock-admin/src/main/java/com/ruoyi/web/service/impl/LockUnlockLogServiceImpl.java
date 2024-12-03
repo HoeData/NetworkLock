@@ -59,6 +59,7 @@ public class LockUnlockLogServiceImpl extends
                 LockPdaUserPageParamVO.builder().pdaId(lockUnlockHexMessageVO.getPdaInfoId()).build())
             .get(CommonConst.ZERO);
         lockUnlockHexMessageVO.getHexMessageList().forEach(hexMessage -> {
+            hexMessage = hexMessage.replace(" ", "");
             String dataHex = hexMessage.substring(10, hexMessage.length() - 2);
             List<String> list = Lists.newArrayList();
             for (int i = 0; i < dataHex.length(); i += 46) {
@@ -88,7 +89,8 @@ public class LockUnlockLogServiceImpl extends
                         unlockLog.setCreateTime(unlockTimeDate);
                         unlockLog.setLockSerialNumber(serialNumber);
                         unlockLog.setPortId(serialNumberIdMap.get(serialNumber));
-                        unlockLog.setStatus(str.substring(44, 46).equals("7F") ? 1 : 2);
+                        unlockLog.setStatus(
+                            StringUtils.equalsIgnoreCase(str.substring(44, 46), "7F") ? 1 : 2);
                         unlockLog.setErrorMsg(
                             unlockLog.getStatus() == 1 ? "开锁成功!" : "开锁失败!");
                         unlockLogList.add(unlockLog);

@@ -20,7 +20,8 @@
         pda.description as pda_description,
         pu.user_name as pda_user_name,
         equ.name AS equipment_name,
-        pi.serial_number AS port_Index
+        pi.serial_number AS port_Index,
+        pda.only_key as pda_only_key
         FROM lock_unlock_log unlog
         inner JOIN lock_pda_user pu ON pu.id = unlog.pda_user_id
         inner JOIN lock_pda_info pda ON pda.id = pu.pda_id

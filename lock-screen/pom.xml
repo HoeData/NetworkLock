@@ -52,13 +52,13 @@
             <artifactId>hutool-all</artifactId>
             <version>5.7.3</version>
         </dependency>
-
+        <!-- 请将外部依赖包安装到本地maven仓库 -->
         <dependency>
             <groupId>com.jinfu.lock</groupId>
             <artifactId>control</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/lib/control-proguard.jar</systemPath>
+<!--            <scope>system</scope>-->
+<!--            <systemPath>${project.basedir}/src/main/resources/lib/control-proguard.jar</systemPath>-->
         </dependency>
 
         <!-- Mysql驱动包 -->

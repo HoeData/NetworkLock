@@ -31,4 +31,5 @@ public class LockUnlockViewVO {
     @ExcelProperty("创建时间")
     @DateTimeFormat("yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    private String pdaOnlyKey;
 }
