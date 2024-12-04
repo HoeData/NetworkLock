@@ -6,7 +6,7 @@ import lombok.Data;
 public class LockScreenApiParamVO {
 
     /**
-     * ip
+     * IP
      */
     private String ip;
     /**

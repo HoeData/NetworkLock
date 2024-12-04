@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manniu.screen.mapper.LockScreenUserLockPermissionsMapper">
+
+    <select id="selectUserLockPermissionsList"
+      resultType="com.manniu.screen.vo.view.LockScreenUserLockPermissionsViewVO">
+        select t.*
+        from lock_screen_user_lock_permissions t left join sys_user u on t.user_id = u.user_id
+        left join lock_screen_electronic_lock e on t.electronic_lock_id = e.id
+        where t.delete_flag = 0 and u.delete_flag = 0
+        and t.user_id = #{userId}
+        <if test="carNumber != null and carNumber !='' ">
+            AND t.car_number like concat('%',#{carNumber},'%')
+        </if>
+        <if test="electronicLockSerialNumber != null and electronicLockSerialNumber !='' ">
+            AND e.serial_number like concat('%',#{electronicLockSerialNumber},'%')
+        </if>
+
+    </select>
+</mapper>

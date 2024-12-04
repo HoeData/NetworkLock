@@ -396,8 +396,7 @@ public class LockUtil {
     public static byte[] getByteForProofreadingTime() {
         byte[] bytes = new byte[]{0x68, 0x66, 0x00, 0x06};
         byte[] time = new byte[6];
-//        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime now = LocalDateTime.of(2024, 12, 2, 12, 0, 0);
+        LocalDateTime now = LocalDateTime.now();
         time[0] = (byte) (Integer.parseInt(String.valueOf(now.getYear()).substring(2, 4)) & 0xFF);
         time[1] = (byte) (now.getMonthValue() & 0xFF);
         time[2] = (byte) (now.getDayOfMonth() & 0xFF);

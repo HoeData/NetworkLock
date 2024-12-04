@@ -1,14 +1,10 @@
 package com.manniu.screen.controller;
 
 import com.jinfu.lock.core.LockTemplate;
-import com.jinfu.lock.mina.MinaServer;
 import com.jinfu.lock.pojo.LockResult;
-import com.manniu.screen.domain.Test;
-import com.manniu.screen.service.ITestService;
 import com.manniu.screen.vo.LockScreenApiParamVO;
 import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.controller.BaseController;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,19 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Anonymous
 public class ScreenApiController extends BaseController {
 
-    private final ITestService testService;
     private final LockTemplate lockTemplate;
 
-    private final MinaServer minaServer;
-
-    @RequestMapping("/aa")
-    public String test() {
-        Test test = new Test();
-        test.setName("fafa");
-        testService.save(test);
-        List a = minaServer.MY_OBSERVER_LIST;
-        return "aa";
-    }
 
     /**
      * 获取设备心跳
