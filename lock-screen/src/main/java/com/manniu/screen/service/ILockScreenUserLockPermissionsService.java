@@ -2,15 +2,19 @@ package com.manniu.screen.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.manniu.screen.domain.LockScreenUserLockPermissions;
+import com.manniu.screen.vo.CommonVO;
 import com.manniu.screen.vo.param.LockScreenUserLockPermissionsPageParamVO;
 import com.manniu.screen.vo.view.LockScreenUserLockPermissionsViewVO;
 import java.util.List;
+import java.util.Map;
 
 public interface ILockScreenUserLockPermissionsService extends
     IService<LockScreenUserLockPermissions> {
 
-    boolean mySaveOrUpdate(LockScreenUserLockPermissions lockPermissions);
+    Map<String, Object> mySaveOrUpdate(List<LockScreenUserLockPermissions> lockPermissionsList);
 
     List<LockScreenUserLockPermissionsViewVO> getUserLockPermissionsList(
         LockScreenUserLockPermissionsPageParamVO pageParamVO);
+
+    int removeByUserId(CommonVO commonVO);
 }

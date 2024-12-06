@@ -9,4 +9,6 @@ import java.util.List;
 public interface ILockScreenElectronicLockService extends IService<LockScreenElectronicLock> {
 
     List<LockScreenElectronicLockViewVO> getElectronicLockList(LockScreenElectronicLockPageParamVO pageParamVO);
+
+    List<LockScreenElectronicLock> getByNetworkControlId(Integer networkControlId);
 }

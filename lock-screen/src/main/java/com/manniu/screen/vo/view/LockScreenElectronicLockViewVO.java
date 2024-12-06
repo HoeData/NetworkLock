@@ -6,13 +6,13 @@ import lombok.Data;
 public class LockScreenElectronicLockViewVO {
 
     private Integer id;
-    private String address;
-    private String serialNumber;
-    private String modelName;
-    private String equipmentName;
+    private Integer lockId;
+    private String ip;
+    private String deviceId;
+    private String userType;
+
     private Integer networkControlId;
     private Integer networkControlName;
-
     /**
      * 门状态
      */

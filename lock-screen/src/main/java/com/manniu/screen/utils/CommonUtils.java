@@ -9,11 +9,17 @@ public class CommonUtils {
     public static void addCommonParams(Object entity,Integer id) {
         if (entity instanceof LockEntity) {
             LockEntity lockEntity = ((LockEntity) entity);
-            if(null==id){
-                lockEntity.setCreateBy(SecurityUtils.getLoginUser().getUserId().toString());
+            String userId = "";
+            try {
+                userId = (SecurityUtils.getLoginUser().getUserId().toString());
+            } catch (Exception e) {
+
+            }
+            if (null == id) {
+                lockEntity.setCreateBy(userId);
                 lockEntity.setCreateTime(new Date());
             }
-            lockEntity.setUpdateBy(SecurityUtils.getLoginUser().getUserId().toString());
+            lockEntity.setUpdateBy(userId);
             lockEntity.setUpdateTime(new Date());
         }
     }

@@ -11,4 +11,6 @@ public interface LockScreenUserLockPermissionsMapper extends
 
     List<LockScreenUserLockPermissionsViewVO> selectUserLockPermissionsList(
         LockScreenUserLockPermissionsPageParamVO pageParamVO);
+
+    int deleteByDataId(Integer id);
 }

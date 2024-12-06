@@ -5,5 +5,4 @@ import lombok.Data;
 
 @Data
 public class LockScreenElectronicLockPageParamVO extends PageVO {
-    private String serialNumber;
 }

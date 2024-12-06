@@ -13,11 +13,11 @@ public class LockScreenElectronicLock extends LockEntity {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private String address;
-    private String serialNumber;
-    private String modelName;
-    private String equipmentName;
+    @NotNull(message = "锁ID不能为空")
+    private Integer lockId;
+    private String description;
     @NotNull(message = "所属控制器为空")
     private Integer networkControlId;
-
+    private String delFlag;
+    private String userType;
 }

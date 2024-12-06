@@ -7,6 +7,7 @@ public class PageVO extends LockEntity {
     private Integer pageSize;
     private Integer pageNum;
 
+
     public Integer getPageSize() {
         return pageSize;
     }

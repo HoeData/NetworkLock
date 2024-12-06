@@ -20,6 +20,6 @@ public class LockScreenNetworkControl extends LockEntity {
     private String siteName;
     private String machineRoomName;
     private String cabinetName;
-
-
+    private String deviceId;
+    private String delFlag;
 }

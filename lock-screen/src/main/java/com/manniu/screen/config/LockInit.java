@@ -11,9 +11,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class LockInit extends MinaServer implements ApplicationRunner {
-
     @Autowired
-    MinaServer minaServer;
+    private MinaServer minaServer;
 
     @Override
     public void run(ApplicationArguments args) {

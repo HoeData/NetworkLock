@@ -6,12 +6,14 @@
 
     <select id="selectElectronicLockList"
       resultType="com.manniu.screen.vo.view.LockScreenElectronicLockViewVO">
-        select t.*,n.name as network_control_name
+        select t.*,
+               n.name      as network_control_name,
+               n.ip        as ip,
+               n.device_id as device_id
         from lock_screen_electronic_lock t
-        left join lock_screen_network_control n on t.network_control_id = n.id
-        where t.delete_flag = 0 and n.delete_flag = 0
-        <if test="serialNumber != null and serialNumber !='' ">
-            AND t.serial_number like concat('%',#{serialNumber},'%')
-        </if>
+                 left join lock_screen_network_control n on t.network_control_id = n.id
+        where t.del_flag = 0
+          and n.del_flag = 0
+        order by t.create_time desc
     </select>
 </mapper>
