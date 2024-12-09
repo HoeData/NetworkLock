@@ -18,5 +18,7 @@ public class RelPdaUserPortParamVO extends PageDomain {
     private Integer equipmentId;
     @NotNull(message = "用户不能为空")
     private Integer pdaUserId;
+    private String  lockSerialNumber;
+
 
 }

@@ -60,6 +60,10 @@
         <if test="equipmentModelId != null">
             AND equ.equipment_model_id =#{equipmentModelId}
         </if>
+        <if test="lockSerialNumber != null and lockSerialNumber !='' ">
+            AND pt.user_code like concat('%',#{lockSerialNumber},'%')
+        </if>
+
     </sql>
     <delete id="deleteByPdaUserId">
         delete
