@@ -1,6 +1,7 @@
 package com.ruoyi.web.utils;
 
 import com.fazecast.jSerialComm.SerialPort;
+import com.google.common.collect.Lists;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.web.domain.vo.port.LockInfoVO;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
@@ -109,45 +111,6 @@ public class LockUtil {
         }else{
             return false;
         }
-    }
-
-    /**
-     * 添加锁信息
-     */
-    public static void addLockInformation(List<LockInfoVO> lockInfos) throws IOException {
-        if (!lockInfos.isEmpty() && lockInfos.size() > 48) {
-            throw new RuntimeException("数据长度超过48");
-        }
-        SerialPort serialPort = getSerialPort(dev);
-        serialPort.openPort();
-        byte[] header = new byte[]{0x68, 0x61};
-        int sized = lockInfos.size();
-        //转换锁的数量
-        // 获取最低有效字节  字符串
-        byte[] data = new byte[lockInfos.size() * 19 + 1];
-        data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
-        for (int i = 0; i < lockInfos.size(); i++) {
-            int i1 = i + 1;
-            LockInfoVO lockInfo = lockInfos.get(i);
-            data[i1] = lockInfo.getLockNumber();
-            byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
-            for (int j = 0; j < lockSerialNumber.length; j++) {
-                data[i1 + 1 + j] = lockSerialNumber[j];
-            }
-            data[i1 + 17] = lockInfo.getLockEffective();
-            data[i1 + 18] = lockInfo.getLockTime();
-        }
-        byte[] len=CheckLen(data.length);
-        byte[] bytes = mergeByteArrays(header, len, data);
-        int i = calculateChecksum(bytes, 0, bytes.length);
-        byte lsb = (byte) (i & 0xFF); // 获取最低有效字节  字符串
-        byte[] checksum= new byte[]{lsb};
-
-        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
-        OutputStream outputStream = serialPort.getOutputStream();
-        outputStream.write(message);
-        outputStream.flush();
-        serialPort.closePort();
     }
 
 
@@ -299,22 +262,24 @@ public class LockUtil {
     }
 
     public static byte[] getByteForAddLock(List<LockInfoVO> lockInfoList) {
+        int simpleLockSize=20;
         byte[] header = new byte[]{0x68, 0x61};
         int sized = lockInfoList.size();
         //转换锁的数量
         // 获取最低有效字节  字符串
-        byte[] data = new byte[lockInfoList.size() * 19 + 1];
+        byte[] data = new byte[lockInfoList.size() * simpleLockSize + 1];
         data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
         for (int i = 0; i < lockInfoList.size(); i++) {
-            int i1 = i*19 + 1;
+            int i1 = i*simpleLockSize + 1;
             LockInfoVO lockInfo = lockInfoList.get(i);
-            data[i1] = lockInfo.getLockNumber();
+            data[i1] = lockInfo.getLockNumber()[0];
+            data[i1+1] = lockInfo.getLockNumber()[1];
             byte[] lockSerialNumber = lockInfo.getLockSerialNumber();
             for (int j = 0; j < lockSerialNumber.length; j++) {
-                data[i1 + 1 + j] = lockSerialNumber[j];
+                data[i1 + 2 + j] = lockSerialNumber[j];
             }
-            data[i1 + 17] = lockInfo.getLockEffective();
-            data[i1 + 18] = lockInfo.getLockTime();
+            data[i1 + 18] = lockInfo.getLockEffective();
+            data[i1 + 19] = lockInfo.getLockTime();
         }
         byte[] len = CheckLen(data.length);
         byte[] bytes = mergeByteArrays(header, len, data);
@@ -329,11 +294,12 @@ public class LockUtil {
         int sized = lockInfoList.size();
         //转换锁的数量
         // 获取最低有效字节  字符串
-        byte[] data = new byte[lockInfoList.size() + 1];
+        byte[] data = new byte[lockInfoList.size()*2 + 1];
         data[0] = (byte) (sized & 0xFF); // 获取最低有效字节  字符串
         for (int i = 0; i < lockInfoList.size(); i++) {
             int i1 = i + 1;
-            data[i1] = lockInfoList.get(i).getLockNumber();
+            data[i1] = lockInfoList.get(i).getLockNumber()[0];
+            data[i1+1] = lockInfoList.get(i).getLockNumber()[1];
         }
         byte[] len = CheckLen(data.length);
         byte[] bytes = mergeByteArrays(header, len, data);
@@ -421,45 +387,71 @@ public class LockUtil {
             new byte[]{(byte) (calculateChecksum(bytes, 0, bytes.length) & 0xFF)});
     }
 
+    public static byte[] intToTwoByteHex(int value) {
+        // 创建一个长度为2的字节数组
+        byte[] bytes = new byte[2];
+        // 将整数的低8位放入第二个字节
+        bytes[1] = (byte) (value & 0xFF);
+        // 将整数的高8位放入第一个字节
+        bytes[0] = (byte) ((value >> 8) & 0xFF);
+        return bytes;
+    }
+
     public static void main(String[] args) throws Exception {
-        System.out.println(bytesToHexWithSpaces(getByteForProofreadingTime()));
+        List<LockInfoVO> list=new ArrayList<>();
+        LockInfoVO lockInfoVO2=new LockInfoVO();
+        lockInfoVO2.setLockNumber(intToTwoByteHex(10));
+        list.add(lockInfoVO2);
+        LockInfoVO lockInfoVO1=new LockInfoVO();
+        lockInfoVO1.setLockNumber(intToTwoByteHex(270));
+        list.add(lockInfoVO1);
+        System.out.println(bytesToHexWithSpaces(getByteForDelLock(list)));
+        String aaa="62 62 44 65 64 30 34 32 35 30 32 37 38 34 35 32 ";
+                String decodedString=new String(hexStringToByteArray(aaa));
+//        // 输出解码后的字符串
+        System.out.println(decodedString);
+        byte[] decodedByte = Base64.getDecoder().decode(decodedString);
+        String decodedStringa = new String(decodedByte, StandardCharsets.US_ASCII);
+        System.out.println(decodedStringa);
 
-        System.out.println(bytesToHexWithSpaces(getByteForUnlockLog(1)));
+        byte[] header=new byte[]{0x68,0x62};
+        byte[] data=new byte[21];
+        data[0]=10& 0xFF;
+        int a=1;
+        for(int i=269;i<279;i++){
+            byte[] b =intToTwoByteHex(i);
+           data[a]=b[0];
+           a++;
+           data[a]=b[1];
+           a++;
+        }
+        byte[] len=CheckLen(data.length);
+        byte[] bytes = mergeByteArrays(header, len,data);
+        int i = calculateChecksum(bytes, 0, bytes.length);
+        byte[] checksum= new byte[]{(byte) i};
+        byte[] message = mergeByteArrays(header, len, data, checksum);//报文
+        System.out.println(bytesToHexWithSpaces(message));
 
-       String a = "68 68 02 CA 1F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 14 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 3B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 3A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 29 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 15 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 13 01 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 29 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 15 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 12 02 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 2A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 11 01 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 26 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 10 13 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 3B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 27 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0F 13 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 37 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 24 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0E 10 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 39 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 25 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0D 0B 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 2D 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0C 03 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0B 2A 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0B 16 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 36 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 21 7F 74 65 73 74 63 6F 64 65 31 32 33 34 35 36 37 38 18 0B 1A 0E 0A 0A 7F 8F ";
-       a=a.replace(" ", "");
-        System.out.println(a);
 
+
+        List<LockInfoVO> lockInfoList = Lists.newArrayList();
+        LockInfoVO lockInfoVO=new LockInfoVO();
+        lockInfoVO.setLockEffective((byte) 255);
+        lockInfoVO.setLockNumber(intToTwoByteHex(270));
+        lockInfoVO.setLockSerialNumber("bbDed04250278452".getBytes(StandardCharsets.US_ASCII));
+        lockInfoVO.setLockEffective(
+            (byte) Integer.parseInt(Integer.toHexString(255), 16));
+        lockInfoVO.setLockTime(
+            (byte) Integer.parseInt(Integer.toHexString(6), 16));
+        lockInfoList.add(lockInfoVO);
+        System.out.println(LockUtil.bytesToHexWithSpaces(LockUtil.getByteForAddLock(lockInfoList)));
 //        byte[] aa=hexStringToByteArray(a);
 //         int i1 =calculateChecksum(aa,0,aa.length);
 //        byte[] checksum = new byte[]{(byte) i1};
 //        byte[] message = mergeByteArrays(aa, checksum);//报文
 //        System.out.println(bytesToHexWithSpaces(message));
 
-        List<LockInfoVO> lockInfoList = new ArrayList<>();
-        List<String> lockList = new ArrayList<>();
-        lockList.add("XYZS2408AB000046");
-        lockList.add("XYZS2408AB000048");
-        lockList.add("XYZS2408AB000049");
-        lockList.add("XYZS2408AB000050");
-        lockList.add("XYZS2408AB000051");
-        lockList.add("XYZS2408AB000052");
-        lockList.add("XYZS2408AB000053");
-        lockList.add("XYZS2408AB000058");
-        lockList.add("XYZS2408AB000059");
-        lockList.add("XYZS2408AB000062");
-        for (int i = 0; i < 10; i++) {
-            LockInfoVO lockInfo = new LockInfoVO();
-            lockInfo.setLockNumber(
-                (byte) Integer.parseInt(Integer.toHexString(i), 16));
-            lockInfo.setLockSerialNumber(lockList.get(i).getBytes(StandardCharsets.US_ASCII));
-            lockInfo.setLockEffective(
-                (byte) Integer.parseInt(Integer.toHexString(255), 16));
-            lockInfo.setLockTime(
-                (byte) Integer.parseInt(Integer.toHexString(6), 16));
-            lockInfoList.add(lockInfo);
-        }
-        System.out.println(bytesToHexWithSpaces(getByteForAddLock(lockInfoList)));
+
 //        byte[] aa = "1234567890asdfgh".getBytes(StandardCharsets.US_ASCII);
 //        byte[] bb = new byte[]{0x68, (byte) 0x64};
 //        byte[] len = CheckLen(aa.length);

@@ -27,7 +27,7 @@ public class Task {
     private final ILockMonitorFlowService monitorFlowService;
     private final ILockWarnInfoService warnInfoService;
 
-    @Scheduled(cron = "0/10 * * * * ?")
+    @Scheduled(cron = "0/30 * * * * ?")
     public void monitorAbnormalTraffic() {
         List<MonitorPortViewVO> viewVOList = portInfoService.getMonitorPortList();
         if (viewVOList.size() > 0) {

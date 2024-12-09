@@ -7,7 +7,7 @@ public class LockInfoVO {
     /**
      * 锁序号
      */
-    private byte lockNumber;
+    private byte[] lockNumber;
     /**
      * 锁序列号
      */

@@ -72,7 +72,7 @@
         <include refid="fromSql"/>
         where equ.del_flag = '0'
         <include refid="whereSql"/>
-        order by pt.update_time desc
+        order by pt.user_code desc ,pt.update_time desc
     </select>
     <select id="selectAuthorizationList"
       resultType="com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO">

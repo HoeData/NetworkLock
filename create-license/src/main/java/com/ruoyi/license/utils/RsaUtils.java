@@ -8,6 +8,7 @@ import cn.hutool.crypto.asymmetric.RSA;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.read.listener.PageReadListener;
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -184,13 +185,12 @@ public class RsaUtils {
         for (LockSerialNumber lockSerialNumber : lockSerialNumberList) {
             Map<String, Object> map = new HashMap<>();
             map.put("type", 1);
-            map.put("serialNumber", lockSerialNumber);
+            map.put("serialNumber", lockSerialNumber.getSerialNumber());
             mapList.add(map);
         }
         resultMap.put("lockInfoList", mapList);
         createLicense(resultMap);
     }
-
     public static void createLicense(Map<String, Object> resultMap) {
         RSA rsa = new RSA(privateKey, publicKey);
         String encrypt2 = rsa.encryptBase64(
@@ -206,8 +206,8 @@ public class RsaUtils {
 
     public static void main(String[] args) throws Exception {
         List<String> filePath = new ArrayList<>();
-        filePath.add("C:\\Users\\xiaomi\\Desktop\\620p锁ID - 11月27、28、29日发往邯郸.xlsx");
-        createLicenseForFile(filePath, "邯郸", 1000);
+        filePath.add("C:\\Users\\xiaomi\\Desktop\\设备信息.xlsx");
+        createLicenseForFile(filePath, "沧州", 4000);
     }
 
 }

@@ -42,6 +42,8 @@ public class RelPdaUserPortServiceImpl extends
     private final ILockAuthorizationLogService lockAuthorizationLogService;
     private final LockPdaInfoMapper lockPdaInfoMapper;
 
+    public static final int MAX_LOCK_NUMBER=300;
+
     @Override
     public List<RelPdaUserPortViewVO> getAllList(RelPdaUserPortParamVO vo) {
         return pdaUserPortMapper.selectAllList(vo);
@@ -109,8 +111,7 @@ public class RelPdaUserPortServiceImpl extends
                 lockInfoList = new ArrayList<>();
             }
             LockInfoVO lockInfo = new LockInfoVO();
-            lockInfo.setLockNumber(
-                (byte) Integer.parseInt(Integer.toHexString(item.getSerialNumber()), 16));
+            lockInfo.setLockNumber(LockUtil.intToTwoByteHex(item.getSerialNumber()));
             lockInfo.setLockSerialNumber(
                 item.getLockSerialNumber().getBytes(StandardCharsets.US_ASCII));
             lockInfo.setLockEffective((byte) Integer.parseInt(Integer.toHexString(4), 16));
@@ -137,8 +138,7 @@ public class RelPdaUserPortServiceImpl extends
         List<LockInfoVO> lockInfoList = new ArrayList<>();
         list.forEach(lockPortInfo -> {
             LockInfoVO lockInfo = new LockInfoVO();
-            lockInfo.setLockNumber(
-                (byte) Integer.parseInt(Integer.toHexString(lockPortInfo.getSerialNumber()), 16));
+            lockInfo.setLockNumber(LockUtil.intToTwoByteHex(lockPortInfo.getSerialNumber()));
             lockInfoList.add(lockInfo);
         });
         return LockUtil.bytesToHexWithSpaces(LockUtil.getByteForDelLock(lockInfoList));
@@ -147,15 +147,15 @@ public class RelPdaUserPortServiceImpl extends
     private void setSerialNumber(List<RelPdaUserPort> relPdaUserPortList) {
         List<RelPdaUserPort> list = pdaUserPortMapper.selectByPdaUserId(
             relPdaUserPortList.get(0).getPdaUserId());
-        if (list.size() + relPdaUserPortList.size() > 255) {
-            throw new ServiceException("电子钥匙最多授权255把锁");
+        if (list.size() + relPdaUserPortList.size() > MAX_LOCK_NUMBER) {
+            throw new ServiceException("电子钥匙最多授权"+MAX_LOCK_NUMBER+"把锁");
         }
         Map<Integer, Boolean> existMap = list.stream()
             .collect(Collectors.toMap(RelPdaUserPort::getSerialNumber, vo -> true, (a, b) -> b));
         int endSize = 0;
         int size = relPdaUserPortList.size();
         int listIndex = 0;
-        for (int i = 1; i <= 255; i++) {
+        for (int i = 1; i <= MAX_LOCK_NUMBER; i++) {
             if (endSize == size) {
                 break;
             }
