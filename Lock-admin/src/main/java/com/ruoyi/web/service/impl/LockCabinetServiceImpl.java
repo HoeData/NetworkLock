@@ -66,4 +66,9 @@ public class LockCabinetServiceImpl extends ServiceImpl<LockCabinetMapper, LockC
     public List<LockCabinet> getAll(LockCommonParamVO lockCommonParamVO) {
         return lockCabinetMapper.selectAllList(lockCommonParamVO);
     }
+
+    @Override
+    public void saveOrUpdateForSynchronization(List<LockCabinet> list) {
+        saveOrUpdateBatch(list);
+    }
 }

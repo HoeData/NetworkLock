@@ -1,4 +1,4 @@
-package com.manniu.offline.domain;
+package com.manniu.offline.enums;
 
 public enum PdaDataSynchronizationStatusType {
     START(0, "开始同步"),
@@ -9,6 +9,7 @@ public enum PdaDataSynchronizationStatusType {
     PDA_GET_DATA(4, "pda获取同步文件失败"),
     END(5, "同步成功"),
     MAXIMUM_NUMBER_EXCEEDED(6, "超过最大允许管理锁数量"),
+    CONNECT_SERVER_ERROR(7, "与服务器连接失败,请离线同步将PDA数据同步到平台在进行同步"),
     ;
 
 

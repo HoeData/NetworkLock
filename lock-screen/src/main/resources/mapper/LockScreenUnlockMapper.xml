@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.manniu.screen.mapper.LockScreenUnlockMapper">
+
+    <select id="selectUnlockList"
+            resultType="com.manniu.screen.vo.view.LockScreenUnlockVIewVO">
+        SELECT
+        ul.*,
+        u.user_name,
+        control.name as network_control_name,
+        elock.description as electronic_lock_description
+        FROM
+        lock_screen_unlock ul
+        LEFT JOIN sys_user u ON u.user_id = ul.user_id
+        LEFT JOIN lock_screen_network_control control on control.device_id = ul.device_id
+        left join lock_screen_electronic_lock elock on elock.network_control_id = control.id and elock.lock_id=ul.lock_id
+        <where>
+            <if test="ip != null and ip !='' ">
+                AND ul.ip like concat('%',#{ip},'%')
+            </if>
+            <if test="deviceId != null and deviceId !='' ">
+                AND ul.device_id like concat('%',#{deviceId},'%')
+            </if>
+            <if test="lockId != null and lockId !='' ">
+                AND ul.lock_id like concat('%',#{lockId},'%')
+            </if>
+            <if test="startLockTIme != null">
+                AND ul.lock_time <![CDATA[ >= ]]> #{startLockTIme}
+            </if>
+            <if test="endLockTIme != null">
+                AND ul.lock_time <![CDATA[ <= ]]> #{endLockTIme}
+            </if>
+            <if test="userName != null and userName !='' ">
+                AND u.user_name like concat('%',#{userName},'%')
+            </if>
+        </where>
+        order by ul.create_time desc
+
+    </select>
+</mapper>

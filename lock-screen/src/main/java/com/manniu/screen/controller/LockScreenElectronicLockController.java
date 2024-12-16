@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/lockScreenElectronicLock")
 @RequiredArgsConstructor
 public class LockScreenElectronicLockController extends BaseController {
-
     private final ILockScreenElectronicLockService lockScreenElectronicLockService;
     private final LockTemplate lockTemplate;
 

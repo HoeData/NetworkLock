@@ -25,4 +25,5 @@ public interface ILockEquipmentService extends IService<LockEquipment> {
 
     int removeActiveDefenseByIds(String[] ids);
     List<LockEquipment> getAll(LockEquipmentParamVO lockEquipmentParamVO);
+    void saveOrUpdateForSynchronization(List<LockEquipment> list);
 }

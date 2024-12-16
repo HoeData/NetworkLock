@@ -20,4 +20,5 @@ public class LockPortInfo extends LockEntity {
     @TableField(fill = FieldFill.UPDATE)
     private String userCode;
     private Integer pdaUserId;
+    private Integer otherStatus;
 }

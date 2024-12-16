@@ -16,4 +16,6 @@ public interface ILockMachineRoomService extends IService<LockMachineRoom> {
     void judgeName(LockMachineRoom lockMachineRoom);
 
     List<LockMachineRoom> getAll(LockCommonParamVO lockCommonParamVO);
+
+    void saveOrUpdateForSynchronization(List<LockMachineRoom> list);
 }

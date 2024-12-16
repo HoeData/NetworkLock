@@ -55,4 +55,9 @@ public class LockEquipmentTypeServiceImpl extends
         }
     }
 
+    @Override
+    public void saveOrUpdateForSynchronization(List<LockEquipmentType> list) {
+        saveOrUpdateBatch(list);
+    }
+
 }

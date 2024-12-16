@@ -10,5 +10,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "license")
 public class LicenseProperties {
-    private List<String> pathList;
+    private List<String> lockLicensePathList;
+    private String startLicensePath;
 }

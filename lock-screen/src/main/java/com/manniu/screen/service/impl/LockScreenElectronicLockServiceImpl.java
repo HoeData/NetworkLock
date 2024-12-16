@@ -2,6 +2,7 @@ package com.manniu.screen.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.manniu.screen.config.LockScreenCache;
 import com.manniu.screen.constans.CommonConst;
 import com.manniu.screen.domain.LockScreenElectronicLock;
 import com.manniu.screen.mapper.LockScreenElectronicLockMapper;
@@ -23,7 +24,23 @@ public class LockScreenElectronicLockServiceImpl extends
     @Override
     public List<LockScreenElectronicLockViewVO> getElectronicLockList(
         LockScreenElectronicLockPageParamVO pageParamVO) {
-        return lockScreenElectronicLockMapper.selectElectronicLockList(pageParamVO);
+        List<LockScreenElectronicLockViewVO> list = lockScreenElectronicLockMapper.selectElectronicLockList(
+            pageParamVO);
+        list.forEach(item -> {
+            try {
+                item.setDoorStatusStr(
+                    LockScreenCache.lockStatusVOMap.get(item.getDeviceId()).get(item.getLockId())
+                        .getDoorStatus());
+                item.setLockStatusStr(
+                    LockScreenCache.lockStatusVOMap.get(item.getDeviceId()).get(item.getLockId())
+                        .getLockStatus());
+                item.setOnlineStatusStr(
+                    LockScreenCache.lockStatusVOMap.get(item.getDeviceId()).get(item.getLockId())
+                        .getOnlineStatus());
+            } catch (Exception e) {
+            }
+        });
+        return list;
     }
 
     @Override

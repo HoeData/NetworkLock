@@ -11,9 +11,11 @@ public class LockScreenUserLockPermissionsViewVO {
     private Long userId;
     private String userName;
     private Integer networkControlId;
+    private String networkControlName;
     private String ip;
     private String deviceId;
     private Integer electronicLockId;
+    private Integer electronicLockDescription;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")

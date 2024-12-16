@@ -16,4 +16,6 @@ public interface ILockCabinetService extends IService<LockCabinet> {
     void judgeName(LockCabinet lockCabinet);
 
     List<LockCabinet> getAll(LockCommonParamVO lockCommonParamVO);
+
+    void saveOrUpdateForSynchronization(List<LockCabinet> list);
 }

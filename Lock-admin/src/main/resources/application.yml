@@ -128,6 +128,7 @@ xss:
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
 license:
-  pathList:
+  startLicensePath: D:\\out\\start.license
+  lockLicensePathList:
    - D:\\out\\lock.license
 

@@ -7,6 +7,7 @@ import com.manniu.screen.vo.LockScreenApiParamVO;
 import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -59,16 +60,9 @@ public class ScreenApiController extends BaseController {
         networkControlService.saveAndUpdateControlAndLockByMap(map);
         return AjaxResult.success(map);
     }
-    @GetMapping("/getsn")
-    public AjaxResult getsn() {
-       return AjaxResult.success(lockTemplate.getVerification("192.168.1.199","14080010",1));
-    }
-    @GetMapping("/setsn0")
-    public AjaxResult setsn0() {
-        return AjaxResult.success( lockTemplate.setVerification("192.168.1.199","14080010",1,"0"));
-    }
-    @GetMapping("/setsn1")
-    public AjaxResult setsn1() {
-        return AjaxResult.success( lockTemplate.setVerification("192.168.1.199","14080010",1,"1"));
+    @PostMapping("/setDeviceTime")
+    public LockResult setDeviceTime(@RequestBody LockScreenApiParamVO paramVO) {
+        return lockTemplate.setDeviceTime(paramVO.getIp(), paramVO.getDeviceId(),
+            paramVO.getLockId(), new Date());
     }
 }

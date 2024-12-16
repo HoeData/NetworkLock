@@ -33,4 +33,16 @@ public class PdaMergeDataVO implements Serializable {
     private List<RelPdaUserPort> relPdaUserPortList = new ArrayList<>();
     private List<LockUnlockLog> unlockLogList = new ArrayList<>();
 
+    public PdaMergeDataVO getByPdaData(PdaDataVO pdaDataVO) {
+        PdaMergeDataVO pdaMergeDataVO = new PdaMergeDataVO();
+        pdaMergeDataVO.setMachineRoomList(pdaDataVO.getLockMachineRoom());
+        pdaMergeDataVO.setCabinetList(pdaDataVO.getLockCabinet());
+        pdaMergeDataVO.setEquipmentTypeList(pdaDataVO.getLockEquipmentType());
+        pdaMergeDataVO.setEquipmentModelList(pdaDataVO.getLockEquipmentModel());
+        pdaMergeDataVO.setEquipmentList(pdaDataVO.getLockEquipment());
+        pdaMergeDataVO.setPortInfoList(pdaDataVO.getLockPortInfo());
+        pdaMergeDataVO.setUnlockLogList(pdaDataVO.getLockUnlockLog());
+        return pdaMergeDataVO;
+    }
+
 }

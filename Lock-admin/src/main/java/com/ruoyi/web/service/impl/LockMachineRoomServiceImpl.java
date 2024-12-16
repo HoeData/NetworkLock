@@ -66,4 +66,9 @@ public class LockMachineRoomServiceImpl extends
     public List<LockMachineRoom> getAll(LockCommonParamVO lockCommonParamVO) {
         return lockMachineRoomMapper.selectAllList(lockCommonParamVO);
     }
+
+    @Override
+    public void saveOrUpdateForSynchronization(List<LockMachineRoom> list) {
+        saveOrUpdateBatch(list);
+    }
 }

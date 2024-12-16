@@ -19,5 +19,4 @@ public class PdaMergeDataVO implements Serializable {
     private List<LockPdaUser> pdaUserList = new ArrayList<>();
     private List<RelPdaUserPort> relPdaUserPortList = new ArrayList<>();
     private List<LockUnlockLog> unlockLogList = new ArrayList<>();
-
 }

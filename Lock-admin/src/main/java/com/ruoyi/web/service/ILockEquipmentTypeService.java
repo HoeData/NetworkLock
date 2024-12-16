@@ -14,4 +14,6 @@ public interface ILockEquipmentTypeService extends IService<LockEquipmentType> {
 
     void judgeName(LockEquipmentType lockEquipmentType);
 
+    void saveOrUpdateForSynchronization(List<LockEquipmentType> list);
+
 }

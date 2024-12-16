@@ -134,4 +134,9 @@ public class LockEquipmentServiceImpl extends
     public List<LockEquipment> getAll(LockEquipmentParamVO lockEquipmentParamVO) {
         return lockEquipmentMapper.selectAllList(lockEquipmentParamVO);
     }
+
+    @Override
+    public void saveOrUpdateForSynchronization(List<LockEquipment> list) {
+        saveOrUpdateBatch(list);
+    }
 }

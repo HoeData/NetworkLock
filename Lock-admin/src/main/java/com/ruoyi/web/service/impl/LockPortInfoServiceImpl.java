@@ -72,4 +72,9 @@ public class LockPortInfoServiceImpl extends
             throw new ServiceException("该锁已被绑定,请先解绑,在进行绑定");
         }
     }
+
+    @Override
+    public void saveOrUpdateForSynchronization(List<LockPortInfo> list) {
+        saveOrUpdateBatch(list);
+    }
 }

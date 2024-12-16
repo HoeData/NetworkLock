@@ -8,30 +8,36 @@ import com.ruoyi.common.annotation.Anonymous;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.constants.LockCache;
 import com.ruoyi.web.controller.lock.LockPdaInfoController;
+import com.ruoyi.web.domain.LockCabinet;
+import com.ruoyi.web.domain.LockEquipment;
+import com.ruoyi.web.domain.LockEquipmentModel;
+import com.ruoyi.web.domain.LockEquipmentType;
+import com.ruoyi.web.domain.LockMachineRoom;
 import com.ruoyi.web.domain.LockPdaDataSynchronizationInfo;
 import com.ruoyi.web.domain.LockPdaInfo;
 import com.ruoyi.web.domain.LockPortInfo;
 import com.ruoyi.web.domain.vo.pda.PdaDataVO;
+import com.ruoyi.web.domain.vo.pda.PdaMergeDataVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.enums.PdaDataSynchronizationStatusType;
 import com.ruoyi.web.enums.PdaDataSynchronizationType;
+import com.ruoyi.web.service.ILockCabinetService;
+import com.ruoyi.web.service.ILockEquipmentModelService;
+import com.ruoyi.web.service.ILockEquipmentService;
+import com.ruoyi.web.service.ILockEquipmentTypeService;
+import com.ruoyi.web.service.ILockMachineRoomService;
 import com.ruoyi.web.service.ILockPdaDataSynchronizationInfoService;
 import com.ruoyi.web.service.ILockPdaInfoService;
 import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.service.PdaService;
+import com.ruoyi.web.utils.CommonUtils;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -55,7 +61,6 @@ public class PdaDataSynchronizationController {
     private final ILockPdaDataSynchronizationInfoService pdaDataSynchronizationInfoService;
     private final ILockPdaInfoService lockPdaInfoService;
     private final ILockPortInfoService portInfoService;
-
     private final PdaService pdaService;
     public static final String AES_KEY = "uuNbz89psCnbtJlm";
 
@@ -77,9 +82,10 @@ public class PdaDataSynchronizationController {
     }
 
     @PostMapping("/updatePdaData")
-    public void updatePdaData(@RequestBody PdaDataVO fromPdaData) {
-        pdaService.update(fromPdaData);
+    public void updatePdaData(@RequestBody PdaMergeDataVO pdaMergeDataVO) {
+        pdaService.update(pdaMergeDataVO);
     }
+
 
     @PostMapping("/updatePdaDataForFile")
     public AjaxResult updatePdaDataForFile(@RequestParam("file") MultipartFile file) {
@@ -91,6 +97,7 @@ public class PdaDataSynchronizationController {
             AES aes = SecureUtil.aes(AES_KEY.getBytes());
             PdaDataVO fromPdaData = JSON.parseObject(aes.decryptStr(content), PdaDataVO.class);
             LockPdaInfo pdaInfo = lockPdaInfoService.getById(fromPdaData.getPdaId());
+            PdaMergeDataVO pdaMergeDataVO = pdaService.getAllDataByPda(pdaInfo);
             lockPdaDataSynchronizationInfo = pdaDataSynchronizationInfoService.saveAll(
                 pdaInfo.getOnlyKey(), PdaDataSynchronizationType.getEnum(2));
             List<LockPortInfo> portInfoList = portInfoService.getAll(new LockPortInfoListParamVO());
@@ -122,7 +129,7 @@ public class PdaDataSynchronizationController {
                 return AjaxResult.error("同步失败,"
                     + PdaDataSynchronizationStatusType.MAXIMUM_NUMBER_EXCEEDED.getMsg());
             }
-            pdaService.update(fromPdaData);
+            pdaService.synchronization(fromPdaData,pdaMergeDataVO);
             pdaDataSynchronizationInfoService.updateStatus(lockPdaDataSynchronizationInfo,
                 PdaDataSynchronizationStatusType.END.getValue());
             return AjaxResult.success("同步成功");
@@ -140,6 +147,14 @@ public class PdaDataSynchronizationController {
     @GetMapping("/getStatus")
     public AjaxResult getStatus() {
         return AjaxResult.success();
+    }
+
+    @PostMapping("/onlineSynchronization/{deviceId}")
+    public PdaMergeDataVO onlineSynchronization(@PathVariable String deviceId,
+        @RequestBody PdaDataVO pdaDataVO) {
+        LockPdaInfo pdaInfo = lockPdaInfoService.getByKey(deviceId);
+        PdaMergeDataVO pdaMergeDataVO = pdaService.getAllDataByPda(pdaInfo);
+        return pdaService.synchronization(pdaDataVO, pdaMergeDataVO);
     }
 
 }

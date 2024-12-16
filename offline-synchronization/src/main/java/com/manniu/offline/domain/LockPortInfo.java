@@ -13,4 +13,5 @@ public class LockPortInfo extends LockEntity {
     private String delFlag;
     private String userCode;
     private Integer pdaUserId;
+    private Integer otherStatus;
 }

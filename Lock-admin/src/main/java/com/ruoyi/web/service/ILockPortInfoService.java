@@ -21,4 +21,5 @@ public interface ILockPortInfoService extends IService<LockPortInfo> {
 
     List<LockPortInfo> getAll(LockPortInfoListParamVO portInfoListParamVO);
     void judgeUserCode(Integer id,String userCode);
+    void saveOrUpdateForSynchronization(List<LockPortInfo> list);
 }

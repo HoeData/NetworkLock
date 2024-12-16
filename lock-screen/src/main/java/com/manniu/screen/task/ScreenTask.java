@@ -15,7 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 @EnableScheduling
 @Slf4j
 @RequiredArgsConstructor
-public class Task {
+public class ScreenTask {
 
     private final ILockScreenNetworkControlService networkControlService;
     private final LockTemplate lockTemplate;
