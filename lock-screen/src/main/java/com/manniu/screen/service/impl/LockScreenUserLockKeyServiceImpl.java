@@ -43,9 +43,11 @@ public class LockScreenUserLockKeyServiceImpl extends
 
     @Override
     public boolean mySaveOrUpdate(LockScreenUserLockKey lockScreenUserLockKey) {
-        if (null != lockScreenUserLockKey.getId()) {
+        if (null != lockScreenUserLockKey.getId() && null != lockScreenUserLockKey.getType()) {
             UserLockKeyType keyType = UserLockKeyType.getEnum(lockScreenUserLockKey.getType());
             LockScreenUserLockKey old = getByUserId(lockScreenUserLockKey.getId());
+            judgeCardNumber(lockScreenUserLockKey.getCardNumber(), lockScreenUserLockKey.getId());
+            judgePassword(lockScreenUserLockKey.getPassword(), lockScreenUserLockKey.getId());
             switch (keyType) {
                 case PASSWORD:
                     old.setPassword(lockScreenUserLockKey.getPassword());
@@ -59,8 +61,6 @@ public class LockScreenUserLockKeyServiceImpl extends
             }
             lockScreenUserLockKey = old;
         }
-        judgeCardNumber(lockScreenUserLockKey.getCardNumber(), lockScreenUserLockKey.getId());
-        judgePassword(lockScreenUserLockKey.getPassword(), lockScreenUserLockKey.getId());
         CommonUtils.addCommonParams(lockScreenUserLockKey, lockScreenUserLockKey.getId());
         boolean result;
         synchronized (this) {

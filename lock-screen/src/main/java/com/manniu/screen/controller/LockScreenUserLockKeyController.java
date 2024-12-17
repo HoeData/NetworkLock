@@ -27,7 +27,7 @@ public class LockScreenUserLockKeyController extends BaseController {
     @PostMapping("/saveOrUpdate")
     public Object saveOrUpdate(@RequestBody LockScreenUserLockKey lockScreenUserLockKey) {
         return userLockKeyService.mySaveOrUpdate(lockScreenUserLockKey)
-            ? lockPermissionsService.updateByUserId(lockScreenUserLockKey.getRealAccountId())
+            ? lockPermissionsService.updateByUserId(lockScreenUserLockKey.getId())
             : AjaxResult.error();
     }
 
