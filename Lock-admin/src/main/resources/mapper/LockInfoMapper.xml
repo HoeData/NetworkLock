@@ -40,4 +40,30 @@
             </if>
         </where>
     </select>
+    <select id="selectInstallationList"
+            resultType="com.ruoyi.web.domain.vo.installationlist.LockInstallationViewVO">
+        select CASE
+        WHEN t.type = 1 THEN '闲置'
+        ELSE '在用'
+        END AS typeStr,
+        t.serial_number as lock_serial_number,
+        c.name as cabinet_name,
+        e.name as equipment_name,
+        p.serial_number as port_index
+        from lock_info t
+        inner join lock_port_info p on t.serial_number = p.user_code
+        inner join lock_equipment e on p.equipment_id = e.id
+        inner join lock_cabinet c on e.cabinet_id = c.id
+        inner join lock_machine_room m on c.machine_room_id = m.id
+        inner join lock_site s on m.site_id = s.id
+        where p.del_flag = 0
+        and e.del_flag = 0
+        and c.del_flag = 0
+        and m.del_flag = 0
+        and s.del_flag = 0
+        <if test="siteId != null ">
+            AND s.id = #{siteId}
+        </if>
+        order by c.id desc
+    </select>
 </mapper>

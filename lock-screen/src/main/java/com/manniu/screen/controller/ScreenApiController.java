@@ -26,7 +26,17 @@ public class ScreenApiController extends BaseController {
     private final LockTemplate lockTemplate;
     private final ILockScreenNetworkControlService networkControlService;
 
-
+    /**
+     * 获取设备心跳
+     *
+     * @param paramVO 参数vo
+     * @return {@link LockResult }
+     */
+    @PostMapping("/removeAccount")
+    public LockResult removeAccount(@RequestBody LockScreenApiParamVO paramVO) {
+//        return lockTemplate.heartBeat(paramVO.getIp(), paramVO.getDeviceId(), paramVO.getLockId());
+        return lockTemplate.removeAccount(paramVO.getIp(), paramVO.getDeviceId(), paramVO.getLockId(),"1");
+    }
     /**
      * 获取设备心跳
      *
@@ -35,7 +45,8 @@ public class ScreenApiController extends BaseController {
      */
     @PostMapping("/getHeartBrat")
     public LockResult getHeartBeat(@RequestBody LockScreenApiParamVO paramVO) {
-        return lockTemplate.heartBeat(paramVO.getIp(), paramVO.getDeviceId(), paramVO.getLockId());
+//        return lockTemplate.heartBeat(paramVO.getIp(), paramVO.getDeviceId(), paramVO.getLockId());
+        return lockTemplate.lockAccountGroupMessage(paramVO.getIp(), paramVO.getDeviceId(), paramVO.getLockId());
     }
 
     /**

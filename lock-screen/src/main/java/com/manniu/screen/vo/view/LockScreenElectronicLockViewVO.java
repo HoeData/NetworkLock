@@ -12,7 +12,7 @@ public class LockScreenElectronicLockViewVO {
     private String deviceId;
     private String userType;
     private Integer networkControlId;
-    private Integer networkControlName;
+    private String networkControlName;
     /**
      * 门状态
      */

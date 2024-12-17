@@ -38,7 +38,6 @@ public class LockScreenUserLockPermissionsController extends BaseController {
             pageParamVO);
         return getDataTable(list);
     }
-
     @PostMapping("/remove")
     public AjaxResult remove(@RequestBody CommonVO commonVO) {
         return toAjax(lockPermissionsService.removeByUserId(commonVO));

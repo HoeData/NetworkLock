@@ -1,6 +1,7 @@
 package com.manniu.screen.vo;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 public class CommonVO {
 
@@ -8,7 +9,7 @@ public class CommonVO {
     private String ip;
     @NotBlank(message = "设备不能为空")
     private String deviceId;
-    @NotBlank(message = "锁ID不能为空")
+    @NotNull(message = "锁ID不能为空")
     private Integer lockId;
     private Integer id;
 

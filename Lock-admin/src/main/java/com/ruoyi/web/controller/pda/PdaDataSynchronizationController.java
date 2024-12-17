@@ -32,12 +32,17 @@ import com.ruoyi.web.service.ILockPortInfoService;
 import com.ruoyi.web.service.PdaService;
 import com.ruoyi.web.utils.CommonUtils;
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.utils.Lists;
@@ -156,5 +161,4 @@ public class PdaDataSynchronizationController {
         PdaMergeDataVO pdaMergeDataVO = pdaService.getAllDataByPda(pdaInfo);
         return pdaService.synchronization(pdaDataVO, pdaMergeDataVO);
     }
-
 }

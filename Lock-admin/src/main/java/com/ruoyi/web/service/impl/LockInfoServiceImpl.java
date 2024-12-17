@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.web.domain.LockInfo;
 import com.ruoyi.web.domain.vo.LockInfoPageParamVO;
 import com.ruoyi.web.domain.vo.LockInfoViewVO;
+import com.ruoyi.web.domain.vo.installationlist.LockInstallationPageParamVO;
+import com.ruoyi.web.domain.vo.installationlist.LockInstallationViewVO;
 import com.ruoyi.web.mapper.LockInfoMapper;
 import com.ruoyi.web.service.ILockInfoService;
 import java.util.List;
@@ -18,7 +20,12 @@ public class LockInfoServiceImpl extends ServiceImpl<LockInfoMapper, LockInfo> i
     private final LockInfoMapper lockInfoMapper;
 
     @Override
-    public List<LockInfoViewVO> selectAllList(LockInfoPageParamVO vo) {
+    public List<LockInfoViewVO> getAllList(LockInfoPageParamVO vo) {
         return lockInfoMapper.selectAllList(vo);
+    }
+
+    @Override
+    public List<LockInstallationViewVO> getInstallationList(LockInstallationPageParamVO vo) {
+        return lockInfoMapper.selectInstallationList(vo);
     }
 }

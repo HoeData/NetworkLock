@@ -6,9 +6,8 @@ import lombok.Data;
 
 @Data
 public class LockScreenUserLockPermissionsViewVO {
-
     private Integer id;
-    private Long userId;
+    private Integer userId;
     private String userName;
     private Integer networkControlId;
     private String networkControlName;
@@ -22,4 +21,7 @@ public class LockScreenUserLockPermissionsViewVO {
     private LocalDateTime endTime;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+    private Integer lockId;
+    private Integer authorizationFlag;
+    private String authorizationFlagStr;
 }

@@ -15,7 +15,7 @@ public class LockScreenUserLockPermissions extends LockEntity {
 
     @TableId(type = IdType.AUTO)
     private Integer id;
-    private Long userId;
+    private Integer userId;
 
     /**
      * 这个id是数据库的lock表id不是硬件的lockid
@@ -32,4 +32,5 @@ public class LockScreenUserLockPermissions extends LockEntity {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
     private String delFlag;
+    private Integer authorizationFlag;
 }

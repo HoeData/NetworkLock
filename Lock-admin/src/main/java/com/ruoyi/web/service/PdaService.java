@@ -3,6 +3,7 @@ package com.ruoyi.web.service;
 import com.esotericsoftware.reflectasm.MethodAccess;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.ruoyi.web.aspectj.CompanyScopeAspect;
 import com.ruoyi.web.constants.CommonFieldConst;
 import com.ruoyi.web.domain.LockCabinet;
@@ -24,11 +25,11 @@ import com.ruoyi.web.domain.vo.pda.RelPdaUserPortParamVO;
 import com.ruoyi.web.domain.vo.pda.RelPdaUserPortViewVO;
 import com.ruoyi.web.domain.vo.port.LockPortInfoListParamVO;
 import com.ruoyi.web.enums.SynchronizationDataType;
-import com.ruoyi.web.service.impl.LockMachineRoomServiceImpl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -154,6 +155,7 @@ public class PdaService {
             GET + StringUtils.capitalize(synchronizationDataType.getPdaFieldName())));
         List<Object> pcList = Lists.newArrayList();
         List<Object> pdaList = Lists.newArrayList();
+        Set<Integer> idSet = Sets.newHashSet();
         if (null != pcValue) {
             pcList = (List<Object>) pcValue;
             pdaList = (List<Object>) pdaValue;
@@ -181,6 +183,7 @@ public class PdaService {
                     encapsulatedSimpleData(synchronizationDataType, objPda, idMap, pdaDataId,
                         service));
             } else {
+                idSet.add(pdaDataId);
                 Date pcUpdateTime = (Date) dataAccess.invoke(pcMap.get(pdaDataId),
                     dataAccess.getIndex(
                         GET + StringUtils.capitalize(CommonFieldConst.UPDATE_TIME)));
@@ -195,15 +198,23 @@ public class PdaService {
                 }
             }
         }
+        List<Object> allList = Lists.newArrayList();
+        pcMap.forEach((k, v) -> {
+            if (!idSet.contains(k)) {
+                allList.add(v);
+            }
+        });
         if (needUpdate) {
             MethodAccess serviceMethodAccess = MethodAccess.get(service.getClass());
             serviceMethodAccess.invoke(service,
-                serviceMethodAccess.getIndex("saveOrUpdateForSynchronization", List.class), updateList);
+                serviceMethodAccess.getIndex("saveOrUpdateForSynchronization", List.class),
+                updateList);
         }
-        endList.addAll(updateList);
+        allList.addAll(updateList);
+        allList.addAll(endList);
         pdaMergeAccess.invoke(pdaMergeDataVO, pdaMergeAccess.getIndex(
                 SET + StringUtils.capitalize(synchronizationDataType.getFieldName()), List.class),
-            endList);
+            allList);
     }
 
     private Object encapsulatedSimpleData(SynchronizationDataType synchronizationDataType,

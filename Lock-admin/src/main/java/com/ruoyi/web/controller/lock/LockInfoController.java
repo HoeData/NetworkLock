@@ -22,7 +22,7 @@ public class LockInfoController extends BaseController {
     @PostMapping("/list")
     public TableDataInfo list(@RequestBody LockInfoPageParamVO vo) {
         PageHelper.startPage(vo.getPageNum(), vo.getPageSize());
-        List<LockInfoViewVO> list = lockInfoService.selectAllList(vo);
+        List<LockInfoViewVO> list = lockInfoService.getAllList(vo);
         return getDataTable(list);
     }
 }

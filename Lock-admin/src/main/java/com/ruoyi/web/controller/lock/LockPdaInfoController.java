@@ -44,9 +44,6 @@ public class LockPdaInfoController extends BaseController {
 
     private final ILockPdaInfoService pdaInfoService;
     private final ILockUnlockLogService unlockLogService;
-    private final ILockPdaUserService pdaUserService;
-
-    private final ILockPortInfoService portInfoService;
     public static final String AES_KEY = "uuNbz89psCnbtJlm";
 
     @PostMapping("/list")

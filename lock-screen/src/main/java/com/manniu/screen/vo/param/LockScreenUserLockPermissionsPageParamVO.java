@@ -13,5 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LockScreenUserLockPermissionsPageParamVO extends PageVO {
     @NotNull(message = "用户不能为空")
-    private Long userId;
+    private Integer userId;
+    private Integer authorizationFlag;
 }
