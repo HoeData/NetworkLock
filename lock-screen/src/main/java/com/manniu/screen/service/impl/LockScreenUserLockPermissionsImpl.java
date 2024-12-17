@@ -37,11 +37,11 @@ public class LockScreenUserLockPermissionsImpl extends
     public AjaxResult mySaveOrUpdate(
         List<LockScreenUserLockPermissions> lockPermissionsList) {
         LockScreenUserLockKey userLockKey = userLockKeyService.getByUserId(
-            lockPermissionsList.get(0).getUserId());
+            lockPermissionsList.get(CommonConst.ZERO).getUserId());
         if (userLockKey == null) {
             throw new ServiceException("授权用户还未录入卡号或指纹");
         }
-        List<String> errorList = new ArrayList<>();
+        String errorMsg = "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for (LockScreenUserLockPermissions item : lockPermissionsList) {
             boolean success = setLock(item, userLockKey, item.getStartTime().format(formatter),
@@ -49,13 +49,14 @@ public class LockScreenUserLockPermissionsImpl extends
             if (success) {
                 item.setAuthorizationFlag(CommonConst.ONE);
             } else {
-                errorList.add(item.getIp() + CommonConst.ENGLISH_COLON + item.getDeviceId()
-                    + CommonConst.ENGLISH_COLON + item.getLockId() + "授权失败");
+                errorMsg += item.getIp() + CommonConst.ENGLISH_COLON + item.getDeviceId()
+                    + CommonConst.ENGLISH_COLON + item.getLockId() + "授权失败,";
             }
             saveOrUpdate(item);
         }
-        if (errorList.size() > 0) {
-            return AjaxResult.error().put("data", errorList);
+        if (errorMsg.length() > CommonConst.ZERO) {
+            return AjaxResult.error(
+                errorMsg.substring(CommonConst.ZERO, errorMsg.length() - CommonConst.ONE));
         }
         return AjaxResult.success();
     }
@@ -75,9 +76,9 @@ public class LockScreenUserLockPermissionsImpl extends
                 userLockKeyService.getByUserId(lockPermissions.getUserId()).getRealAccountId()
                     .toString());
             return lockResult.getB() ? userLockPermissionsMapper.deleteByDataId(
-                lockPermissions.getId()) : 0;
+                lockPermissions.getId()) : CommonConst.ZERO;
         } catch (Exception e) {
-            return 0;
+            return CommonConst.ZERO;
         }
     }
 
@@ -86,7 +87,7 @@ public class LockScreenUserLockPermissionsImpl extends
         PageHelper.startPage(1, Integer.MAX_VALUE);
         List<LockScreenUserLockPermissionsViewVO> list = getUserLockPermissionsList(
             LockScreenUserLockPermissionsPageParamVO.builder().userId(userId).build());
-        if (list.size() > 0) {
+        if (list.size() > CommonConst.ZERO) {
             List<LockScreenUserLockPermissions> lockPermissionsList = new ArrayList<>();
             LockScreenUserLockPermissions lockPermissions;
             for (LockScreenUserLockPermissionsViewVO item : list) {

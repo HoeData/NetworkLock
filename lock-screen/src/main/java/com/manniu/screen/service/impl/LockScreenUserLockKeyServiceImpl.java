@@ -15,7 +15,6 @@ import com.manniu.screen.vo.param.LockUserKeyPageParamVO;
 import com.manniu.screen.vo.view.LockScreenUserLockPermissionsViewVO;
 import com.manniu.screen.vo.view.LockUserKeyViewVO;
 import com.ruoyi.common.core.domain.AjaxResult;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,11 +42,9 @@ public class LockScreenUserLockKeyServiceImpl extends
 
     @Override
     public boolean mySaveOrUpdate(LockScreenUserLockKey lockScreenUserLockKey) {
+        LockScreenUserLockKey old = getByUserId(lockScreenUserLockKey.getId());
         if (null != lockScreenUserLockKey.getId() && null != lockScreenUserLockKey.getType()) {
             UserLockKeyType keyType = UserLockKeyType.getEnum(lockScreenUserLockKey.getType());
-            LockScreenUserLockKey old = getByUserId(lockScreenUserLockKey.getId());
-            judgeCardNumber(lockScreenUserLockKey.getCardNumber(), lockScreenUserLockKey.getId());
-            judgePassword(lockScreenUserLockKey.getPassword(), lockScreenUserLockKey.getId());
             switch (keyType) {
                 case PASSWORD:
                     old.setPassword(lockScreenUserLockKey.getPassword());
@@ -61,6 +58,14 @@ public class LockScreenUserLockKeyServiceImpl extends
             }
             lockScreenUserLockKey = old;
         }
+        if (null != old) {
+            old.setName(lockScreenUserLockKey.getName());
+            old.setContactInformation(lockScreenUserLockKey.getContactInformation());
+            old.setRemark(lockScreenUserLockKey.getRemark());
+            lockScreenUserLockKey=old;
+        }
+        judgeCardNumber(lockScreenUserLockKey.getCardNumber(), lockScreenUserLockKey.getId());
+        judgePassword(lockScreenUserLockKey.getPassword(), lockScreenUserLockKey.getId());
         CommonUtils.addCommonParams(lockScreenUserLockKey, lockScreenUserLockKey.getId());
         boolean result;
         synchronized (this) {
@@ -95,22 +100,23 @@ public class LockScreenUserLockKeyServiceImpl extends
         String accountId = lockScreenUserLockKey.getRealAccountId().toString();
         List<LockScreenUserLockPermissionsViewVO> list = userLockPermissionsMapper.selectUserLockPermissionsList(
             LockScreenUserLockPermissionsPageParamVO.builder().userId(userId).build());
-        if (list.size() > 0) {
-            List<String> errorList = new ArrayList<>();
+        if (list.size() > CommonConst.ZERO) {
+            String errorMsg = "";
             for (LockScreenUserLockPermissionsViewVO item : list) {
                 try {
                     if (!lockTemplate.removeAccount(item.getIp(), item.getDeviceId(),
                         item.getLockId(), accountId).getB()) {
-                        errorList.add(item.getIp() + CommonConst.ENGLISH_COLON + item.getDeviceId()
-                            + CommonConst.ENGLISH_COLON + item.getLockId() + "删除授权失败");
+                        errorMsg += item.getIp() + CommonConst.ENGLISH_COLON + item.getDeviceId()
+                            + CommonConst.ENGLISH_COLON + item.getLockId() + "删除授权失败,";
                     }
                 } catch (Exception e) {
-                    errorList.add(item.getIp() + CommonConst.ENGLISH_COLON + item.getDeviceId()
-                        + CommonConst.ENGLISH_COLON + item.getLockId() + "删除授权失败");
+                    errorMsg += item.getIp() + CommonConst.ENGLISH_COLON + item.getDeviceId()
+                        + CommonConst.ENGLISH_COLON + item.getLockId() + "删除授权失败,";
                 }
             }
-            if (errorList.size() > 0) {
-                return AjaxResult.error().put("data", errorList);
+            if (errorMsg.length() > CommonConst.ZERO) {
+                return AjaxResult.error(
+                    errorMsg.substring(CommonConst.ZERO, errorMsg.length() - CommonConst.ONE));
             }
         }
         userLockKeyMapper.deleteByDataId(userId);
@@ -127,7 +133,7 @@ public class LockScreenUserLockKeyServiceImpl extends
         }
         Set<Integer> set = list.stream().map(LockScreenUserLockKey::getRealAccountId)
             .collect(Collectors.toSet());
-        int accountId = 0;
+        int accountId = CommonConst.ZERO;
         for (int i = 1; i <= max; i++) {
             if (!set.contains(i)) {
                 accountId = i;
