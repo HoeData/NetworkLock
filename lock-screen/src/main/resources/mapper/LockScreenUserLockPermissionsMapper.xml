@@ -29,9 +29,9 @@
                  left join lock_screen_network_control control on e.network_control_id = control.id
         where t.del_flag = 0
           and t.user_id = #{userId}
-        order by t.create_time desc
         <if test="authorizationFlag != null">
             AND t.authorization_flag =#{authorizationFlag}
         </if>
+        order by t.create_time desc
     </select>
 </mapper>

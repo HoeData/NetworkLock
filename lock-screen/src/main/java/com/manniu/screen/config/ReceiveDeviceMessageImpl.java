@@ -4,6 +4,7 @@ import cn.hutool.extra.spring.SpringUtil;
 import com.alibaba.fastjson2.JSON;
 import com.jinfu.lock.callback.ObServer;
 import com.jinfu.lock.pojo.OpenLockMessage;
+import com.manniu.screen.constans.CommonConst;
 import com.manniu.screen.domain.LockScreenUnlock;
 import com.manniu.screen.service.ILockScreenUnlockService;
 import com.manniu.screen.vo.LockStatusVO;
@@ -18,9 +19,9 @@ import org.apache.commons.lang3.time.DateUtils;
 @Slf4j
 public class ReceiveDeviceMessageImpl implements ObServer {
 
-    private static final String HORIZONTAL_LINE = "-";
-    private static final String OFFLINE = "离线";
-    private static final String ONLINE = "在线";
+    public static final String HORIZONTAL_LINE = "-";
+    public static final String OFFLINE = "离线";
+    public static final String ONLINE = "在线";
 
 
     @Override
@@ -29,7 +30,7 @@ public class ReceiveDeviceMessageImpl implements ObServer {
         LockScreenCache.deviceStatusVOMap.put(openLockMessage.getDeviceId(), ONLINE);
         Map<String, LockStatusVO> map = LockScreenCache.lockStatusVOMap.get(
             openLockMessage.getDeviceId());
-        if ("0".equals(openLockMessage.getLockId())) {
+        if (CommonConst.ZERO_STR.equals(openLockMessage.getLockId())) {
             if (null != map) {
                 map.forEach((k, v) -> {
                     v.setDoorStatus(HORIZONTAL_LINE);

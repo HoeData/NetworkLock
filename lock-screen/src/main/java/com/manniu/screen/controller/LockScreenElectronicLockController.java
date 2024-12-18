@@ -42,13 +42,18 @@ public class LockScreenElectronicLockController extends BaseController {
 
     @PostMapping("/setUserStatus")
     public AjaxResult setUserStatus(@RequestBody @Validated ElectronicLockSetUserTypeVO vo) {
-        if (lockTemplate.setVerification(vo.getIp(), vo.getDeviceId(), vo.getLockId(),
-            vo.getUserType()).getB()) {
-            LockScreenElectronicLock lock = new LockScreenElectronicLock();
-            lock.setId(vo.getId());
-            lock.setUserType(vo.getUserType());
-            return toAjax(lockScreenElectronicLockService.saveOrUpdate(lock));
+        try {
+            if (lockTemplate.setVerification(vo.getIp(), vo.getDeviceId(), vo.getLockId(),
+                vo.getUserType()).getB()) {
+                LockScreenElectronicLock lock = new LockScreenElectronicLock();
+                lock.setId(vo.getId());
+                lock.setUserType(vo.getUserType());
+                return toAjax(lockScreenElectronicLockService.saveOrUpdate(lock));
+            }
+            return AjaxResult.error();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error();
         }
-        return AjaxResult.error();
     }
 }
